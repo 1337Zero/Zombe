@@ -1,0 +1,311 @@
+package me.zero.cc.Zero_lite.Mods;
+
+import org.lwjgl.input.Keyboard;
+
+import com.mumfrey.liteloader.core.LiteLoader;
+
+import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
+import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
+import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
+import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
+import me.zero.cc.Zero_lite.utils.GuiPositions;
+import me.zero.cc.Zero_lite.utils.Speicher;
+import me.zero.cc.Zero_lite.utils.SunThread;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.world.EnumSkyBlock;
+
+public class TimeMod implements Mod {
+
+	private Minecraft minecraft;
+	private String version = "0.1";
+	
+	private int addtime = 0;
+	private int subtime = 0;
+	private int freezekey = 0;
+	
+	private double lastpressed = 0;
+	private long timetoadd = 0;
+	private Speicher speicher;
+	private int infoid = 0;	
+	private boolean enabled = false;
+	private SunThread st;
+	private boolean freezetime = false;
+	private int multipl = (int) ((50 / 100.0)*1);
+	private GuiPositions pos = GuiPositions.UP_CENTER;
+	private boolean showTimeInfo = false;
+	
+	public TimeMod(Minecraft minecraft,Speicher speicher){
+		this.minecraft = minecraft;
+		this.speicher = speicher;
+		lastpressed = System.currentTimeMillis();
+				
+		addtime = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-addtime"));
+		subtime = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-subtime"));
+		freezekey = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-freezetime"));
+		
+		timetoadd = Integer.parseInt(speicher.getConfig().getData("Time-Mod.timetoadd"));
+		enabled = Boolean.valueOf(speicher.getConfig().getData("Time-Mod.Time-Mod-enabled"));
+		freezetime = Boolean.valueOf(speicher.getConfig().getData("Time-Mod.time-freezed"));
+		multipl = Integer.parseInt(speicher.getConfig().getData("Time-Mod.time-multiplier"));
+		showTimeInfo = Boolean.valueOf(speicher.getConfig().getData("Time-Mod.showTimeinfo"));
+		pos = GuiPositions.valueOf(speicher.getConfig().getData("Time-Mod.showtimepos"));
+		
+		infoid = speicher.getInfoLineManager().getInfoLine(pos).addInfo("");		
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void use() {
+		if(enabled){
+			if(st == null){
+				st = new SunThread(minecraft, timetoadd,minecraft.theWorld.getWorldTime());
+				st.start();
+			}
+		}
+		if((System.currentTimeMillis() - lastpressed) >=100){
+			if(Keyboard.isKeyDown(addtime)){
+				timetoadd = timetoadd + 240;
+				if(st != null){
+					st.settime2add(timetoadd);
+				}				
+			}
+			if(Keyboard.isKeyDown(subtime)){
+				timetoadd = timetoadd - 240;
+				if(st != null){
+					st.settime2add(timetoadd);
+				}
+			}
+			if(Keyboard.isKeyDown(freezekey)){
+				if(freezetime){
+					freezetime = false;
+				}else{
+					freezetime = true;
+				}	
+				if(st != null){
+					st.setFreezetime(freezetime);	
+				}				
+			}
+			lastpressed = System.currentTimeMillis();
+		}	
+		if(showTimeInfo){
+			if(timetoadd < 0){
+				speicher.getInfoLineManager().getInfoLine(pos).setInfo(infoid, "{Time " +  timetoadd + "}");
+			}else{
+				speicher.getInfoLineManager().getInfoLine(pos).setInfo(infoid, "{Time +" +  timetoadd + "}");
+			}
+			
+		}
+	}
+
+	@Override
+	public String getName() {
+		return ModData.TimeMod.name();
+	}
+	@Override
+	public String getVersion() {
+		return version;
+	}
+
+	@Override
+	public GuiScreen drawGui() {		
+		return new WeatherModGui(speicher);
+	}
+
+	@Override
+	public void manupulateValue(String ValueToManupulate, int value) {
+		if(ValueToManupulate.equalsIgnoreCase("Time-Add")){
+			addtime = value;
+			speicher.getConfig().replaceData("Time-Mod.Key-addtime", addtime + "");
+		}else if(ValueToManupulate.equalsIgnoreCase("Time-Sub")){
+			subtime = value;
+			speicher.getConfig().replaceData("Time-Mod.Key-subtime", subtime + "");
+		}else if(ValueToManupulate.equalsIgnoreCase("Freeze-Time")){
+			freezekey = value;
+			speicher.getConfig().replaceData("Time-Mod.Key-freezetime", freezekey +  "");
+		}else if(ValueToManupulate.equalsIgnoreCase("Time-Multiplier")){
+			this.setMultipl((int) ((50 / 100.0)*value));
+			if(st != null){
+				st.setTimemultipliere((int) ((50 / 100.0)*value));
+			}
+			speicher.getConfig().replaceData("Time-Mod.time-multiplier", this.getMultipl() + "");
+		}else{
+			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
+		}		
+	}
+
+	@Override
+	public void manupulateValue(String valueToManupulate, boolean b) {
+		if(valueToManupulate.equalsIgnoreCase("freezetime")){
+			freezetime = b;
+			if(st != null){
+				st.setFreezedtime(minecraft.theWorld.getWorldTime());
+				st.setFreezetime(b);
+			}						
+			speicher.getConfig().replaceData("time-freezed", freezetime + "");
+		}else if(valueToManupulate.equalsIgnoreCase("enable")){
+			enabled = b;
+			if(b){				
+				st = new SunThread(minecraft, timetoadd, minecraft.theWorld.getWorldTime());
+				st.start();
+			}else{
+				st.interrupt();
+			}
+			speicher.getConfig().replaceData("Time-Mod-enabled", enabled + "");
+		}else if(valueToManupulate.equalsIgnoreCase("showtime")){
+			showTimeInfo = b;
+			speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoid);
+			speicher.getConfig().replaceData("Time-Mod.showTimeinfo", showTimeInfo + "");
+		}else{
+			System.out.println("Don't know that " + valueToManupulate);
+		}
+	}
+
+	@Override
+	public void manupulateValue(String valueToManupulate, String value) {
+		if(valueToManupulate.equalsIgnoreCase("timepos")){
+			speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoid);
+			pos = GuiPositions.valueOf(value);
+			infoid = speicher.getInfoLineManager().getInfoLine(pos).addInfo("");
+			speicher.getConfig().replaceData("Time-Mod.showtimepos", pos.toString());
+		}else{
+			System.out.println("Don't know that " + valueToManupulate);
+		}		
+	}
+	public boolean isFreezetime() {
+		return freezetime;
+	}
+
+	public int getAddtime() {
+		return addtime;
+	}
+
+	public void setAddtime(int addtime) {
+		this.addtime = addtime;
+	}
+
+	public int getSubtime() {
+		return subtime;
+	}
+
+	public void setSubtime(int subtime) {
+		this.subtime = subtime;
+	}
+
+	public int getFreezetimekey() {
+		return freezekey;
+	}
+
+	public void setFreezetimekey(int freezetimekey) {
+		freezekey = freezetimekey;
+	}
+
+	public int getMultipl() {
+		return multipl;
+	}
+
+	public void setMultipl(int multipl) {
+		this.multipl = multipl;
+	}
+	public GuiPositions getPos() {
+		return pos;
+	}
+
+	public void setPos(GuiPositions pos) {
+		this.pos = pos;
+	}
+
+	public boolean isShowTimeInfo() {
+		return showTimeInfo;
+	}
+
+	public void setShowTimeInfo(boolean showTimeInfo) {
+		this.showTimeInfo = showTimeInfo;
+	}
+}
+class WeatherModGui extends GuiScreen{
+	
+	private Speicher speicher;
+	private boolean GivingKey = false;
+	private String valueToManupulate = "";
+	private GuiChooseKeyButton key_add;
+	private GuiChooseKeyButton key_sub;
+	private GuiChooseKeyButton key_freeze;
+	
+	public WeatherModGui(Speicher speicher){
+		this.speicher = speicher;
+	}
+	
+	public void initGui(){
+		drawButtons();
+	}
+	
+	public void actionPerformed(GuiButton b){	
+		if(b.displayString.contains("back to game")){
+			speicher.getMinecraft().displayGuiScreen(null);
+			speicher.getZm().setShown(false);
+		}else if(b.displayString.contains("waiting")){
+			valueToManupulate = b.displayString.split("waiting")[0];
+			GivingKey = true;
+		}
+	}
+	
+	public void drawButtons(){	
+		
+		GuiBooleanButton freezetime = new GuiBooleanButton(1, width/2-170, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isFreezetime(), "freezetime", ModData.TimeMod, speicher);
+		
+		key_add = new GuiChooseKeyButton(2, width/2-170, height/4+20, 150, 20, "Time-Add", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getAddtime());
+		key_sub = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Time-Sub", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getSubtime());
+		key_freeze = new GuiChooseKeyButton(4, width/2, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getFreezetimekey());
+		SimpleSlider slider = new SimpleSlider(5, width/2, height/4+50, "Time-Multiplier",(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl()/5), 150, 20, ModData.TimeMod, "Time-Multiplier", speicher);
+		//(int) ((50 / 100.0)*value)
+		GuiBooleanButton enable = new GuiBooleanButton(7, width/2-170, height/4+50, 150, 20, "Enabled", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isEnabled(), "enable", ModData.TimeMod, speicher);
+		
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+80, 150, 20, "TimeInfo-Pos", GuiPositions.getPosList(), "timepos", ModData.TimeMod, speicher, GuiPositions.getPos(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getPos()));
+		GuiBooleanButton showFlyInfo = new GuiBooleanButton(8, width/2, height/4+80, 150, 20, "Show-TimeInfo", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isShowTimeInfo(), "showtime", ModData.TimeMod, speicher);
+		
+		
+		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
+		
+		
+		buttonList.add(choosepos);
+		buttonList.add(showFlyInfo);
+		buttonList.add(enable);
+		buttonList.add(slider);
+		buttonList.add(key_freeze);
+		buttonList.add(key_sub);
+		buttonList.add(key_add);
+		buttonList.add(freezetime);
+		buttonList.add(back);
+	}
+	protected void keyTyped(char c,int key){
+		if(GivingKey){
+			if(key != 65 && key != 1){
+				//speicher.getMinecraft().thePlayer.playSound("mob.ghast.scream", 1.0F, 1.0F);	
+				valueToManupulate = valueToManupulate.replace(" ", "");
+				((TimeMod)speicher.getMod(ModData.TimeMod.name())).manupulateValue(valueToManupulate, key);
+				
+				if(valueToManupulate.equalsIgnoreCase("Time-Add")){
+					key_add.setButtonkey(key);
+				}else if(valueToManupulate.equalsIgnoreCase("Time-Sub")){
+					key_sub.setButtonkey(key);
+				}else if(valueToManupulate.equalsIgnoreCase("Freeze-Time")){
+					key_freeze.setButtonkey(key);
+				}
+				GivingKey = false;
+			}
+		}else{
+			if(key == 65 || key == 1){
+				speicher.getMinecraft().displayGuiScreen(null);
+				speicher.getZm().setShown(false);
+			}
+		}		
+	}
+}
+

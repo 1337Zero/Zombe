@@ -1,0 +1,7 @@
+{
+    "name": "${ant.project.name}",
+    "mcversion": "${litemodversion}",
+    "revision": "${build.number}",
+    "author": "${author}",
+    "description": "This awesome Mod is a remake from Zombe-Modpack, it uses Liteloader to work."
+}
