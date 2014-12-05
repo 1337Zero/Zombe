@@ -14,7 +14,6 @@ import me.zero.cc.Zero_lite.Mods.MobHighlighterMod;
 import me.zero.cc.Zero_lite.Mods.ReciepeMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
-import me.zero.cc.Zero_lite.utils.InfoLine;
 import me.zero.cc.Zero_lite.utils.InfoLineManager;
 import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
@@ -87,10 +86,9 @@ public class LiteModMain implements Tickable, ChatFilter{
 		}
 	}
 	@Override
-	public boolean onChat(IChatComponent chat, String message,
-			ReturnValue<IChatComponent> newMessage) {
+	public boolean onChat(IChatComponent chat, String message,ReturnValue<IChatComponent> newMessage) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }
 
