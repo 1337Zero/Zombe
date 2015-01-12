@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import me.zero.cc.Zero_lite.Mods.FlyMod;
 import me.zero.cc.Zero_lite.Mods.ModData;
+import me.zero.cc.Zero_lite.Mods.OreHighlighterMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
 import me.zero.cc.Zero_lite.utils.Speicher;
@@ -40,6 +41,8 @@ public class SimpleSlider extends GuiButton{
 			value =  (int)((SpeedMod)speicher.getMod(modname.name())).getSpeedValue();
 		}else if(modname.name().equalsIgnoreCase(ModData.TimeMod.name())){
 			 value = ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl();
+		}else if(modname.name().equalsIgnoreCase(ModData.OreHighLighter.name())){
+			 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius()*10;
 		 }	
 		txt = valueNameToManupulate + ": " + value;
 		this.valueToManupulate = valueNameToManupulate;
@@ -88,7 +91,10 @@ public class SimpleSlider extends GuiButton{
 			 value =  (int)((SpeedMod)speicher.getMod(modname.name())).getSpeedValue();
 		 }else if(modname.name().equalsIgnoreCase(ModData.TimeMod.name())){
 			 value = ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl();
-		 }
+		 }else if(modname.name().equalsIgnoreCase(ModData.OreHighLighter.name())){
+			 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius()*10;
+		 }	
+		 
 		 this.setText(valueToManupulate + ": " + value);
 	 }	 
 	 /**

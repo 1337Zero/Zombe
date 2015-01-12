@@ -13,6 +13,7 @@ import me.zero.cc.Zero_lite.utils.Speicher;
 import me.zero.cc.Zero_lite.utils.SunThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.world.EnumSkyBlock;
@@ -70,19 +71,19 @@ public class TimeMod implements Mod {
 			}
 		}
 		if((System.currentTimeMillis() - lastpressed) >=100){
-			if(Keyboard.isKeyDown(addtime)){
+			if(Keyboard.isKeyDown(addtime) && (minecraft.currentScreen == null)){
 				timetoadd = timetoadd + 240;
 				if(st != null){
 					st.settime2add(timetoadd);
 				}				
 			}
-			if(Keyboard.isKeyDown(subtime)){
+			if(Keyboard.isKeyDown(subtime) && (minecraft.currentScreen == null)){
 				timetoadd = timetoadd - 240;
 				if(st != null){
 					st.settime2add(timetoadd);
 				}
 			}
-			if(Keyboard.isKeyDown(freezekey)){
+			if(Keyboard.isKeyDown(freezekey) && (minecraft.currentScreen == null)){
 				if(freezetime){
 					freezetime = false;
 				}else{

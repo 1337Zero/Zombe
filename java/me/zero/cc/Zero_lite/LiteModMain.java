@@ -11,25 +11,37 @@ import me.zero.cc.Zero_lite.Mods.FlyMod;
 import me.zero.cc.Zero_lite.Mods.InfoMod;
 import me.zero.cc.Zero_lite.Mods.LightMod;
 import me.zero.cc.Zero_lite.Mods.MobHighlighterMod;
+import me.zero.cc.Zero_lite.Mods.ModData;
+import me.zero.cc.Zero_lite.Mods.OreHighlighterMod;
 import me.zero.cc.Zero_lite.Mods.ReciepeMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
 import me.zero.cc.Zero_lite.utils.InfoLineManager;
 import me.zero.cc.Zero_lite.utils.Speicher;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BlockModelRenderer;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S02PacketChat;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.IBlockAccess;
 
 import com.mumfrey.liteloader.ChatFilter;
+import com.mumfrey.liteloader.PostRenderListener;
+import com.mumfrey.liteloader.RenderListener;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.core.LiteLoaderEventBroker.ReturnValue;
+import com.mumfrey.liteloader.transformers.event.ReturnEventInfo;
 
-public class LiteModMain implements Tickable, ChatFilter{
+public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 
 	private static KeyBinding Zombe_config = new KeyBinding("Zombe-Config", Keyboard.KEY_F7, "Zombe-Config");
 	private Speicher speicher;
@@ -63,7 +75,8 @@ public class LiteModMain implements Tickable, ChatFilter{
 			speicher.addMod(new LightMod(minecraft, speicher));
 			speicher.addMod(new ReciepeMod(minecraft,speicher));
 			speicher.addMod(new TimeMod(minecraft, speicher));
-			speicher.addMod(new MobHighlighterMod(minecraft));
+			speicher.addMod(new MobHighlighterMod(minecraft,speicher));
+			speicher.addMod(new OreHighlighterMod(minecraft,speicher));
 			speicher.setMinecraft(minecraft);
 			ch = new ChatMod(minecraft,speicher);
 			speicher.addMod(ch);
@@ -73,7 +86,6 @@ public class LiteModMain implements Tickable, ChatFilter{
 
 	public void onTick(Minecraft minecraft, float partialTicks, boolean inGame,	boolean clock) {	
 		initMods(minecraft);
-		//System.out.println(Keyboard.isKeyDown(65) || Keyboard.isKeyDown(1));
 		if(minecraft.thePlayer != null){
 			speicher.getInfoLineManager().use(minecraft);
 			if(Zombe_config.isKeyDown()){
@@ -90,5 +102,17 @@ public class LiteModMain implements Tickable, ChatFilter{
 		// TODO Auto-generated method stub
 		return true;
 	}
+
+	@Override
+	public void onPostRenderEntities(float partialTicks) {
+		// TODO Auto-generated method stub
+		((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).render(partialTicks);
+		((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).render(partialTicks);
+	}
+
+	@Override
+	public void onPostRender(float partialTicks) {		
+	}
+
 }
 

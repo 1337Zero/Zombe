@@ -12,6 +12,7 @@ import me.zero.cc.Zero_lite.utils.GuiPositions;
 import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.MathHelper;
 
@@ -62,7 +63,7 @@ public class SpeedMod implements Mod {
 
 	@Override
 	public void use() {		
-		if(Keyboard.isKeyDown(onkey) && !(minecraft.gameSettings.keyBindRight.isKeyDown() || minecraft.gameSettings.keyBindLeft.isKeyDown() || minecraft.gameSettings.keyBindForward.isKeyDown() || minecraft.gameSettings.keyBindBack.isKeyDown())){
+		if(Keyboard.isKeyDown(onkey) && !(minecraft.gameSettings.keyBindRight.isKeyDown() || minecraft.gameSettings.keyBindLeft.isKeyDown() || minecraft.gameSettings.keyBindForward.isKeyDown() || minecraft.gameSettings.keyBindBack.isKeyDown() || (minecraft.currentScreen != null))){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(speedenabled){
 					speedenabled = false;
@@ -77,7 +78,7 @@ public class SpeedMod implements Mod {
 		
 		if(speedenabled){
 			if(toggledspeed){
-				if(Keyboard.isKeyDown(onkey)){
+				if(Keyboard.isKeyDown(onkey) && (minecraft.currentScreen == null)){
 					if(showspeed){
 						speicher.getInfoLineManager().getInfoLine(pos).setInfo(infoID, "Speed (" + speedValue + ")");
 					}else{

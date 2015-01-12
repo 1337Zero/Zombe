@@ -10,6 +10,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 
@@ -42,7 +43,7 @@ public class LightMod implements Mod {
 
 	@Override
 	public void use() {
-		if(Keyboard.isKeyDown(onkey)){
+		if(Keyboard.isKeyDown(onkey) && (minecraft.currentScreen == null)){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(enabled){
 					enabled = false;

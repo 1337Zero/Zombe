@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.EnumFacing;
 
 public class InfoMod implements Mod {
 
@@ -165,6 +166,9 @@ public class InfoMod implements Mod {
 		}
 	}
 	private void UpdateDirection(double value){
+		
+		//	   EnumFacing facing =  EnumFacing.fromAngle(ent.getRotationYawHead());
+		// Use this cause better and stuff
 		if(value >= 135 && value < 180 || value > -180 && value <= -135){
 			if(!getFacing().contains("North")){
 				setFacing("North");

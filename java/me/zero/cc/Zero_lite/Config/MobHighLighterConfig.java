@@ -10,22 +10,43 @@ import java.util.*;
 
 import com.mumfrey.liteloader.core.LiteLoader;
 
-public class Config {
+public class MobHighLighterConfig {
 
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Fly-Mod.Key-Down:16","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:57","Fly-Mod.key-Toggle-fly:46","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false",
-			"Speed-Mod.Toggle-speed:21","Speed-Mod.maxspeed:10","Speed-Mod.speed:1","Speed-Mod.showspeed:true","Speed-Mod.speed-Pos:UP_LEFT","Speed-Mod.togglespeed:false","Speed-Mod.speed-enabled:false","Speed-Mod.enabled:false",
-			"Info-Mod.FPS-Pos:UP_CENTER","Info-Mod.showFPS:false","Info-Mod.Dir-POS:UP_RIGHT","Info-Mod.showdir:false","Info-Mod.Coor-Pos:UP_RIGHT","Info-Mod.showcoor:false","Info-Mod.Worldage-Pos:UP_LEFT","Info-Mod.showworldage:false",
-			"Light-Mod.Toggle-Light:38","Light-Mod.lightmod-enabled:false",
-			"Time-Mod.Key-addtime:78","Time-Mod.Key-subtime:74","Time-Mod.Key-freezetime:55","Time-Mod.timetoadd:0","Time-Mod.Time-Mod-enabled:false","Time-Mod.time-freezed:false","Time-Mod.time-multiplier:0","Time-Mod.showTimeinfo:false","Time-Mod.showtimepos:UP_CENTER",
-			"RecipeMod.Enabled:false",
-			"MobHighlighter.enabled:false","MobHighlighter.Toggle-Mobhighlighter:55","MobHighlighter.info-Pos:UP_LEFT","MobHighlighter.showinfo:false",
-			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:27","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2"
+			"Moblist:Chicken,Cow,Horse,Ocelot,Pig,Sheep,Bat,Mooshroomcow,Squid,Villager,Rabbit,Creeper,Skeleton,Zombie,Spider,Enderman,Zombiepigman,Cavespider,Silverfish,Lohe,Magma,Witch,Endermite,Guardian,Wolf,Item,Player",
+								
+			"Color.Chicken:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Cow:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Horse:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Ocelot:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Pig:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Sheep:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Bat:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Mooshroomcow:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Squid:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Villager:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Rabbit:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Creeper:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Skeleton:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Zombie:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Spider:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Enderman:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Zombiepigman:1.0F, 0.4F, 0.1F, 1.0F",
+			"Color.Cavespider:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Silverfish:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Lohe:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Magma:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Witch:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Endermite:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Guardian:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Wolf:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Item:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Player:1.0F, 1.0F, 1.0F, 1.0F"
 			);
 	
-	public Config(){
+	public MobHighLighterConfig(){
 		path = System.getProperty("user.dir");
 		path = path + System.getProperty("file.separator") + "Mods" + System.getProperty("file.separator") + "Lite_Zombe";
 		try {
@@ -48,7 +69,7 @@ public class Config {
 		if(!folder_Lite_Zombe.exists()){
 			folder_Lite_Zombe.mkdir();
 		}
-		File config_File = new File(path + "\\config.cfg");
+		File config_File = new File(path + "\\Mobhighlighter.cfg");
 		if(!config_File.exists()){
 			config_File.createNewFile();
 			createConfigFile(defaultconfig, "");
@@ -71,7 +92,7 @@ public class Config {
 	 * @throws Exception
 	 */
 	private void createConfigFile(List<String> list,String valuetochange) throws Exception{
-		File config_File = new File(path + "\\config.cfg");
+		File config_File = new File(path + "\\Mobhighlighter.cfg");
 		config_File.createNewFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(config_File));
@@ -91,7 +112,7 @@ public class Config {
 	 */
 	private void saveConfig(String changedpart) throws Exception{
 		if(!LiteLoader.isDevelopmentEnvironment()){
-			File config_File = new File(path + "\\config.cfg");		
+			File config_File = new File(path + "\\Mobhighlighter.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){
 		      back.add(key + ":" + data.get(key));
@@ -109,7 +130,7 @@ public class Config {
 	public String getData(String key){
 		String back = "";
 		if(data.get(key) == null){
-			System.out.println("Your config-File is old, i will try update it for you ;D");
+			System.out.println(key + " was not found in your config,i will try update it for you ;D");
 			for(int i = 0; i < defaultconfig.size();i++){
 				if(defaultconfig.get(i).split(":")[0].equalsIgnoreCase(key)){
 					data.put(key, defaultconfig.get(i).split(":")[1]);
