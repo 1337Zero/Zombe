@@ -1,7 +1,10 @@
 package me.zero.cc.Zero_lite;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.lwjgl.input.Keyboard;
 
@@ -19,6 +22,7 @@ import me.zero.cc.Zero_lite.Mods.ReciepeMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
 import me.zero.cc.Zero_lite.utils.InfoLineManager;
+import me.zero.cc.Zero_lite.utils.UpdateChecker;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -32,6 +36,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.HttpUtil;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.IBlockAccess;
 
@@ -52,17 +59,23 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private Config config;
 	private InfoLineManager ilm;
 	private Minecraft minecraft;
+	private UpdateChecker updatecheck;
+	private boolean checkedupdate = false;
+	private ArrayList<String > messages;
+	private String urlVersion = "";
+	private String downloadURL = "";
+	private String prefix = "&6[Lite-Zombe] ";
 	
 	public String getName() {
 		return "Zero-Lite";
 	}
 	public String getVersion() {
-		return "0.1";
+		return "0.0.3";
 	}
 
 	public void init(File configPath) {	
 		LiteLoader.getInput().registerKeyBinding(Zombe_config);
-		config = new Config();
+		config = new Config();	
 	}
 
 	public void upgradeSettings(String version, File configPath,File oldConfigPath) {	
@@ -91,7 +104,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			this.addMod(ch);
 			init = true;
 		}
-	}
+	}	
 	/**
 	 * Addes a Mod to the Modlist
 	 * @param Mod
@@ -127,13 +140,56 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			ilm.use(minecraft);
 			if(Zombe_config.isKeyDown()){
 				minecraft.displayGuiScreen(new ConfigMainFrame(this));
+			}			
+			if(!checkedupdate && minecraft.theWorld != null && minecraft.currentScreen == null){
+				if(Boolean.valueOf(config.getData("Main.searchupdates"))){
+					updatecheck = new UpdateChecker(this);	
+					updatecheck.start();				
+					checkedupdate = true;
+				}
 			}
-			
+			if(messages != null){
+				if(messages.size() > 0 || urlVersion != "" & downloadURL != ""){					
+					if(!urlVersion.equalsIgnoreCase(getVersion())){
+						minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + "&4A new Lite-Zombe Version is avaible: " + urlVersion)));						
+						minecraft.thePlayer.addChatMessage(new ChatComponentText(downloadURL));
+					}
+					for(String msg : messages){		
+						minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + msg)));								
+					}	
+					messages = null;
+				}
+			}			
 			for(int i = 0; i < this.getMods().size();i++){
 				this.getMods().get(i).use();
 			}
 		}
+	}	
+	private String formateTextColor(String msg){		
+		msg = msg.replace("&0", "" + EnumChatFormatting.BLACK);
+		msg = msg.replace("&1", "" + EnumChatFormatting.DARK_BLUE);
+		msg = msg.replace("&2", "" + EnumChatFormatting.DARK_GREEN);
+		msg = msg.replace("&3", "" + EnumChatFormatting.DARK_AQUA);
+		msg = msg.replace("&4", "" + EnumChatFormatting.DARK_RED);
+		msg = msg.replace("&5", "" + EnumChatFormatting.DARK_PURPLE);
+		msg = msg.replace("&6", "" + EnumChatFormatting.GOLD);
+		msg = msg.replace("&7", "" + EnumChatFormatting.GRAY);
+		msg = msg.replace("&8", "" + EnumChatFormatting.DARK_GRAY);
+		msg = msg.replace("&9", "" + EnumChatFormatting.BLUE);
+		msg = msg.replace("&a", "" + EnumChatFormatting.GREEN);
+		msg = msg.replace("&b", "" + EnumChatFormatting.AQUA);
+		msg = msg.replace("&c", "" + EnumChatFormatting.RED);
+		msg = msg.replace("&d", "" + EnumChatFormatting.LIGHT_PURPLE);
+		msg = msg.replace("&e", "" + EnumChatFormatting.YELLOW);
+		msg = msg.replace("&f", "" + EnumChatFormatting.WHITE);
+		msg = msg.replace("&k", "" + EnumChatFormatting.OBFUSCATED);
+		msg = msg.replace("&l", "" + EnumChatFormatting.BOLD);
+		msg = msg.replace("&m", "" + EnumChatFormatting.STRIKETHROUGH);
+		msg = msg.replace("&n", "" + EnumChatFormatting.UNDERLINE);
+		msg = msg.replace("&o", "" + EnumChatFormatting.ITALIC);
+		return msg;
 	}
+	
 	@Override
 	public boolean onChat(IChatComponent chat, String message,ReturnValue<IChatComponent> newMessage) {
 		//return false = no chat
@@ -167,6 +223,21 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	}
 	public void setConfig(Config config) {
 		this.config = config;
+	}
+	public synchronized void setAnnouncement(ArrayList<String> messages){
+		this.messages = messages;
+	}
+	public String getUrlVersion() {
+		return urlVersion;
+	}
+	public void setUrlVersion(String urlVersion) {
+		this.urlVersion = urlVersion;
+	}
+	public String getDownloadURL() {
+		return downloadURL;
+	}
+	public void setDownloadURL(String downloadURL) {
+		this.downloadURL = downloadURL;
 	}
 }
 class ConfigMainFrame extends GuiScreen{
