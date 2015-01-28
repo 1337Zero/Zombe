@@ -59,6 +59,7 @@ public class UpdateChecker extends Thread{
             	readed = reader.readLine();
             } 
             main.setAnnouncement(messages);
+            reader.close();
         }catch(IOException e){
         	e.printStackTrace();
         }catch (InterruptedException e) {
