@@ -7,11 +7,11 @@ import org.lwjgl.input.Keyboard;
 
 import com.mumfrey.liteloader.core.LiteLoader;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -25,7 +25,7 @@ public class InfoMod implements Mod {
 	private int rotation = 0;
 	private String Facing = "";
 	private int onkey = 0;
-	private Speicher speicher;
+	private LiteModMain speicher;
 	
 	private int fps = 0;
 	private int newstfps = 0;
@@ -51,7 +51,7 @@ public class InfoMod implements Mod {
 	private float rotationyam = 0;
 	private long lastdiraktu = 0;
 	
-	public InfoMod(Minecraft minecraft,Speicher speicher){		
+	public InfoMod(Minecraft minecraft,LiteModMain speicher){		
 		this.minecraft = minecraft;
 		this.speicher = speicher;	
 		
@@ -82,10 +82,12 @@ public class InfoMod implements Mod {
 			UpdateFPS();
 		}
 		if(showdir){
-			if(System.currentTimeMillis() - lastdiraktu >= 500){
-				rotationyam = minecraft.thePlayer.rotationYawHead;			
-				UpdateDirection(getPercent());
-				UpdateRotation(minecraft);
+			if(System.currentTimeMillis() - lastdiraktu >= 60){
+				//Old but Gold -> if Enumfacing will be removed this should also calc the facing...
+				//rotationyam = minecraft.thePlayer.rotationYawHead;			
+				//UpdateDirection(getPercent());
+				//UpdateRotation(minecraft);
+				Facing = EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().toUpperCase();
 				lastdiraktu = System.currentTimeMillis();
 			}			
 		}	
@@ -100,6 +102,10 @@ public class InfoMod implements Mod {
 			lastaktu = System.currentTimeMillis();
 		}
 	}
+	/**
+	 * Calculates the the world Age in human-readable way
+	 * @return String
+	 */
 	private String getWorldAge(){
 		long worldage = minecraft.theWorld.getTotalWorldTime();
 		int sek = (int) (worldage/20);
@@ -193,9 +199,17 @@ public class InfoMod implements Mod {
 			System.out.println(value);
 		}
 	}
+	/**
+	 * Gets the key for enable
+	 * @return Integer
+	 */
 	public int getOn() {
 		return onkey;
 	}
+	/**
+	 * Sets the key for enable
+	 * @param Integer
+	 */
 	public void setOn(int on) {
 		onkey = on;
 	}
@@ -216,21 +230,45 @@ public class InfoMod implements Mod {
 			setRotation((int)rotationyam / 360);
 		}
 	}
+	/**
+	 * Returns how often the Player has turned
+	 * @return Integer
+	 */
 	public int getRotation() {
 		return rotation;
 	}
+	/**
+	 * Sets how often the Player has turned
+	 * @return Integer
+	 */
 	public void setRotation(int rotation) {
 		this.rotation = rotation;
 	}
+	/**
+	 * Gets the Percent where the player is looking
+	 * @return Double
+	 */
 	public double getPercent() {
 		return percent;
 	}
+	/**
+	 * Sets the Percent where the player is looking
+	 * @param percent
+	 */
 	public void setPercent(double percent) {
 		this.percent = percent;
 	}
+	/**
+	 * Gets the Facing of the Player
+	 * @return String
+	 */
 	public String getFacing() {
 		return Facing;
 	}
+	/**
+	 * Sets the facing
+	 * @param String
+	 */
 	public void setFacing(String facing) {
 		Facing = facing;
 	}
@@ -296,90 +334,141 @@ public class InfoMod implements Mod {
 			System.out.println("Don't know that " + valueToManupulate);		
 		}		
 	}
-
+	/**
+	 * Get the Position of the FPS Counter
+	 * @return GuiPositions
+	 */
 	public GuiPositions getPosFPS() {
 		return posFPS;
 	}
-
+	/**
+	 * Sets the Position of the FPS Counter
+	 * @param GuiPositions
+	 */
 	public void setPosFPS(GuiPositions posFPS) {
 		this.posFPS = posFPS;
 	}
-
+	/**
+	 * Get the Position for the Direction
+	 * @return GuiPositions
+	 */
 	public GuiPositions getPosDir() {
 		return posDir;
 	}
-
+	/**
+	 * Get the Position for the WorldAge
+	 * @return GuiPositions
+	 */
 	public GuiPositions getPosWorldAge() {
 		return posWorldAge;
 	}
-
+	/**
+	 * Set the Position for the WorldAge
+	 * @param GuiPositions
+	 */
 	public void setPosWorldAge(GuiPositions posWorldAge) {
 		this.posWorldAge = posWorldAge;
 	}
-
+	/**
+	 * Set the Position for the Direction
+	 * @param GuiPositions
+	 */
 	public void setPosDir(GuiPositions posDir) {
 		this.posDir = posDir;
 	}
-
+	/**
+	 * Get the Position for the Coordinates
+	 * @return GuiPositions
+	 */
 	public GuiPositions getPosCoor() {
 		return posCoor;
 	}
-
+	/**
+	 * Set the Position for the Coordinates
+	 * @param GuiPositions
+	 */
 	public void setPosCoor(GuiPositions posCoor) {
 		this.posCoor = posCoor;
 	}
-
+	/**
+	 * Get if the FPS are shown
+	 * @return Boolean
+	 */
 	public boolean isShowfps() {
 		return showfps;
 	}
-
+	/**
+	 * Set if the FPS are shown
+	 * @param Boolean
+	 */
 	public void setShowfps(boolean showfps) {
 		this.showfps = showfps;
 	}
-
+	/**
+	 * Get if the Worldage is shown
+	 * @return Boolean
+	 */
 	public boolean isShowWorldAge() {
 		return showWorldAge;
 	}
-
+	/**
+	 * Set if the Worldage is shown
+	 * @param Boolean
+	 */
 	public void setShowWorldAge(boolean showWorldAge) {
 		this.showWorldAge = showWorldAge;
 	}
-
+	/**
+	 * Get if the Direction is shown
+	 * @return Boolean
+	 */
 	public boolean isShowdir() {
 		return showdir;
 	}
-
+	/**
+	 * Set if the Direction is shown
+	 * @param Boolean
+	 */
 	public void setShowdir(boolean showdir) {
 		this.showdir = showdir;
 	}
-
+	/**
+	 * Get if the Coordinations are shown
+	 * @return Boolean
+	 */
 	public boolean isShowcoor() {
 		return showcoor;
 	}
-
+	/**
+	 * Set if the Coordinations are shown
+	 * @param Boolean
+	 */
 	public void setShowcoor(boolean showcoor) {
 		this.showcoor = showcoor;
 	}
 }
 class InfoModGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	
-	public InfoModGui(Speicher speicher){
+	public InfoModGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
 	public void initGui(){
 		drawButtons();
 	}
-	
+	/**
+	 * Called if a Button is pressed
+	 */
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}
 	}
-	
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
 	public void drawButtons(){
 		GuiBooleanButton showDirection = new GuiBooleanButton(1, 10, 20, 150, 20, "Show Direction", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowdir(), "showdir", ModData.InfoMod, speicher);
 		GuiChooseStringButton dirpos = new GuiChooseStringButton(2, width/2+50, 20, 150, 20, "Dir-Position", GuiPositions.getPosList(), "posdir", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosDir()));
@@ -393,17 +482,7 @@ class InfoModGui extends GuiScreen{
 		GuiBooleanButton showworldage = new GuiBooleanButton(7, 10, 95, 150, 20, "Show WorldAge", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowWorldAge(), "showworldage", ModData.InfoMod, speicher);
 		GuiChooseStringButton worldagepos = new GuiChooseStringButton(8, width/2+50, 95, 150, 20, "WorldAge-Position", GuiPositions.getPosList(), "posworldage", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosWorldAge()));
 		
-		
-		
 		GuiButton back = new GuiButton(9, width/2-100,height-50 , "back to game");
-		
-		
-		
-		/*
-		 * TODO: Remove Position-Display
-		 * TODO: Add Position Display with the new System
-		 * TODO: Add disable funktion for all Gui-Positions
-		 */
 		
 		buttonList.add(showworldage);
 		buttonList.add(worldagepos);
@@ -418,8 +497,7 @@ class InfoModGui extends GuiScreen{
 	}
 	protected void keyTyped(char c,int key){			
 			if(key == 65 || key == 1){
-				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);			
+				speicher.getMinecraft().displayGuiScreen(null);		
 		}		
 	}
 }

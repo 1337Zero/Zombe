@@ -8,6 +8,11 @@ public enum GuiPositions {
 	MID_LEFT,MID_CENTER,MID_RIGHT,
 	DOWN_LEFT,DOWN_CENTER,DOWN_RIGHT;
 	
+	/**
+	 * Returns a Integer Value which represends the Position
+	 * @param GuiPositions
+	 * @return Integer
+	 */
 	public static int getPos(GuiPositions pos){		
 		if(pos.name().equals(GuiPositions.UP_LEFT.name())) return 0;
 		if(pos.name().equals(GuiPositions.UP_CENTER.name())) return 1;
@@ -25,7 +30,10 @@ public enum GuiPositions {
 	public int size(){
 		return 9;
 	}
-	
+	/**
+	 * Returns a List with the names of Guipositions
+	 * @return ArrayList<String>
+	 */
 	public static ArrayList<String> getPosList(){
 		ArrayList<String> list = new ArrayList<String>();		
 		list.add(GuiPositions.UP_LEFT.name());

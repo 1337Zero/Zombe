@@ -20,16 +20,28 @@ public class InfoLineManager {
 		infolines.add(new InfoLine(valuex, 5,GuiPositions.DOWN_CENTER));	
 		infolines.add(new InfoLine(valuex, 5,GuiPositions.DOWN_RIGHT));	
 	}
-	
+	/**
+	 * Called every tick to update lines
+	 * @param Minecraft
+	 */
 	public void use(Minecraft minecraft){				
 		for(int i = 0; i < infolines.size();i++){
 			infolines.get(i).UpdateLine(minecraft);
 		}
 	}
-	
+	/**
+	 * Get the Infoline with the given id
+	 * @param Integer
+	 * @return InfoLine
+	 */
 	public InfoLine getInfoLine(int x){
 		return infolines.get(x);
 	}
+	/**
+	 * Get the Infoline from the given GuiPosition
+	 * @param GuiPositions
+	 * @return InfoLine
+	 */
 	public InfoLine getInfoLine(GuiPositions pos){		
 		return getInfoLine(pos.getPos(pos));
 	}

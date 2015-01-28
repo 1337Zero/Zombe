@@ -2,12 +2,12 @@ package me.zero.cc.Zero_lite.Gui.Buttons;
 
 import org.lwjgl.opengl.GL11;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Mods.FlyMod;
 import me.zero.cc.Zero_lite.Mods.ModData;
 import me.zero.cc.Zero_lite.Mods.OreHighlighterMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
@@ -23,10 +23,10 @@ public class SimpleSlider extends GuiButton{
       private String txt = "";
       private ModData modname;
       private String valueToManupulate;
-      private Speicher speicher;
+      private LiteModMain speicher;
       
       
-	public SimpleSlider(int id, int x, int y, String label, int startingValue,int width,int height,ModData modname,String valueNameToManupulate,Speicher speicher) {
+	public SimpleSlider(int id, int x, int y, String label, int startingValue,int width,int height,ModData modname,String valueNameToManupulate,LiteModMain speicher) {
 		super(id, x, y, width, height, label);		
 		xstart = x;
 		xPosition = (int) ((((double)width/10.0)*(double)startingValue) + (double)xstart);
@@ -58,14 +58,21 @@ public class SimpleSlider extends GuiButton{
         	 }         
         	 this.displayString = txt;
         	 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        	 //System.out.println(xPosition);
              this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 66, 4, 20);
              this.drawTexturedModalRect(this.xPosition + 4, this.yPosition, 196, 66, 4, 20);
          }
 	}
+	/**
+	 * Set the text of the Slider
+	 * @param text, the Label of the Slider
+	 */
 	public void setText(String text){
 		txt = text;
 	}
+	/**
+	 * Get the text of the Slider
+	 * @return String, the label of the Slider
+	 */
 	public String getText(){
 		return txt;
 	}

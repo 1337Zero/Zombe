@@ -10,9 +10,9 @@ import java.util.List;
 
 import com.mumfrey.liteloader.core.LiteLoader;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -50,9 +50,9 @@ public class ReciepeMod implements Mod {
 	private ArrayList<ItemStack> olditems = new ArrayList<ItemStack>();
 	private ArrayList<ItemStack> founditems = new ArrayList<ItemStack>();
 	private boolean aktu = false;
-	private Speicher speicher;
+	private LiteModMain speicher;
 
-	public ReciepeMod(Minecraft minecraft,Speicher speicher) {
+	public ReciepeMod(Minecraft minecraft,LiteModMain speicher) {
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		enabled = Boolean.valueOf(speicher.getConfig().getData("RecipeMod.Enabled"));
@@ -331,28 +331,37 @@ public class ReciepeMod implements Mod {
 		System.out.println(value);
 
 	}
+
+	@Override
+	public int getOn() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
 class ReciepeModGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	
-	public ReciepeModGui(Speicher speicher){
+	public ReciepeModGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
 	public void initGui(){
 		drawButtons();
 	}
-	
+	/**
+	 * Called if a Button is pressed
+	 */
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}
 	}
-	
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
 	public void drawButtons(){
 		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4-10, 150, 20, "Enabled", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isEnabled(), "renabled", ModData.ReciepeMod, speicher);
 
@@ -370,7 +379,6 @@ class ReciepeModGui extends GuiScreen{
 		}else{
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);
 			}
 		}		
 	}

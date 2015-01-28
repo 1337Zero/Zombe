@@ -48,15 +48,31 @@ public class GuiChooseKeyButton extends GuiButton{
 	public void mouseReleased(int x, int y) {
 		//Unused
 	}
+	/**
+	 * Set the text of the Button
+	 * @param txt ,the new Label of the Button
+	 */
 	public void setLabel(String txt){
 		this.txt = txt;
 	}
+	/**
+	 * Get the text of the Button
+	 * @return String ,the Label of the Button
+	 */
 	public String getLabel(){
 		return txt;
 	}
+	/**
+	 * Get the key of the Button as Integer value
+	 * @return Integer
+	 */
 	public int getButtonkey() {
 		return buttonkey;
 	}
+	/**
+	 * Sets the key of the Button
+	 * @param buttonkey ,the key for that Button
+	 */
 	public void setButtonkey(int buttonkey) {
 		waiting = false;
 		this.buttonkey = buttonkey;

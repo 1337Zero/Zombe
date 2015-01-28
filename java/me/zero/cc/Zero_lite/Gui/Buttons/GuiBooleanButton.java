@@ -1,7 +1,7 @@
 package me.zero.cc.Zero_lite.Gui.Buttons;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Mods.ModData;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
@@ -15,9 +15,9 @@ public class GuiBooleanButton extends GuiButton{
 	private String txt = "";
 	private ModData moddata;
 	private String valueToManupulate;
-	private Speicher speicher;
+	private LiteModMain speicher;
 	
-	public GuiBooleanButton(int id, int x, int y, int width, int height,String label, boolean value,String valueToManupulate,ModData moddata,Speicher speicher) {
+	public GuiBooleanButton(int id, int x, int y, int width, int height,String label, boolean value,String valueToManupulate,ModData moddata,LiteModMain speicher) {
 		super(id, x, y, width, height, label);
 		this.value = value;
 		this.xstart = x;

@@ -19,28 +19,56 @@ public class InfoLine {
 		this.posy = posy;
 		this.pos = pos;
 	}
-	
+	/**
+	 * Return true if visible
+	 * @return Boolean
+	 */
 	public boolean isVisible() {
 		return visible;
 	}
-
+	/**
+	 * Set the Visible value
+	 * @param Boolean
+	 */
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-	
+	/**
+	 * Addes a Text to the Info Arraylist
+	 * returns the position in the arraylist
+	 * @param String
+	 * @return Integer
+	 */
 	public int addInfo(String info){
 		infos.add(info);
 		return infos.size() -1;		
 	}
+	/**
+	 * Removes text from the Arraylist with the given id
+	 * @param Integer
+	 */
 	public void removeInfo(int id){
 		infos.remove(id);
 	}
+	/**
+	 * Resets the text with the given id
+	 * @param Integer
+	 */
 	public void resetInfo(int id){
 		infos.set(id, "");
 	}
+	/**
+	 * Sets the text with the given id
+	 * @param Integer
+	 * @param String
+	 */
 	public void setInfo(int id, String txt){
 		infos.set(id, txt);
 	}
+	/**
+	 * Updates and draws the Infoline
+	 * @param Minecraft
+	 */
 	public void UpdateLine(Minecraft minecraft){
 		ScaledResolution reso = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
 		int posx = reso.getScaledWidth();

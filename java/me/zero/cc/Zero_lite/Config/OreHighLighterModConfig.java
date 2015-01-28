@@ -69,7 +69,7 @@ public class OreHighLighterModConfig {
 	}
 	/**
 	 * Creates the Config File and writes data from a list into it.
-	 * @param list
+	 * @param list ,the default list
 	 * @throws Exception
 	 */
 	private void createConfigFile(List<String> list,String valuetochange) throws Exception{
@@ -105,7 +105,7 @@ public class OreHighLighterModConfig {
 	}
 	/**
 	 * Returns Data stored in a HashMap, loded from the HDD.
-	 * @param key
+	 * @param key ,the identifier for the data
 	 * @return String data loaded from File
 	 */
 	public String getData(String key){
@@ -128,6 +128,12 @@ public class OreHighLighterModConfig {
 		}		
 		return data.get(key);
 	}
+	/**
+	 * Replaces data in the hashmap, then writes the hashmap to the HDD
+	 * 
+	 * @param key ,the identifier for the data
+	 * @param newdata ,the new value for the key
+	 */
 	public void replaceData(String key,String newdata){
 		data.put(key, newdata);
 		try{

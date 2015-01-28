@@ -2,9 +2,9 @@ package me.zero.cc.Zero_lite.Gui.Buttons;
 
 import java.util.List;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Mods.ModData;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
@@ -19,9 +19,9 @@ public class GuiChooseStringButton extends GuiButton{
 	private String txt = "";
 	private ModData moddata;
 	private String valueToManupulate;
-	private Speicher speicher;
+	private LiteModMain speicher;
 	
-	public GuiChooseStringButton(int id, int x, int y, int width, int height,String label, List<String> list,String valueToManupulate,ModData moddata,Speicher speicher,int defaultpos) {
+	public GuiChooseStringButton(int id, int x, int y, int width, int height,String label, List<String> list,String valueToManupulate,ModData moddata,LiteModMain speicher,int defaultpos) {
 		super(id, x, y, width, height, label);
 		this.list = list;
 		this.xstart = x;

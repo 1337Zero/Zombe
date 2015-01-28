@@ -12,9 +12,9 @@ import com.mumfrey.liteloader.client.gui.GuiCheckbox;
 import com.mumfrey.liteloader.client.gui.GuiPanel;
 import com.mumfrey.liteloader.client.gui.ScrollPanelContent;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiListExtended;
@@ -31,10 +31,10 @@ public class ChatMod implements Mod {
 	private boolean enabled = true;
 	private String version = "0.1";
 	private String lastMessage = "";
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean enablekick = false;
 	
-	public ChatMod(Minecraft minecraft,Speicher speicher){
+	public ChatMod(Minecraft minecraft,LiteModMain speicher){
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 	}
@@ -112,22 +112,22 @@ public class ChatMod implements Mod {
 		return lastMessage;
 	}
 	private String replaceSpezialChars(String msg){
-		msg = msg.replace("§1", "");
-		msg = msg.replace("§2", "");
-		msg = msg.replace("§3", "");
-		msg = msg.replace("§4", "");
-		msg = msg.replace("§5", "");
-		msg = msg.replace("§6", "");
-		msg = msg.replace("§7", "");
-		msg = msg.replace("§8", "");
-		msg = msg.replace("§9", "");
-		msg = msg.replace("§a", "");
-		msg = msg.replace("§b", "");
-		msg = msg.replace("§c", "");
-		msg = msg.replace("§d", "");
-		msg = msg.replace("§e", "");
-		msg = msg.replace("§f", "");	
-		msg = msg.replace("§r", "");	
+		msg = msg.replace("ï¿½1", "");
+		msg = msg.replace("ï¿½2", "");
+		msg = msg.replace("ï¿½3", "");
+		msg = msg.replace("ï¿½4", "");
+		msg = msg.replace("ï¿½5", "");
+		msg = msg.replace("ï¿½6", "");
+		msg = msg.replace("ï¿½7", "");
+		msg = msg.replace("ï¿½8", "");
+		msg = msg.replace("ï¿½9", "");
+		msg = msg.replace("ï¿½a", "");
+		msg = msg.replace("ï¿½b", "");
+		msg = msg.replace("ï¿½c", "");
+		msg = msg.replace("ï¿½d", "");
+		msg = msg.replace("ï¿½e", "");
+		msg = msg.replace("ï¿½f", "");	
+		msg = msg.replace("ï¿½r", "");	
 		msg = msg.replace("<", "");
 		msg = msg.replace(">", ":");
 		msg = msg.toLowerCase();		
@@ -152,15 +152,21 @@ public class ChatMod implements Mod {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public int getOn() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
 class ChatModGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	private GuiChooseKeyButton chooseOn;
 	
-	public ChatModGui(Speicher speicher){
+	public ChatModGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
@@ -171,7 +177,6 @@ class ChatModGui extends GuiScreen{
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}else if(b.displayString.contains("waiting")){
 			valueToManupulate = b.displayString.split("waiting")[0];
 			GivingKey = true;
@@ -180,15 +185,11 @@ class ChatModGui extends GuiScreen{
 	
 	public void drawButtons(){
 		GuiBooleanButton enableKick = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Kick on Ip", ((ChatMod)speicher.getMod(ModData.ChatMod.name())).isEnablekick(), "enablekick", ModData.ChatMod, speicher);
-		//chooseOn = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Enable-Key", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).getOn().getKeyCode());
-		//GuiChooseKeyButton b = new GuiChooseKeyButton(0, width/2-170, height/4+20, 150, 20, "MSG Right of", Keyboard.)
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 	
 		buttonList.add(back);
 	}
 	protected void keyTyped(char c,int key){
-		System.out.println(c);
-		System.out.println(key);
 		if(GivingKey){
 			if(key != 65 && key != 1){
 				//speicher.getMinecraft().thePlayer.playSound("mob.ghast.scream", 1.0F, 1.0F);	
@@ -203,7 +204,6 @@ class ChatModGui extends GuiScreen{
 		}else{
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);
 			}
 		}		
 	}

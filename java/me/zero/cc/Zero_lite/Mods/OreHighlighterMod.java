@@ -8,15 +8,14 @@ import org.lwjgl.opengl.GL11;
 
 import com.mumfrey.liteloader.gl.GL;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Config.OreHighLighterModConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
-import me.zero.cc.Zero_lite.utils.MarkedBlock;
-import me.zero.cc.Zero_lite.utils.MarkedEntity;
-import me.zero.cc.Zero_lite.utils.Speicher;
+import me.zero.cc.Zero_lite.utils.Mark;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockLadder;
@@ -30,12 +29,13 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class OreHighlighterMod implements Mod {
 
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private double lastpressed = 0;
 	private double lastaktu = 0;
 	
@@ -48,7 +48,7 @@ public class OreHighlighterMod implements Mod {
 	private int infoID;
 	private GuiPositions pos = GuiPositions.DOWN_RIGHT;
 	
-	private List<MarkedBlock> blocks = new ArrayList<MarkedBlock>();
+	private List<Mark> blocks = new ArrayList<Mark>();
 	
 	private boolean showinfo = false;
 	
@@ -57,7 +57,7 @@ public class OreHighlighterMod implements Mod {
 	
 	private int radius = 2;
 	
-	public OreHighlighterMod(Minecraft minecraft,Speicher speicher) {
+	public OreHighlighterMod(Minecraft minecraft,LiteModMain speicher) {
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		config = new OreHighLighterModConfig();
@@ -87,10 +87,13 @@ public class OreHighlighterMod implements Mod {
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(enabled){
 					enabled = false;
-					speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);	
+					showinfo = false;
+					speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);
 				}else{
+					showinfo = true;
 					enabled = true;
 				}	
+				speicher.getConfig().replaceData("OreHighlighter.enabled", "" + enabled);
 			}	
 			lastpressed = System.currentTimeMillis();
 		}
@@ -111,7 +114,10 @@ public class OreHighlighterMod implements Mod {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Called by every render tick... has to be registered in LiteModMain
+	 * @param float
+	 */
 	public void render(float partialTicks){
 		if(blocks.size() > 0 && enabled){			
 			EntityPlayerSP player = minecraft.thePlayer;
@@ -147,16 +153,21 @@ public class OreHighlighterMod implements Mod {
 	    GL.glPopMatrix();
 	    GL.glEnableDepthTest();
 	}
-	
-	public void renderBlock(MarkedBlock block){
+	/**
+	 * Marks a Block with lines
+	 * @param MarkedBlock
+	 */
+	public void renderBlock(Mark block){
 	    
 	    Tessellator tessellator = Tessellator.getInstance();
 	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 	    
-	    GL.glColor4f(block.getR(), block.getG(),block.getB(),block.getAlpha());
-		AxisAlignedBB axis= block.getEnt().getSelectedBoundingBox(minecraft.theWorld, new BlockPos(block.getX(), block.getY(), block.getZ()));
 
-		worldRenderer.startDrawing(2);
+	    
+	    GL.glColor4f(block.getR(), block.getG(),block.getB(),block.getAlpha());
+	    AxisAlignedBB axis = minecraft.theWorld.getBlockState(new BlockPos(block.getX(),block.getY(), block.getZ())).getBlock().getSelectedBoundingBox(minecraft.theWorld, new BlockPos(block.getX(), block.getY(), block.getZ()));
+
+	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.minZ);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.maxZ);		
 	    tessellator.draw();
@@ -175,26 +186,26 @@ public class OreHighlighterMod implements Mod {
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.minZ);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.maxZ);		
 	    tessellator.draw();
-
+	    	    
 	}
 	
 	private void updateRenderPos() throws Exception{	
 		blocks.clear();
-		
-		
+				
 		double posx = minecraft.thePlayer.posX - radius*10;
 		double posy = minecraft.thePlayer.posY - radius*10;
 		double posz = minecraft.thePlayer.posZ - radius*10;
-				
+						
 		for(double x = posx; x < (posx + (radius *10)*2);x++){
 			
 			for(double y = posy; y < (posy + (radius *10)*2);y++){				
 				for(double z = posz; z < (posz + (radius *10)*2);z++){
-					Block block = minecraft.theWorld.getChunkFromBlockCoords(new BlockPos(x, y, z)).getBlock((int)x,(int) y,(int) z);
+					Block block = minecraft.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
+					
 					if(isInConfig("" + Block.getIdFromBlock(block))){
 						String color = config.getData("Color."+ Block.getIdFromBlock(block));
 						if(color != null){	
-							blocks.add(new MarkedBlock(block,Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+							blocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
 						}else{
 							System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
 						}
@@ -266,60 +277,70 @@ public class OreHighlighterMod implements Mod {
 			System.out.println("Fehler: " + valueToManupulate + " is not a known Value in " + this.getName());
 		}
 	}
-
-	public Speicher getSpeicher() {
-		return speicher;
-	}
-
-	public void setSpeicher(Speicher speicher) {
-		this.speicher = speicher;
-	}
-
+	/**
+	 * Returns the Radius of the search-area
+	 * @return Integer
+	 */
 	public int getRadius() {
 		return radius;
 	}
-
+	/**
+	 * Sets the Radius of the search-area
+	 * @param radius
+	 */
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
-
+	/**
+	 * Get if the info is shown
+	 * @return Boolean
+	 */
 	public boolean isShowInfo() {
 		return showinfo;
 	}
-
+	/**
+	 * Get the Position of the info
+	 * @return GuiPositions
+	 */
 	public GuiPositions getPos() {
 		return pos;
 	}
-
+	/**
+	 * Get the key to enable
+	 * @return Integer
+	 */
 	public int getOn() {
 		return onkey;
 	}
 }
 class OreHighLighterGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	private GuiChooseKeyButton chooseOn;
 	
-	public OreHighLighterGui(Speicher speicher){
+	public OreHighLighterGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
 	public void initGui(){
 		drawButtons();
 	}
-	
+	/**
+	 * Called if a Button is pressed
+	 */
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}else if(b.displayString.contains("waiting")){
 			valueToManupulate = b.displayString.split("waiting")[0];
 			GivingKey = true;
 		}
 	}
-	
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
 	public void drawButtons(){
 		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Highlighter", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEnabled(), "togglehighlighter", ModData.OreHighLighter, speicher);
 		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Radius", (int) ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius() , 150, 20, ModData.OreHighLighter, "Radius", speicher);
@@ -342,7 +363,7 @@ class OreHighLighterGui extends GuiScreen{
 			if(key != 65 && key != 1){
 				//speicher.getMinecraft().thePlayer.playSound("mob.ghast.scream", 1.0F, 1.0F);	
 				valueToManupulate = valueToManupulate.replace(" ", "");
-				((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).manupulateValue(valueToManupulate, key);
+				((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).manupulateValue(valueToManupulate, key);
 				
 				if(valueToManupulate.equalsIgnoreCase("Enable-Key")){
 					chooseOn.setButtonkey(key);
@@ -352,7 +373,6 @@ class OreHighLighterGui extends GuiScreen{
 		}else{
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);
 			}
 		}		
 	}

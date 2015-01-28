@@ -4,12 +4,12 @@ import org.lwjgl.input.Keyboard;
 
 import com.mumfrey.liteloader.core.LiteLoader;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import me.zero.cc.Zero_lite.utils.SunThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -29,7 +29,7 @@ public class TimeMod implements Mod {
 	
 	private double lastpressed = 0;
 	private long timetoadd = 0;
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private int infoid = 0;	
 	private boolean enabled = false;
 	private SunThread st;
@@ -38,7 +38,7 @@ public class TimeMod implements Mod {
 	private GuiPositions pos = GuiPositions.UP_CENTER;
 	private boolean showTimeInfo = false;
 	
-	public TimeMod(Minecraft minecraft,Speicher speicher){
+	public TimeMod(Minecraft minecraft,LiteModMain speicher){
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		lastpressed = System.currentTimeMillis();
@@ -116,7 +116,7 @@ public class TimeMod implements Mod {
 
 	@Override
 	public GuiScreen drawGui() {		
-		return new WeatherModGui(speicher);
+		return new TimeModGui(speicher);
 	}
 
 	@Override
@@ -179,67 +179,114 @@ public class TimeMod implements Mod {
 			System.out.println("Don't know that " + valueToManupulate);
 		}		
 	}
+	/**
+	 * Get if the time is freezed
+	 * @return boolean
+	 */
 	public boolean isFreezetime() {
 		return freezetime;
 	}
-
+	/**
+	 * Get the amount which will be added to time
+	 * @return Integer
+	 */
 	public int getAddtime() {
 		return addtime;
 	}
-
+	/**
+	 * Set the amount which will be added to time
+	 * @param Integer
+	 */
 	public void setAddtime(int addtime) {
 		this.addtime = addtime;
 	}
-
+	/**
+	 * Get the amount which will be remove from time
+	 * @return Integer
+	 */
 	public int getSubtime() {
 		return subtime;
 	}
-
+	/**
+	 * Set the amount which will be remove from time
+	 * @param Integer
+	 */
 	public void setSubtime(int subtime) {
 		this.subtime = subtime;
 	}
-
+	/**
+	 * Get the key for freeze time
+	 * @return Integer
+	 */
 	public int getFreezetimekey() {
 		return freezekey;
 	}
-
+	/**
+	 * Set the key for freeze time
+	 * @param Integer
+	 */
 	public void setFreezetimekey(int freezetimekey) {
 		freezekey = freezetimekey;
 	}
-
+	/**
+	 * Get the time multiplicator
+	 * @return Integer
+	 */
 	public int getMultipl() {
 		return multipl;
 	}
-
+	/**
+	 * set the time multiplicator
+	 * @param multipl
+	 */
 	public void setMultipl(int multipl) {
 		this.multipl = multipl;
 	}
+	/**
+	 * Get the Position of the info
+	 * @return GuiPositions
+	 */
 	public GuiPositions getPos() {
 		return pos;
 	}
-
+	/**
+	 * Set the Position of the info 
+	 * @param GuiPositions
+	 */
 	public void setPos(GuiPositions pos) {
 		this.pos = pos;
 	}
-
+	/**
+	 * Get if the info is shown
+	 * @return Boolean
+	 */
 	public boolean isShowTimeInfo() {
 		return showTimeInfo;
 	}
-
+	/**
+	 * Set if the info is shown
+	 * @param Boolean
+	 */
 	public void setShowTimeInfo(boolean showTimeInfo) {
 		this.showTimeInfo = showTimeInfo;
 	}
+
+	@Override
+	public int getOn() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
-class WeatherModGui extends GuiScreen{
+class TimeModGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	private GuiChooseKeyButton key_add;
 	private GuiChooseKeyButton key_sub;
 	private GuiChooseKeyButton key_freeze;
 	
-	public WeatherModGui(Speicher speicher){
+	public TimeModGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
@@ -250,13 +297,14 @@ class WeatherModGui extends GuiScreen{
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}else if(b.displayString.contains("waiting")){
 			valueToManupulate = b.displayString.split("waiting")[0];
 			GivingKey = true;
 		}
 	}
-	
+	/**
+	 * Called if a Button is pressed
+	 */
 	public void drawButtons(){	
 		
 		GuiBooleanButton freezetime = new GuiBooleanButton(1, width/2-170, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isFreezetime(), "freezetime", ModData.TimeMod, speicher);
@@ -285,6 +333,9 @@ class WeatherModGui extends GuiScreen{
 		buttonList.add(freezetime);
 		buttonList.add(back);
 	}
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
 	protected void keyTyped(char c,int key){
 		if(GivingKey){
 			if(key != 65 && key != 1){
@@ -304,7 +355,6 @@ class WeatherModGui extends GuiScreen{
 		}else{
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);
 			}
 		}		
 	}

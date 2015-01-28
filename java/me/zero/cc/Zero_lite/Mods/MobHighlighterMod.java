@@ -15,14 +15,14 @@ import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.gl.GL;
 import com.mumfrey.liteloader.modconfig.Exposable;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Config.MobHighLighterConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
-import me.zero.cc.Zero_lite.utils.MarkedEntity;
+import me.zero.cc.Zero_lite.utils.Mark;
 import me.zero.cc.Zero_lite.utils.Mobs;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -55,8 +55,9 @@ public class MobHighlighterMod implements Mod {
 	
 	private Minecraft minecraft;
 	private MobHighLighterConfig config;
-	private List<MarkedEntity> entities = new ArrayList<MarkedEntity>();
-	private Speicher speicher;
+	private List<Mark> entities = new ArrayList<Mark>();
+	
+	private LiteModMain speicher;
 	private double lastpressed = 0;
 	private double lastaktu = 0;
 	
@@ -64,7 +65,7 @@ public class MobHighlighterMod implements Mod {
 	private GuiPositions pos = GuiPositions.DOWN_LEFT;
 	private int infoID = 0;
 	
-	public MobHighlighterMod(Minecraft minecraft,Speicher speicher) {
+	public MobHighlighterMod(Minecraft minecraft,LiteModMain speicher) {
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		config = new MobHighLighterConfig();
@@ -90,19 +91,20 @@ public class MobHighlighterMod implements Mod {
 	public void use() {
 		
 		if(Keyboard.isKeyDown(onkey) && (minecraft.currentScreen == null)){
-			if((System.currentTimeMillis() - lastpressed) >=100){
+			if((System.currentTimeMillis() - lastpressed) >= 100){
 				if(enabled){
 					enabled = false;
 					speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);	
 				}else{
 					enabled = true;
 				}	
+				speicher.getConfig().replaceData("MobHighlighter.enabled", "" + enabled);
 			}	
 			lastpressed = System.currentTimeMillis();
 		}
 		try {
 			if(enabled){
-				if((System.currentTimeMillis() - lastaktu) >= 5000){
+				if((System.currentTimeMillis() - lastaktu) >= 500){
 					updateRenderPos();						
 					lastaktu = System.currentTimeMillis();
 				}
@@ -128,7 +130,7 @@ public class MobHighlighterMod implements Mod {
 				String color = config.getData("Color."+ mob);
 				if(color != null){
 					if(!mobs.get(i).equals(minecraft.thePlayer)){
-						entities.add(new MarkedEntity(mobs.get(i),Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3])));	
+						entities.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), mobs.get(i).posX, mobs.get(i).posY, mobs.get(i).posZ,mobs.get(i).getEyeHeight(), mobs.get(i)));	
 					}
 				}else{
 					System.out.println("[Zombe-Lite] An Error was detected: " + mobs.get(i).getClass().getSimpleName() + " was found in your config but no color was found");
@@ -144,7 +146,6 @@ public class MobHighlighterMod implements Mod {
 	private boolean isInConfig(String key){
 		String[] founds = config.getData("Moblist").split(",");
 		//String found = Mobs.getClassNameFromString(key);
-		
 		for(int i = 0; i < founds.length;i++){
 			if(founds[i].equalsIgnoreCase(key)){
 				return true;
@@ -173,7 +174,10 @@ public class MobHighlighterMod implements Mod {
 	    GL.glPopMatrix();
 	    GL.glEnableDepthTest();
 	}
-
+	/**
+	 * Called by every render tick... has to be registered in LiteModMain
+	 * @param float
+	 */
 	public void render(float partialTicks){
 		if(enabled){
 			EntityPlayerSP player = minecraft.thePlayer;
@@ -183,24 +187,35 @@ public class MobHighlighterMod implements Mod {
 			
 			setUpRenderer(x,y,z);	
 			for(int i = 0; i < entities.size();i++){
-				renderMob(entities.get(i).getEnt(), entities.get(i).getR(),entities.get(i).getG(),entities.get(i).getB(),entities.get(i).getAlpha());
+				renderMob(entities.get(i));
 			}
 		    normalizeRenderer();
 		}
 	}
-	
-	public void renderMob(Entity ent,float r,float g,float b,float alpha){
-		    
+	/**
+	 * Markes a Mob with a line  {args: Entity ent,float Red,float Green,float Blue,float alpha}
+	 * @param  ent
+	 * @param  r
+	 * @param  g
+	 * @param  b
+	 * @param  alpha
+	 */
+	public void renderMob(Mark m){
+		    //float r,float g,float b,float alpha,double x,double y,double z,double maxy
 	    Tessellator tessellator = Tessellator.getInstance();
 	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-	    GL.glColor4f(r, g,b,alpha);
+	    GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
 		worldRenderer.startDrawing(2);
 	    
-	    worldRenderer.addVertex( ent.posX, ent.posY,  ent.posZ);
-	    worldRenderer.addVertex( ent.posX, ent.posY + ent.getEyeHeight(),  ent.posZ);
+	    worldRenderer.addVertex( m.getEntity().posX, m.getEntity().posY,  m.getEntity().posZ);
+	    worldRenderer.addVertex( m.getEntity().posX, m.getEntity().posY + m.getEntity().getEyeHeight(), m.getEntity().posZ);
 
 	    tessellator.draw();
 	}
+	/**
+	 * Get the key to enable
+	 * @return Integer
+	 */
 	public int getOn(){
 		return onkey;
 	}
@@ -219,9 +234,17 @@ public class MobHighlighterMod implements Mod {
 	public GuiScreen drawGui() {
 		return new MobHighLighterGui(speicher);
 	}
+	/**
+	 * Return the Position of the Info
+	 * @return GuiPositions
+	 */
 	public GuiPositions getPos(){
 		return pos;
 	}
+	/**
+	 * Returns if the info is shown
+	 * @return Boolean
+	 */
 	public boolean isShowInfo(){
 		return showinfo;
 	}
@@ -262,29 +285,32 @@ public class MobHighlighterMod implements Mod {
 }
 class MobHighLighterGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	private GuiChooseKeyButton chooseOn;
 	
-	public MobHighLighterGui(Speicher speicher){
+	public MobHighLighterGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
 	public void initGui(){
 		drawButtons();
 	}
-	
+	/**
+	 * Called if a Button is pressed
+	 */
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}else if(b.displayString.contains("waiting")){
 			valueToManupulate = b.displayString.split("waiting")[0];
 			GivingKey = true;
 		}
 	}
-	
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
 	public void drawButtons(){
 		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Highlighter", ((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).isEnabled(), "togglehighlighter", ModData.MobHighLighter, speicher);
 		
@@ -308,14 +334,13 @@ class MobHighLighterGui extends GuiScreen{
 				((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).manupulateValue(valueToManupulate, key);
 				
 				if(valueToManupulate.equalsIgnoreCase("Enable-Key")){
-					chooseOn.setButtonkey(key);
+					chooseOn.setButtonkey(key);					
 				}
 				GivingKey = false;
 			}
 		}else{
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);
 			}
 		}		
 	}

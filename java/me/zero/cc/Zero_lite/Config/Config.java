@@ -22,8 +22,13 @@ public class Config {
 			"Time-Mod.Key-addtime:78","Time-Mod.Key-subtime:74","Time-Mod.Key-freezetime:55","Time-Mod.timetoadd:0","Time-Mod.Time-Mod-enabled:false","Time-Mod.time-freezed:false","Time-Mod.time-multiplier:0","Time-Mod.showTimeinfo:false","Time-Mod.showtimepos:UP_CENTER",
 			"RecipeMod.Enabled:false",
 			"MobHighlighter.enabled:false","MobHighlighter.Toggle-Mobhighlighter:55","MobHighlighter.info-Pos:UP_LEFT","MobHighlighter.showinfo:false",
-			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:27","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2"
-			);
+			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:27","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2",
+			"PathMod.info-Pos:UP_LEFT","PathMod.showinfo:false","PathMod.enabled:false","PathMod.Toggle-PathMod:11","PathMod.seethroughwall:true","PathMod.mark.r:1.0F","PathMod.mark.g:0.0F","PathMod.mark.b:1.0F","PathMod.mark.alpha:1.0F");
+	
+	/**
+	 * Constructor for this class, loads the config from the Given path
+	 * 
+	 */
 	
 	public Config(){
 		path = System.getProperty("user.dir");
@@ -67,7 +72,8 @@ public class Config {
 	}
 	/**
 	 * Creates the Config File and writes data from a list into it.
-	 * @param list
+	 * @param list The default Config
+	 * @param valuetochange the value which should be changed
 	 * @throws Exception
 	 */
 	private void createConfigFile(List<String> list,String valuetochange) throws Exception{
@@ -87,6 +93,7 @@ public class Config {
 	}
 	/**
 	 * Save Stuff to HDD
+	 * @param changedpart The Part of the config that was modifyed
 	 * @throws Exception 
 	 */
 	private void saveConfig(String changedpart) throws Exception{
@@ -103,8 +110,8 @@ public class Config {
 	}
 	/**
 	 * Returns Data stored in a HashMap, loded from the HDD.
-	 * @param key
-	 * @return String data loaded from File
+	 * @param key ,an identifier for the Hashmap
+	 * @return data loaded from File as String
 	 */
 	public String getData(String key){
 		String back = "";
@@ -126,6 +133,12 @@ public class Config {
 		}		
 		return data.get(key);
 	}
+	/**
+	 * Replaces data in the hashmap, then writes the hashmap to the HDD
+	 * 
+	 * @param key ,value that should be changed
+	 * @param newdata , value that should be stored
+	 */
 	public void replaceData(String key,String newdata){
 		data.put(key, newdata);
 		try{

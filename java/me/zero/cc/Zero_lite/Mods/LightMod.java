@@ -4,10 +4,10 @@ import org.lwjgl.input.Keyboard;
 
 import com.mumfrey.liteloader.core.LiteLoader;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
@@ -22,9 +22,9 @@ public class LightMod implements Mod {
 	private float gamasetting = 0;
 	private double lastpressed = 0;
 	private String version = "0.1";
-	private Speicher speicher;
+	private LiteModMain speicher;
 	
-	public LightMod(Minecraft minecraft,Speicher speicher){
+	public LightMod(Minecraft minecraft,LiteModMain speicher){
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		
@@ -68,15 +68,21 @@ public class LightMod implements Mod {
 	public String getName() {
 		return ModData.LightMod.name();
 	}
-
+	/**
+	 * Get the key to enable
+	 * @return Integer
+	 */
 	public int getOn() {
 		return onkey;
 	}
-
+	/**
+	 * Set the key to enable
+	 * @param on
+	 */
 	public void setOn(int on) {
 		onkey = on;
 	}
-
+	
 	@Override
 	public String getVersion() {
 		return version;
@@ -115,29 +121,33 @@ public class LightMod implements Mod {
 }
 class LightModGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	private GuiChooseKeyButton chooseOn;
 	
-	public LightModGui(Speicher speicher){
+	public LightModGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
 	public void initGui(){
 		drawButtons();
 	}
-	
+	/**
+	 * Called if a Button is pressed
+	 */
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}else if(b.displayString.contains("waiting")){
 			valueToManupulate = b.displayString.split("waiting")[0];
 			GivingKey = true;
 		}
 	}
-	
+
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
 	public void drawButtons(){
 		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Light", ((LightMod)speicher.getMod(ModData.LightMod.name())).isEnabled(), "toggleLight", ModData.LightMod, speicher);
 		
@@ -152,7 +162,6 @@ class LightModGui extends GuiScreen{
 	protected void keyTyped(char c,int key){
 		if(GivingKey){
 			if(key != 65 && key != 1){
-				//speicher.getMinecraft().thePlayer.playSound("mob.ghast.scream", 1.0F, 1.0F);	
 				valueToManupulate = valueToManupulate.replace(" ", "");
 				((LightMod)speicher.getMod(ModData.LightMod.name())).manupulateValue(valueToManupulate, key);
 				
@@ -164,7 +173,6 @@ class LightModGui extends GuiScreen{
 		}else{
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);
 			}
 		}		
 	}

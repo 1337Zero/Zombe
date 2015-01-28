@@ -88,7 +88,7 @@ public class MobHighLighterConfig {
 	}
 	/**
 	 * Creates the Config File and writes data from a list into it.
-	 * @param list
+	 * @param list ,the default Config
 	 * @throws Exception
 	 */
 	private void createConfigFile(List<String> list,String valuetochange) throws Exception{
@@ -124,7 +124,7 @@ public class MobHighLighterConfig {
 	}
 	/**
 	 * Returns Data stored in a HashMap, loded from the HDD.
-	 * @param key
+	 * @param key ,the identifier for that data
 	 * @return String data loaded from File
 	 */
 	public String getData(String key){
@@ -147,6 +147,12 @@ public class MobHighLighterConfig {
 		}		
 		return data.get(key);
 	}
+	/**
+	 * Replaces data in the hashmap, then writes the hashmap to the HDD
+	 * 
+	 * @param key ,the identifier for that data
+	 * @param newdata , the new value of that data
+	 */
 	public void replaceData(String key,String newdata){
 		data.put(key, newdata);
 		try{

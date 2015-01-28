@@ -4,12 +4,12 @@ import org.lwjgl.input.Keyboard;
 
 import com.mumfrey.liteloader.core.LiteLoader;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
@@ -20,7 +20,7 @@ public class SpeedMod implements Mod {
 
 	private Minecraft minecraft;
 	private double speedValue = 1;
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private int onkey = 0;
 	private boolean speedenabled = false;
 	private double lastpressed = 0;
@@ -31,16 +31,8 @@ public class SpeedMod implements Mod {
 	private boolean toggledspeed = false;
 	private GuiPositions pos = GuiPositions.UP_LEFT;
 	private boolean showspeed = true;
-	
-	public boolean isShowspeed() {
-		return showspeed;
-	}
 
-	public void setShowspeed(boolean showspeed) {
-		this.showspeed = showspeed;
-	}
-
-	public SpeedMod(Minecraft minecraft,Speicher speicher){
+	public SpeedMod(Minecraft minecraft,LiteModMain speicher){
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		
@@ -60,7 +52,20 @@ public class SpeedMod implements Mod {
 	public boolean isEnabled() {
 		return speedenabled;
 	}
-
+	/**
+	 * Get if the info is shown
+	 * @return Boolean
+	 */
+	public boolean isShowspeed() {
+		return showspeed;
+	}
+	/**
+	 * Set if the info is shown
+	 * @param Boolean
+	 */
+	public void setShowspeed(boolean showspeed) {
+		this.showspeed = showspeed;
+	}
 	@Override
 	public void use() {		
 		if(Keyboard.isKeyDown(onkey) && !(minecraft.gameSettings.keyBindRight.isKeyDown() || minecraft.gameSettings.keyBindLeft.isKeyDown() || minecraft.gameSettings.keyBindForward.isKeyDown() || minecraft.gameSettings.keyBindBack.isKeyDown() || (minecraft.currentScreen != null))){
@@ -97,11 +102,17 @@ public class SpeedMod implements Mod {
 			
 		}				
 	}
-
+	/**
+	 * Get the Position of the Info
+	 * @return GuiPositions
+	 */
 	public GuiPositions getPos() {
 		return pos;
 	}
-
+	/**
+	 * Set the Position of the Info
+	 * @param pos
+	 */
 	public void setPos(GuiPositions pos) {
 		this.pos = pos;
 	}
@@ -114,10 +125,17 @@ public class SpeedMod implements Mod {
 	public String getVersion() {
 		return version;
 	}
+	/**
+	 * Get the key to enable
+	 * @return Integer
+	 */
 	public int getOn() {
 		return onkey;
 	}
-
+	/**
+	 * Set the key to enable
+	 * @param Integer
+	 */
 	public void setOn(int on) {
 		onkey = on;
 	}
@@ -179,12 +197,24 @@ public class SpeedMod implements Mod {
         }
         
 	}
+	/**
+	 * Get The Speed value
+	 * @return Double
+	 */
 	public double getSpeedValue() {
 		return speedValue;
 	}
+	/**
+	 * Set the Speed value
+	 * @param speedValue
+	 */
 	public void setSpeedValue(double speedValue) {
 		this.speedValue = speedValue;
 	}
+	/**
+	 * Set enabled
+	 * @param Boolean
+	 */
 	public void setEnabled(boolean enabled) {
 		this.speedenabled = enabled;
 	}
@@ -233,40 +263,49 @@ public class SpeedMod implements Mod {
 			System.out.println("Don't know that " + value + " " + valueToManupulate);
 		}		
 	}
-
+	/**
+	 * Get is the Speed is toggled
+	 * @return Boolean
+	 */
 	public boolean isToggledspeed() {
 		return toggledspeed;
 	}
-
+	/**
+	 * Set the Speed toggled
+	 * @param Boolean
+	 */
 	public void setToggledspeed(boolean toggledspeed) {
 		this.toggledspeed = toggledspeed;
 	}
 }
 class SpeedModGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	private GuiChooseKeyButton chooseOn;
 	
-	public SpeedModGui(Speicher speicher){
+	public SpeedModGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
 	public void initGui(){
 		drawButtons();
 	}
-	
+	/**
+	 * Called if a Button is pressed
+	 */
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}else if(b.displayString.contains("waiting")){
 			valueToManupulate = b.displayString.split("waiting")[0];
 			GivingKey = true;
 		}
 	}
-	
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
 	public void drawButtons(){
 		
 		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Speed", (int) ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getSpeedValue() , 150, 20, ModData.SpeedMod, "Speed", speicher);
@@ -302,7 +341,6 @@ class SpeedModGui extends GuiScreen{
 		}else{
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);
 			}
 		}		
 	}

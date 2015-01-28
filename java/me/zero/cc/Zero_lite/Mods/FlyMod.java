@@ -4,12 +4,12 @@ import org.lwjgl.input.Keyboard;
 
 import com.mumfrey.liteloader.core.LiteLoader;
 
+import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
-import me.zero.cc.Zero_lite.utils.Speicher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundList;
 import net.minecraft.client.gui.GuiButton;
@@ -31,7 +31,7 @@ public class FlyMod implements Mod{
 	private int upkey = 0;
 	private int onkey = 0;
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private int infoID = 0;
 	private double lastpressed = 0;
 	private double maxValue = 10;
@@ -39,19 +39,7 @@ public class FlyMod implements Mod{
 	private boolean showFlyinfo = true;
 	private boolean ignoreshift = true;
 	
-	public GuiPositions getPos() {
-		return pos;
-	}
-	public void setPos(GuiPositions pos) {
-		this.pos = pos;
-	}
-	public boolean isShowFlyinfo() {
-		return showFlyinfo;
-	}
-	public void setShowFlyinfo(boolean showFlyinfo) {
-		this.showFlyinfo = showFlyinfo;
-	}
-	public FlyMod(Minecraft minecraft, Speicher speicher) {	
+	public FlyMod(Minecraft minecraft, LiteModMain speicher) {	
 		this.speicher = speicher;
 		this.minecraft = minecraft;
 		
@@ -68,7 +56,7 @@ public class FlyMod implements Mod{
 		ignoreshift = Boolean.valueOf(speicher.getConfig().getData("Fly-Mod.ignoreshift"));	
 		
 		infoID = this.speicher.getInfoLineManager().getInfoLine(pos).addInfo("");
-		lastpressed = System.currentTimeMillis();					
+		lastpressed = System.currentTimeMillis();
 	}		
 	@Override
 	public void use() {
@@ -129,9 +117,17 @@ public class FlyMod implements Mod{
 	public String getName() {
 		return name;
 	}
+	/**
+	 * Get the flyUpSpeed
+	 * @return Double
+	 */
 	public double getFlyValue() {
 		return flyValue;
 	}
+	/**
+	 * Set the flyUpSpeeds
+	 * @param flyValue the new FlySpeed
+	 */
 	public void setFlyValue(int flyValue) {
 		this.flyValue = flyValue;
 	}
@@ -143,27 +139,59 @@ public class FlyMod implements Mod{
 	public GuiScreen drawGui() {			
 		return new FlyModGui(speicher);
 	}
+	/**
+	 * Get if fly is toggled
+	 * @return Boolean
+	 */
 	public boolean isTogglefly() {
 		return togglefly;
 	}
+	/**
+	 * Set if fly is toggled
+	 * @param togglefly a boolean value
+	 */
 	public void setTogglefly(boolean togglefly) {
 		this.togglefly = togglefly;
 	}
+	/**
+	 * Get the key to fly down
+	 * @return Integer
+	 */
 	public int getDown() {
 		return downkey;
 	}
+	/**
+	 * Set the key to fly down
+	 * @param down ,the key representing the key on the keyboard
+	 */
 	public void setDown(int down) {
 		downkey = down;
 	}
+	/**
+	 * Get the key to fly up
+	 * @return Integer
+	 */
 	public int getUp() {
 		return upkey;
 	}
+	/**
+	 * Set the key to fly up
+	 * @param up ,the key representing the key on the keyboard
+	 */
 	public void setUp(int up) {
 		upkey = up;
 	}
+	/**
+	 * Get the key to enable
+	 * @return Integer
+	 */
 	public int getOn() {
 		return onkey;
 	}
+	/**
+	 * Set the key to enable
+	 * @param on ,the key representing the key on the keyboard
+	 */
 	public void setOn(int on) {
 		onkey = on;
 	}
@@ -203,7 +231,6 @@ public class FlyMod implements Mod{
 			speicher.getConfig().replaceData("Fly-Mod.showfly", ignoreshift + "");
 		}else{		
 			System.out.println("Fehler: " + valueToManupulate + " is not a known Value in " + this.getName());
-			//throw new IllegalArgumentException(valueToManupulate + " is not a known Value in " + this.getName());
 		}	
 	}
 	@Override
@@ -218,40 +245,79 @@ public class FlyMod implements Mod{
 		}
 		
 	}
+	/**
+	 * Get if the Mod is ignoring shift
+	 * @return Boolean
+	 */
 	public boolean isIgnoreshift() {
 		return ignoreshift;
 	}
+	/**
+	 * Set if the Mod is ignoring shift
+	 * @param ignoreshift , a Boolean value
+	 */
 	public void setIgnoreshift(boolean ignoreshift) {
 		this.ignoreshift = ignoreshift;
+	}
+	/**
+	 * Get the current Position of the Infoscreen
+	 * @return GuiPositions
+	 */
+	public GuiPositions getPos() {
+		return pos;
+	}
+	/**
+	 * Sets the current Position of the Infoscreen 
+	 * @param GuiPositions
+	 */
+	public void setPos(GuiPositions pos) {
+		this.pos = pos;
+	}
+	/**
+	 * returns if the flyInfo is shown
+	 * @return Boolean
+	 */
+	public boolean isShowFlyinfo() {
+		return showFlyinfo;
+	}
+	/**
+	 * Set the flyInfo
+	 * @param Boolean
+	 */
+	public void setShowFlyinfo(boolean showFlyinfo) {
+		this.showFlyinfo = showFlyinfo;
 	}
 }
 class FlyModGui extends GuiScreen{
 	
-	private Speicher speicher;
+	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	private GuiChooseKeyButton choosedown;
 	private GuiChooseKeyButton chooseUp;
 	private GuiChooseKeyButton chooseOn;
 	
-	public FlyModGui(Speicher speicher){
+	public FlyModGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
 	public void initGui(){
 		drawButtons();
 	}
-	
+	/**
+	 * Called if a Button is pressed
+	 */
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			speicher.getMinecraft().displayGuiScreen(null);
-			speicher.getZm().setShown(false);
 		}else if(b.displayString.contains("waiting")){
 			valueToManupulate = b.displayString.split("waiting")[0];
 			GivingKey = true;
 		}
 	}
-	
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
 	public void drawButtons(){	
 		
 		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-20, "Fly-Speed-Up", (int) ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getFlyValue() , 150, 20, ModData.FlyMod, "Flyvalue", speicher);
@@ -299,7 +365,6 @@ class FlyModGui extends GuiScreen{
 		}else{
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);
-				speicher.getZm().setShown(false);
 			}
 		}		
 	}

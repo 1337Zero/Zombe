@@ -3,7 +3,8 @@ package me.zero.cc.Zero_lite.utils;
 import com.mumfrey.liteloader.core.LiteLoader;
 
 public enum Mobs {
-
+	//The first value represent the Compiled name of the Class, the second is the name given from config
+	
 	abr("Chicken"),
 	abs("Cow"),
 	abt("Horse"),
@@ -34,12 +35,16 @@ public enum Mobs {
 	cip("Player"),
 	adw("Item");
 	
-private String text;
+	private String text;
 
 	Mobs(String text) {
-	    this.text = text;
-	  }
-	
+		this.text = text;
+	}
+	/**
+	 * Returns the compiled Classname for a Class, if in development Enviroment it returns the given Namen without Entity
+	 * @param mob xxx.getClass().getSimpleName() -> Classname
+	 * @return String Name of the Mob
+	 */
 	public static String getClassNameFromString(String mob){
 		if(mob != null){
 			

@@ -44,40 +44,66 @@ public class SunThread extends Thread{
 				this.yield();
 		}
 	}
+	/**
+	 * Sets the time, this thread should add
+	 * @param long
+	 */
 	public void settime2add(long time2add){
 		this.time2add = time2add;
 	}
+	/**
+	 * Returns if this thread should do something
+	 * @return Boolean
+	 */
 	public boolean isWork() {
 		return work;
 	}
-
+	/**
+	 * Gets if the Thread is working
+	 * @param String
+	 */
 	public void setWork(boolean work) {
 		this.work = work;
 	}
-
-
+	/**
+	 * Returns the time which is freezed
+	 * @return long
+	 */
 	public long getFreezedtime() {
 		return freezedtime;
 	}
-
+	/**
+	 * Set the time which is freezed
+	 * @param long
+	 */
 	public void setFreezedtime(long freezedtime) {
 		this.freezedtime = freezedtime;
 	}
-
-
+	/**
+	 * Return if the Time is freezed
+	 * @return Boolean
+	 */
 	public boolean isFreezetime() {
 		return freezetime;
 	}
-
-
+	/**
+	 * Set if the time is freezed
+	 * @param Boolean
+	 */
 	public void setFreezetime(boolean freezetime) {
 		this.freezetime = freezetime;
 	}
-
+	/**
+	 * Returns the Multiplier of the Time
+	 * @return Integer
+	 */
 	public int getTimemultipliere() {
 		return timemultipliere;
 	}
-
+	/**
+	 * Sets the Time Multiplier
+	 * @param int
+	 */
 	public void setTimemultipliere(int timemultipliere) {
 		this.timemultipliere = timemultipliere;
 	}
