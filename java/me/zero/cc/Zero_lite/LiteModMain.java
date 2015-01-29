@@ -9,6 +9,7 @@ import java.util.HashMap;
 import org.lwjgl.input.Keyboard;
 
 import me.zero.cc.Zero_lite.Config.Config;
+import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Mods.ChatMod;
 import me.zero.cc.Zero_lite.Mods.FlyMod;
 import me.zero.cc.Zero_lite.Mods.InfoMod;
@@ -65,9 +66,10 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private String urlVersion = "";
 	private String downloadURL = "";
 	private String prefix = "&6[Lite-Zombe] ";
+	private boolean update = true;
 	
 	public String getName() {
-		return "Zero-Lite";
+		return "Zombe-Lite";
 	}
 	public String getVersion() {
 		return "0.0.3";
@@ -76,6 +78,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	public void init(File configPath) {	
 		LiteLoader.getInput().registerKeyBinding(Zombe_config);
 		config = new Config();	
+		update = Boolean.valueOf(config.getData("Main.searchupdates"));
 	}
 
 	public void upgradeSettings(String version, File configPath,File oldConfigPath) {	
@@ -142,7 +145,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 				minecraft.displayGuiScreen(new ConfigMainFrame(this));
 			}			
 			if(!checkedupdate && minecraft.theWorld != null && minecraft.currentScreen == null){
-				if(Boolean.valueOf(config.getData("Main.searchupdates"))){
+				if(update){
 					updatecheck = new UpdateChecker(this);	
 					updatecheck.start();				
 					checkedupdate = true;
@@ -239,6 +242,12 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	public void setDownloadURL(String downloadURL) {
 		this.downloadURL = downloadURL;
 	}
+	public boolean isUpdate() {
+		return update;
+	}
+	public void setUpdate(boolean update) {
+		this.update = update;
+	}
 }
 class ConfigMainFrame extends GuiScreen{
 	private LiteModMain lmm;
@@ -261,6 +270,9 @@ class ConfigMainFrame extends GuiScreen{
 	public void actionPerformed(GuiButton b){	
 		if(b.displayString.contains("back to game")){
 			lmm.getMinecraft().displayGuiScreen(null);
+		}else if(b.displayString.contains("Update-Check")){
+			lmm.setUpdate(!lmm.isUpdate());
+			lmm.getConfig().replaceData("Main.searchupdates", "" + lmm.isUpdate());
 		}else{
 			Mod mod = lmm.getMod(b.displayString);
 			if(mod != null){
@@ -274,10 +286,16 @@ class ConfigMainFrame extends GuiScreen{
 	 * Draws for every Mod a Button
 	 */
 	public void drawButtons(){
+		int xvalue = 0;
 		for(int i = 0; i < lmm.getMods().size();i++){
-			buttonList.add(new GuiButton(i, width/2-100, height/lmm.getMods().size() -10 + (i*20), 200, 20, lmm.getMods().get(i).getName()));
+			buttonList.add(new GuiButton(i, xvalue, height/lmm.getMods().size() -10 + (i*20), 100, 20, lmm.getMods().get(i).getName()));
+			if(height/lmm.getMods().size() -10 + (i*20) > height){
+				xvalue = 120;
+			}
 		}	
-		buttonList.add(new GuiButton(lmm.getMods().size(), width/2-100, height/(lmm.getMods().size()+1) -10 + ((lmm.getMods().size()+1) *20), 200, 20,"back to game..."));
+		buttonList.add(new GuiButton(lmm.getMods().size(), width -100, height-40, 100, 20,"back to game..."));
+
+		buttonList.add(new GuiBooleanButton(lmm.getMods().size(), width-100, height-20, 100, 20, "Update-Check", Boolean.valueOf(lmm.getConfig().getData("Main.searchupdates")), "check-updates", ModData.Nil, lmm));
 	}
 	protected void keyTyped(char c,int key){
 		//F7 equals Button 65, so close Gui on key 65

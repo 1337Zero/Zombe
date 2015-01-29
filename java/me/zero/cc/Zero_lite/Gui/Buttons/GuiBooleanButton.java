@@ -40,7 +40,9 @@ public class GuiBooleanButton extends GuiButton{
 				 }else{
 					value = true;
 				 }
-				 speicher.getMod(moddata.name()).manupulateValue(valueToManupulate, value);				
+				 if(!moddata.equals(ModData.Nil)){
+					 speicher.getMod(moddata.name()).manupulateValue(valueToManupulate, value);						 
+				 }			
 				 return true;
 			 }			 
 		 }		 

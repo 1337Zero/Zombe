@@ -45,8 +45,7 @@ public class UpdateChecker extends Thread{
             
             String readed = reader.readLine();
             
-            while(readed != null){
-            	System.out.println(readed);   
+            while(readed != null){  
             	String between = readed;
             	
             	if(main.getUrlVersion() == ""){
