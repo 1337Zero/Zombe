@@ -3,6 +3,7 @@ package me.zero.cc.Zero_lite.Gui.Buttons;
 import org.lwjgl.opengl.GL11;
 
 import me.zero.cc.Zero_lite.LiteModMain;
+import me.zero.cc.Zero_lite.Mods.RangeMod;
 import me.zero.cc.Zero_lite.Mods.FlyMod;
 import me.zero.cc.Zero_lite.Mods.ModData;
 import me.zero.cc.Zero_lite.Mods.OreHighlighterMod;
@@ -43,7 +44,9 @@ public class SimpleSlider extends GuiButton{
 			 value = ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl();
 		}else if(modname.name().equalsIgnoreCase(ModData.OreHighLighter.name())){
 			 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius()*10;
-		 }	
+		}else if(modname.name().equalsIgnoreCase(ModData.RangeMod.name())){
+			 value = ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange();
+		}		
 		txt = valueNameToManupulate + ": " + value;
 		this.valueToManupulate = valueNameToManupulate;
 		this.modname = modname;
@@ -100,7 +103,9 @@ public class SimpleSlider extends GuiButton{
 			 value = ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl();
 		 }else if(modname.name().equalsIgnoreCase(ModData.OreHighLighter.name())){
 			 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius()*10;
-		 }	
+		 }else if(modname.name().equalsIgnoreCase(ModData.RangeMod.name())){
+			 value = ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange();
+		 }		
 		 
 		 this.setText(valueToManupulate + ": " + value);
 	 }	 

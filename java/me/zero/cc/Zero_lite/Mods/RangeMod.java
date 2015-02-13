@@ -1,0 +1,456 @@
+package me.zero.cc.Zero_lite.Mods;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.List;
+
+import org.lwjgl.input.Keyboard;
+
+import com.mumfrey.liteloader.core.LiteLoader;
+
+import me.zero.cc.Zero_lite.LiteModMain;
+import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
+import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
+import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
+import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
+import me.zero.cc.Zero_lite.utils.BlockMark;
+import me.zero.cc.Zero_lite.utils.GuiPositions;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateBase;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.pattern.BlockStateHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiCrafting;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.server.S23PacketBlockChange;
+import net.minecraft.network.play.server.S24PacketBlockAction;
+import net.minecraft.network.play.server.S25PacketBlockBreakAnim;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.WorldManager;
+
+public class RangeMod implements Mod {
+
+	private boolean isenabled = false;
+	private Minecraft minecraft;
+	private LiteModMain main;
+	private int range = 16;
+	private boolean dropblock = false;
+	private boolean markblock = true;
+	private boolean removeFromInventory = false;
+	private boolean addToInventory = false;
+	private boolean reachbreak = false;
+	private boolean reachplace = false;
+	private boolean showinfo = false;
+	
+	private double lastdestroyed = 0;
+	private double lastplaced = 0;
+	private double lastpressed = 0;
+	private int placedelay = 250;
+	private int destroydelay = 125;
+	
+	private int reachplaceonkey = 55;
+	private int reachbreakonkey = 55;
+	private int infoID = 0;
+	
+	private GuiPositions pos = GuiPositions.UP_LEFT;
+	
+	public RangeMod(Minecraft minecraft,LiteModMain main) {
+		this.minecraft = minecraft;
+		this.main = main;
+		lastdestroyed = System.currentTimeMillis();
+		lastplaced = System.currentTimeMillis();
+		lastplaced = System.currentTimeMillis();
+		//Load config
+		range = Integer.parseInt(main.getConfig().getData("RangeMod.Range"));
+		dropblock = Boolean.valueOf(main.getConfig().getData("RangeMod.DropBlock"));
+		markblock = Boolean.valueOf(main.getConfig().getData("RangeMod.MarkBlock"));
+		removeFromInventory = Boolean.valueOf(main.getConfig().getData("RangeMod.removefrominventory"));
+		addToInventory = Boolean.valueOf(main.getConfig().getData("RangeMod.addtoinventory"));
+		
+		placedelay = Integer.valueOf(main.getConfig().getData("RangeMod.placedelay"));
+		destroydelay = Integer.valueOf(main.getConfig().getData("RangeMod.destroydelay"));
+		
+		reachbreak = Boolean.valueOf(main.getConfig().getData("RangeMod.reachbreak"));
+		reachplace = Boolean.valueOf(main.getConfig().getData("RangeMod.reachplace"));
+		
+		reachbreakonkey = Integer.valueOf(main.getConfig().getData("RangeMod.reachbreakonkey")); 
+		reachplaceonkey = Integer.valueOf(main.getConfig().getData("RangeMod.reachplaceonkey")); 
+		
+		showinfo = Boolean.valueOf(main.getConfig().getData("RangeMod.showinfo"));
+		pos = GuiPositions.valueOf(main.getConfig().getData("RangeMod.info-Pos"));
+		
+		infoID = main.getInfoLineManager().getInfoLine(pos).addInfo("");
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return isenabled;
+	}
+
+	@Override
+	public void use() {
+		
+		if(Keyboard.isKeyDown(reachbreakonkey) && (minecraft.currentScreen == null)){
+			if((System.currentTimeMillis() - lastpressed) >=100){
+				if(reachbreak){
+					reachbreak = false;
+					main.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);
+				}else{
+					reachbreak = true;
+				}	
+				main.getConfig().replaceData("RangeMod.reachbreak", "" + reachbreak);
+			}	
+			lastpressed = System.currentTimeMillis();
+		}
+		
+		if(Keyboard.isKeyDown(reachplaceonkey) && (minecraft.currentScreen == null)){
+			if((System.currentTimeMillis() - lastpressed) >=100){
+				if(reachplace){
+					reachplace = false;
+					main.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);
+				}else{
+					reachplace = true;
+				}	
+				main.getConfig().replaceData("RangeMod.reachplace", "" + reachplace);
+			}	
+			lastpressed = System.currentTimeMillis();
+		}
+		
+		if(showinfo){
+			main.getInfoLineManager().getInfoLine(pos).setInfo(infoID, "Reach: " + range);
+		}else{
+			main.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);	
+		}
+		//Marks the Block you are looking at
+		if(markblock){
+			MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
+			if(objpos != null){
+				if(objpos.getBlockPos() != null){
+					markBlock(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ());
+				}	
+			}		
+		}
+		//Destroys the Block where you are looking at
+		if(minecraft.gameSettings.keyBindAttack.isKeyDown()){
+			if(reachbreak){
+				MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
+				if(objpos.getBlockPos() != null){
+					//If to fast Blockbreaking minecraft crashes...idk why
+					if((System.currentTimeMillis() - lastdestroyed) >= destroydelay){	
+						if(minecraft.isSingleplayer()){	
+							minecraft.thePlayer.swingItem();		
+							if(addToInventory){
+								minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.addItemStackToInventory(new ItemStack(minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock().getItem(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()))));	
+								minecraft.getIntegratedServer().getEntityWorld().destroyBlock(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), false);
+							}else{
+								minecraft.getIntegratedServer().getEntityWorld().destroyBlock(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), dropblock);
+							}
+							
+						}else{		
+							//Don't know how to make this in MP
+							//Maybe sending a packet but idk
+						}
+						lastdestroyed = System.currentTimeMillis();
+					}
+				}
+			}			
+			//Sets the Block where you are looking
+		}else if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
+			if(reachplace){
+				MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
+				if(objpos.getBlockPos() != null){					
+					if(minecraft.isSingleplayer()){	
+						if(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem) != null){
+							if(System.currentTimeMillis() - lastplaced >= placedelay){
+								if(Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()) != null){
+									minecraft.thePlayer.swingItem();
+									minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY()+1, objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getDefaultState());
+									
+									if(removeFromInventory){
+										if (minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).stackSize == 1){
+											minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.mainInventory[minecraft.thePlayer.inventory.currentItem] = null;
+										}else{
+											minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.mainInventory[minecraft.thePlayer.inventory.currentItem] = new ItemStack(minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.getCurrentItem().getItem(), minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.getCurrentItem().stackSize-1);
+										}									
+									}
+								}
+							}	
+						}				
+					}else{		
+						//Don't know how to make this in MP
+						//Maybe sending a packet but idk
+					}
+					lastplaced = System.currentTimeMillis();
+				}
+			}				
+		}
+	}
+	private void markBlock(int x, int y, int z){
+		main.addMarkables(new BlockMark(x,y,z, minecraft, 1.0F, 0.0F, 1.0F, 1.0F));
+	}
+
+	@Override
+	public String getName() {
+		return ModData.RangeMod.name();
+	}
+
+	@Override
+	public String getVersion() {
+		return "0.1";
+	}
+
+	@Override
+	public GuiScreen drawGui() {
+		return new RangeModGui(main);
+	}
+	@Override
+	public int getOn() {
+		return 0;
+	}
+
+	public boolean isDropblock() {
+		return dropblock;
+	}
+
+	public void setDropblock(boolean dropblock) {
+		this.dropblock = dropblock;
+	}
+
+	public boolean isMarkblock() {
+		return markblock;
+	}
+
+	public void setMarkblock(boolean markblock) {
+		this.markblock = markblock;
+	}
+
+	public boolean isRemoveFromInventory() {
+		return removeFromInventory;
+	}
+
+	public void setRemoveFromInventory(boolean removeFromInventory) {
+		this.removeFromInventory = removeFromInventory;
+	}
+
+	public boolean isAddToInventory() {
+		return addToInventory;
+	}
+
+	public void setAddToInventory(boolean addToInventory) {
+		this.addToInventory = addToInventory;
+	}
+
+	public int getReachplaceonkey() {
+		return reachplaceonkey;
+	}
+
+	public void setReachplaceonkey(int reachplaceonkey) {
+		this.reachplaceonkey = reachplaceonkey;
+	}
+
+	public int getReachbreakonkey() {
+		return reachbreakonkey;
+	}
+
+	public void setReachbreakonkey(int reachbreakonkey) {
+		this.reachbreakonkey = reachbreakonkey;
+	}
+	public int getRange() {
+		return range;
+	}
+
+	public void setRange(int range) {
+		this.range = range;
+	}
+
+	public boolean isShowinfo() {
+		return showinfo;
+	}
+
+	public void setShowinfo(boolean showinfo) {
+		this.showinfo = showinfo;
+	}
+
+	public GuiPositions getPos() {
+		return pos;
+	}
+
+	public void setPos(GuiPositions pos) {
+		this.pos = pos;
+	}
+
+	public boolean isReachbreak() {
+		return reachbreak;
+	}
+
+	public void setReachbreak(boolean reachbreak) {
+		this.reachbreak = reachbreak;
+	}
+
+	public boolean isReachplace() {
+		return reachplace;
+	}
+
+	public void setReachplace(boolean reachplace) {
+		this.reachplace = reachplace;
+	}
+
+	@Override
+	public void manupulateValue(String ValueToManupulate, int value) {
+		System.out.println(ValueToManupulate);
+		if(ValueToManupulate.equalsIgnoreCase("range")){
+			if(value > 0){
+				range = value;
+			}else{
+				range = 2;
+			}			
+			main.getConfig().replaceData("RangeMod.Range", "" + range);
+		}else if(ValueToManupulate.equalsIgnoreCase("range")){
+			
+		}else{
+			System.out.println("Unknown Value + " + ValueToManupulate);
+		}
+	}
+
+	@Override
+	public void manupulateValue(String valueToManupulate, boolean b) {
+		System.out.println(valueToManupulate + " " + b);
+		if(valueToManupulate.equalsIgnoreCase("togglereachplace")){
+			reachplace = b;
+			main.getConfig().replaceData("RangeMod.reachplace", "" + b);
+		}else if(valueToManupulate.equalsIgnoreCase("togglereachbreak")){
+			reachbreak = b;
+			main.getConfig().replaceData("RangeMod.reachbreak", "" + b);
+		}else if(valueToManupulate.equalsIgnoreCase("togglemark")){
+			markblock = b;
+			main.getConfig().replaceData("RangeMod.MarkBlock", "" + b);
+		}else if(valueToManupulate.equalsIgnoreCase("dropblock")){
+			dropblock = b;
+			main.getConfig().replaceData("RangeMod.DropBlock", "" + b);
+		}else if(valueToManupulate.equalsIgnoreCase("removefrominventory")){
+			removeFromInventory = b;
+			main.getConfig().replaceData("RangeMod.removefrominventory", "" + b);
+		}else if(valueToManupulate.equalsIgnoreCase("addtoinventory")){
+			addToInventory = b;
+			main.getConfig().replaceData("RangeMod.addtoinventory", "" + b);
+		}else if(valueToManupulate.equalsIgnoreCase("showinfo")){	
+			showinfo = b;
+			main.getConfig().replaceData("RangeMod.showinfo", "" + b);
+		}else{
+			System.out.println(valueToManupulate + " " + b);
+		}
+	}
+
+	@Override
+	public void manupulateValue(String valueToManupulate, String value) {
+		System.out.println(valueToManupulate);
+		if(valueToManupulate.equalsIgnoreCase("infopos")){
+			main.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);
+			pos = GuiPositions.valueOf(value);
+			infoID = main.getInfoLineManager().getInfoLine(pos).addInfo("");
+			main.getConfig().replaceData("RangeMod.info-Pos", "" + value);
+		}else{
+			System.out.println(valueToManupulate + ": " + value);
+		}
+	}
+}
+class RangeModGui extends GuiScreen{
+	
+	private LiteModMain speicher;
+	private boolean GivingKey = false;
+	private String valueToManupulate = "";
+	private GuiChooseKeyButton chooseEnableBlockPlace,chooseEnableBlockBreak;
+	
+	public RangeModGui(LiteModMain speicher){
+		this.speicher = speicher;
+	}
+	
+	public void initGui(){
+		drawButtons();
+	}
+	/**
+	 * Called if a Button is pressed
+	 */
+	public void actionPerformed(GuiButton b){	
+		if(b.displayString.contains("back to game")){
+			speicher.getMinecraft().displayGuiScreen(null);
+		}else if(b.displayString.contains("waiting")){
+			valueToManupulate = b.displayString.split("waiting")[0];
+			GivingKey = true;
+		}
+	}
+	/**
+	 * Initialize Buttons and add them to the Button list
+	 */
+	public void drawButtons(){
+		GuiBooleanButton toggleplace = new GuiBooleanButton(2, 80, height/4-40, 150, 20, "Toggle Reachplace", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachplace(), "togglereachplace", ModData.RangeMod, speicher);
+		GuiBooleanButton togglebreak = new GuiBooleanButton(2, 80, height/4-20, 150, 20, "Toggle Reachbreak", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachbreak(), "togglereachbreak", ModData.RangeMod, speicher);
+		GuiBooleanButton togglemark = new GuiBooleanButton(2, 80, height/4, 150, 20, "Toggle Marker", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isMarkblock(), "togglemark", ModData.RangeMod, speicher);
+		
+		GuiBooleanButton dropblock = new GuiBooleanButton(2, 250, height/4-40, 150, 20, "Drop Blocks", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isDropblock(), "dropblock", ModData.RangeMod, speicher);
+		GuiBooleanButton removefrominventory = new GuiBooleanButton(2, 250, height/4-20, 150, 20, "Remove From Inv", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isRemoveFromInventory(), "removefrominventory", ModData.RangeMod, speicher);
+		GuiBooleanButton addtoinventory = new GuiBooleanButton(2, 250, height/4, 150, 20, "add to Inv", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isAddToInventory(), "addtoinventory", ModData.RangeMod, speicher);
+					
+		SimpleSlider slider = new SimpleSlider(0,80, height/4+100, "range", (int) ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange()/10 , 150, 20, ModData.RangeMod, "Range", speicher);
+
+		chooseEnableBlockPlace = new GuiChooseKeyButton(2, 80, height/4+60, 150, 20, "Enableplace-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachplaceonkey());
+		chooseEnableBlockBreak = new GuiChooseKeyButton(2, 80, height/4+80, 150, 20, "Enablebreak-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachbreakonkey());
+		
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, 80, height/4+40, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.RangeMod, speicher, GuiPositions.getPos(((RangeMod)speicher.getMod(ModData.RangeMod.name())).getPos()));
+		GuiBooleanButton showInfo = new GuiBooleanButton(8, 80, height/4+20, 150, 20, "Show-Info", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isShowinfo(), "showinfo", ModData.RangeMod, speicher);
+			
+		GuiButton back = new GuiButton(9, 60,height-50 , "back to game");
+
+		buttonList.add(slider);
+		buttonList.add(showInfo);
+		
+		buttonList.add(chooseEnableBlockBreak);
+		buttonList.add(chooseEnableBlockPlace);
+		
+		buttonList.add(choosepos);		
+		
+		buttonList.add(dropblock);
+		buttonList.add(removefrominventory);
+		buttonList.add(addtoinventory);
+		
+		buttonList.add(togglebreak);
+		buttonList.add(togglemark);
+		buttonList.add(toggleplace);
+		
+		buttonList.add(back);
+	}
+	protected void keyTyped(char c,int key){
+		if(GivingKey){
+			if(key != 65 && key != 1){
+				//speicher.getMinecraft().thePlayer.playSound("mob.ghast.scream", 1.0F, 1.0F);	
+				valueToManupulate = valueToManupulate.replace(" ", "");
+				((RangeMod)speicher.getMod(ModData.RangeMod.name())).manupulateValue(valueToManupulate, key);
+				
+				if(valueToManupulate.equalsIgnoreCase("togglereachplace")){
+					chooseEnableBlockPlace.setButtonkey(key);
+				}else if(valueToManupulate.equalsIgnoreCase("togglereachbreak")){
+					chooseEnableBlockBreak.setButtonkey(key);
+				}
+				GivingKey = false;
+			}
+		}else{
+			if(key == 65 || key == 1){
+				speicher.getMinecraft().displayGuiScreen(null);
+			}
+		}		
+	}
+}

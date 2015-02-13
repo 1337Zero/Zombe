@@ -324,7 +324,7 @@ class SpeedModGui extends GuiScreen{
 		buttonList.add(togglespeed);
 		buttonList.add(enablespeed);
 		buttonList.add(slider);	
-		buttonList.add(back);
+		buttonList.add(back);	
 	}
 	protected void keyTyped(char c,int key){
 		if(GivingKey){

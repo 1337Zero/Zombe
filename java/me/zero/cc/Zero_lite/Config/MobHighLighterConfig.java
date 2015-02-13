@@ -15,7 +15,7 @@ public class MobHighLighterConfig {
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Moblist:Chicken,Cow,Horse,Ocelot,Pig,Sheep,Bat,Mooshroomcow,Squid,Villager,Rabbit,Creeper,Skeleton,Zombie,Spider,Enderman,Zombiepigman,Cavespider,Silverfish,Lohe,Magma,Witch,Endermite,Guardian,Wolf,Item,Player",
+			"Moblist:Chicken,Cow,Horse,Ocelot,Pig,Sheep,Bat,Squid,Villager,Rabbit,Creeper,Skeleton,Zombie,Spider,Enderman,PigZombie,Cavespider,Silverfish,Lohe,Magmacube,Witch,Endermite,Guardian,Wolf,Item,Player,Mushroomcow,Slime,Ghast,Snowman,Giant,Irongolem,Enderdragon,Boat,Minecart,Spawnerminecart,Chestminecart,Tntminecart,Furnaceminecart,Xp,Wither",
 								
 			"Color.Chicken:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Cow:0.0F, 1.0F, 0.0F, 1.0F",
@@ -24,7 +24,7 @@ public class MobHighLighterConfig {
 			"Color.Pig:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Sheep:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Bat:0.0F, 1.0F, 0.0F, 1.0F",
-			"Color.Mooshroomcow:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Mushroomcow:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Squid:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Villager:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Rabbit:0.0F, 1.0F, 0.0F, 1.0F",
@@ -33,17 +33,32 @@ public class MobHighLighterConfig {
 			"Color.Zombie:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Spider:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Enderman:1.0F, 0.0F, 0.0F, 1.0F",
-			"Color.Zombiepigman:1.0F, 0.4F, 0.1F, 1.0F",
+			"Color.PigZombie:1.0F, 0.4F, 0.1F, 1.0F",
 			"Color.Cavespider:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Silverfish:1.0F, 0.0F, 0.0F, 1.0F",
-			"Color.Lohe:1.0F, 0.0F, 0.0F, 1.0F",
-			"Color.Magma:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Blaze:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Magmacube:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Witch:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Endermite:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Guardian:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Wither:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Wolf:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Item:1.0F, 0.0F, 0.0F, 1.0F",
-			"Color.Player:1.0F, 1.0F, 1.0F, 1.0F"
+			"Color.Xp:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Player:1.0F, 1.0F, 1.0F, 1.0F",
+			"Color.Slime:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Ghast:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Giant:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Snowman:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Boat:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Minecart:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Spawnerminecart:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Tntminecart:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Hopperminecart:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Furnaceminecart:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Chestminecart:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Irongolem:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Enderdragon:1.0F, 0.0F, 0.0F, 1.0F"
 			);
 	
 	public MobHighLighterConfig(){

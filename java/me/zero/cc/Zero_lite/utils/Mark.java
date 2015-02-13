@@ -3,7 +3,7 @@ package me.zero.cc.Zero_lite.utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 
-public class Mark{
+public class Mark implements Markables{
 
 	private float r = 0.0F;
 	private float g = 0.0F;
@@ -184,6 +184,10 @@ public class Mark{
 	}
 	public void setEntity(Entity entity) {
 		Entity = entity;
+	}
+	@Override
+	public void draw(float partialTicks) {
+		throw new UnsupportedOperationException("calling Mark.draw() is not supported...");
 	}
 	
 }

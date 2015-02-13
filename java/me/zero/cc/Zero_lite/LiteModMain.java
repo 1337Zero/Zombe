@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Drawable;
 
 import me.zero.cc.Zero_lite.Config.Config;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
+import me.zero.cc.Zero_lite.Mods.RangeMod;
 import me.zero.cc.Zero_lite.Mods.ChatMod;
 import me.zero.cc.Zero_lite.Mods.FlyMod;
 import me.zero.cc.Zero_lite.Mods.InfoMod;
@@ -23,6 +25,8 @@ import me.zero.cc.Zero_lite.Mods.ReciepeMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
 import me.zero.cc.Zero_lite.utils.InfoLineManager;
+import me.zero.cc.Zero_lite.utils.Mark;
+import me.zero.cc.Zero_lite.utils.Markables;
 import me.zero.cc.Zero_lite.utils.UpdateChecker;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -67,12 +71,13 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private String downloadURL = "";
 	private String prefix = "&6[Lite-Zombe] ";
 	private boolean update = true;
+	private ArrayList<Markables> marks = new ArrayList<Markables>();
 	
 	public String getName() {
 		return "Zombe-Lite";
 	}
 	public String getVersion() {
-		return "0.0.3";
+		return "0.0.4";
 	}
 
 	public void init(File configPath) {	
@@ -103,6 +108,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			this.addMod(new MobHighlighterMod(minecraft,this));
 			this.addMod(new OreHighlighterMod(minecraft,this));
 			this.addMod(new PathMod(minecraft,this));
+			this.addMod(new RangeMod(minecraft,this));
 			ch = new ChatMod(minecraft,this);
 			this.addMod(ch);
 			init = true;
@@ -201,52 +207,95 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 
 	@Override
 	public void onPostRenderEntities(float partialTicks) {
+		for(Markables m : marks){
+			m.draw(partialTicks);
+		}
+		marks.clear();
 		((MobHighlighterMod)this.getMod(ModData.MobHighLighter.name())).render(partialTicks);
 		((OreHighlighterMod)this.getMod(ModData.OreHighLighter.name())).render(partialTicks);
 		((PathMod)this.getMod(ModData.PathMod.name())).render(partialTicks);
 	}
 
 	@Override
-	public void onPostRender(float partialTicks) {		
+	public void onPostRender(float partialTicks) {	
+		//unused
 	}
+	/**
+	 * Get the Minecraft instance
+	 * @return Minecraft instance
+	 */
 	public Minecraft getMinecraft() {
 		return minecraft;
 	}
-	public void setMinecraft(Minecraft minecraft) {
-		this.minecraft = minecraft;
-	}
+	/**
+	 * Loads and returns the Config
+	 * @return Config the Config instance
+	 */
 	public Config getConfig() {
 		return config;
 	}
+	/**
+	 * Get the InfoLineManager instance with manages the infolines 
+	 * @return InfoLineManager instance
+	 */
 	public InfoLineManager getInfoLineManager() {
 		return ilm;
 	}
-	public void setInfoLineManager(InfoLineManager ilm) {
-		this.ilm = ilm;
-	}
-	public void setConfig(Config config) {
-		this.config = config;
-	}
+	/**
+	 * Addes Announcements from Update-Url
+	 * @param messages
+	 */
 	public synchronized void setAnnouncement(ArrayList<String> messages){
 		this.messages = messages;
 	}
+	/**
+	 * Returns the newest Version of Zombe
+	 * @return
+	 */
 	public String getUrlVersion() {
 		return urlVersion;
-	}
+	} 
+	/**
+	 * Sets the newest Version of Zombe
+	 * @param urlVersion
+	 */
 	public void setUrlVersion(String urlVersion) {
 		this.urlVersion = urlVersion;
 	}
+	/**
+	 * Returns the URL of the newest Zombe version
+	 * @return
+	 */
 	public String getDownloadURL() {
 		return downloadURL;
 	}
+	/**
+	 * Sets the Download URL for the newest Mod
+	 * @param downloadURL
+	 */
 	public void setDownloadURL(String downloadURL) {
 		this.downloadURL = downloadURL;
 	}
+	/**
+	 * true if an update was found
+	 * @return Boolean
+	 */
 	public boolean isUpdate() {
 		return update;
 	}
+	/**
+	 * Sets if an update was found
+	 * @param update
+	 */
 	public void setUpdate(boolean update) {
 		this.update = update;
+	}
+	/**
+	 * Adds markables for the render
+	 * @param markable
+	 */
+	public void addMarkables(Markables markable){
+		this.marks.add(markable);
 	}
 }
 class ConfigMainFrame extends GuiScreen{
