@@ -173,12 +173,35 @@ public class RangeMod implements Mod {
 			if(reachplace){
 				MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
 				if(objpos.getBlockPos() != null){					
-					if(minecraft.isSingleplayer()){	
+					if(minecraft.isSingleplayer()){							
 						if(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem) != null){
 							if(System.currentTimeMillis() - lastplaced >= placedelay){
 								if(Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()) != null){
 									minecraft.thePlayer.swingItem();
-									minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY()+1, objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getDefaultState());
+									int x = objpos.getBlockPos().getX();
+									int y = objpos.getBlockPos().getY();
+									int z = objpos.getBlockPos().getZ();
+									
+									if(objpos.sideHit.equals(EnumFacing.UP)){
+										//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY()+1, objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
+										y = y + 1;
+									}else if(objpos.sideHit.equals(EnumFacing.DOWN)){
+										//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY()-1, objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));	
+										y = y - 1;
+									}else if(objpos.sideHit.equals(EnumFacing.NORTH)){
+										//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()-1), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
+										z = z -1;
+									}else if(objpos.sideHit.equals(EnumFacing.SOUTH)){
+										//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()+1), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
+										z = z + 1;
+									}else if(objpos.sideHit.equals(EnumFacing.WEST)){
+										//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX()-1, objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
+										x = x -1;
+									}else if(objpos.sideHit.equals(EnumFacing.EAST)){
+										//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX()+1, objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
+										x = x+1;
+									}	
+									minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(x, y, z), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
 									
 									if(removeFromInventory){
 										if (minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).stackSize == 1){
