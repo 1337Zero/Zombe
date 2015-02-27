@@ -15,8 +15,8 @@ public class Config {
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Main.searchupdates:true","Main.debug:false",
-			"Fly-Mod.Key-Down:16","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:57","Fly-Mod.key-Toggle-fly:46","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false",
+			"Main.searchupdates:true","Main.debug:false","Main.cmdControlCharacter:#",
+			"Fly-Mod.Key-Down:16","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:57","Fly-Mod.key-Toggle-fly:46","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false","Fly-Mod.nerfcreaetivefly:true",
 			"Speed-Mod.Toggle-speed:21","Speed-Mod.maxspeed:10","Speed-Mod.speed:1","Speed-Mod.showspeed:true","Speed-Mod.speed-Pos:UP_LEFT","Speed-Mod.togglespeed:false","Speed-Mod.speed-enabled:false","Speed-Mod.enabled:false",
 			"Info-Mod.FPS-Pos:UP_CENTER","Info-Mod.showFPS:false","Info-Mod.Dir-POS:UP_RIGHT","Info-Mod.showdir:false","Info-Mod.Coor-Pos:UP_RIGHT","Info-Mod.showcoor:false","Info-Mod.Worldage-Pos:UP_LEFT","Info-Mod.showworldage:false",
 			"Light-Mod.Toggle-Light:38","Light-Mod.lightmod-enabled:false",
@@ -25,7 +25,7 @@ public class Config {
 			"MobHighlighter.enabled:false","MobHighlighter.Toggle-Mobhighlighter:55","MobHighlighter.info-Pos:UP_LEFT","MobHighlighter.showinfo:false",
 			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:27","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2",
 			"PathMod.info-Pos:UP_LEFT","PathMod.showinfo:false","PathMod.enabled:false","PathMod.Toggle-PathMod:11","PathMod.seethroughwall:true","PathMod.mark.r:1.0F","PathMod.mark.g:0.0F","PathMod.mark.b:1.0F","PathMod.mark.alpha:1.0F",
-			"RangeMod.Range:16","RangeMod.DropBlock:false","RangeMod.MarkBlock:false","RangeMod.removefrominventory:true","RangeMod.addtoinventory:true","RangeMod.placedelay:125","RangeMod.destroydelay:125","RangeMod.reachbreak:false","RangeMod.reachplace:false","RangeMod.reachbreakonkey:12","RangeMod.reachplaceonkey:52","RangeMod.showinfo:false","RangeMod.info-Pos:UP_LEFT");
+			"RangeMod.Range:16","RangeMod.DropBlock:false","RangeMod.MarkBlock:false","RangeMod.removefrominventory:true","RangeMod.addtoinventory:true","RangeMod.placedelay:125","RangeMod.destroydelay:125","RangeMod.reachbreak:false","RangeMod.reachplace:false","RangeMod.reachbreakonkey:12","RangeMod.reachplaceonkey:52","RangeMod.showinfo:false","RangeMod.info-Pos:UP_LEFT","RangeMod.reachpick:false","RangeMod.pickdelay:250","RangeMod.reachpickonkey:55");
 	
 	/**
 	 * Constructor for this class, loads the config from the Given path

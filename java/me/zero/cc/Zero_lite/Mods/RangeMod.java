@@ -3,6 +3,7 @@ package me.zero.cc.Zero_lite.Mods;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 
@@ -16,6 +17,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.BlockMark;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.block.state.IBlockState;
@@ -55,15 +57,29 @@ public class RangeMod implements Mod {
 	private boolean reachbreak = false;
 	private boolean reachplace = false;
 	private boolean showinfo = false;
+	private boolean reachPick = false;
 	
 	private double lastdestroyed = 0;
 	private double lastplaced = 0;
 	private double lastpressed = 0;
+	private double lastpicked = 0;
+	
 	private int placedelay = 250;
 	private int destroydelay = 125;
+	private int pickdelay = 250;
 	
 	private int reachplaceonkey = 55;
 	private int reachbreakonkey = 55;
+	private int reachPickonkey = 55;
+	
+	public boolean isReachPick() {
+		return reachPick;
+	}
+
+	public void setReachPick(boolean reachPick) {
+		this.reachPick = reachPick;
+	}
+	
 	private int infoID = 0;
 	
 	private GuiPositions pos = GuiPositions.UP_LEFT;
@@ -73,7 +89,7 @@ public class RangeMod implements Mod {
 		this.main = main;
 		lastdestroyed = System.currentTimeMillis();
 		lastplaced = System.currentTimeMillis();
-		lastplaced = System.currentTimeMillis();
+		lastpicked = System.currentTimeMillis();
 		//Load config
 		range = Integer.parseInt(main.getConfig().getData("RangeMod.Range"));
 		dropblock = Boolean.valueOf(main.getConfig().getData("RangeMod.DropBlock"));
@@ -83,12 +99,15 @@ public class RangeMod implements Mod {
 		
 		placedelay = Integer.valueOf(main.getConfig().getData("RangeMod.placedelay"));
 		destroydelay = Integer.valueOf(main.getConfig().getData("RangeMod.destroydelay"));
+		pickdelay = Integer.valueOf(main.getConfig().getData("RangeMod.pickdelay"));
 		
 		reachbreak = Boolean.valueOf(main.getConfig().getData("RangeMod.reachbreak"));
 		reachplace = Boolean.valueOf(main.getConfig().getData("RangeMod.reachplace"));
+		reachPick = Boolean.valueOf(main.getConfig().getData("RangeMod.reachpick")); 
 		
 		reachbreakonkey = Integer.valueOf(main.getConfig().getData("RangeMod.reachbreakonkey")); 
 		reachplaceonkey = Integer.valueOf(main.getConfig().getData("RangeMod.reachplaceonkey")); 
+		reachPickonkey = Integer.valueOf(main.getConfig().getData("RangeMod.reachpickonkey"));  
 		
 		showinfo = Boolean.valueOf(main.getConfig().getData("RangeMod.showinfo"));
 		pos = GuiPositions.valueOf(main.getConfig().getData("RangeMod.info-Pos"));
@@ -96,6 +115,14 @@ public class RangeMod implements Mod {
 		infoID = main.getInfoLineManager().getInfoLine(pos).addInfo("");
 	}
 	
+	public int getReachPickonkey() {
+		return reachPickonkey;
+	}
+
+	public void setReachPickonkey(int reachPickonkey) {
+		this.reachPickonkey = reachPickonkey;
+	}
+
 	@Override
 	public boolean isEnabled() {
 		return isenabled;
@@ -130,6 +157,19 @@ public class RangeMod implements Mod {
 			lastpressed = System.currentTimeMillis();
 		}
 		
+		if(Keyboard.isKeyDown(reachPickonkey) && (minecraft.currentScreen == null)){
+			if((System.currentTimeMillis() - lastpressed) >=100){
+				if(reachPick){
+					reachPick = false;
+					main.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);
+				}else{
+					reachPick = true;
+				}	
+				main.getConfig().replaceData("RangeMod.reachpick", "" + reachPick);
+			}	
+			lastpressed = System.currentTimeMillis();
+		}
+		
 		if(showinfo){
 			main.getInfoLineManager().getInfoLine(pos).setInfo(infoID, "Reach: " + range);
 		}else{
@@ -154,7 +194,9 @@ public class RangeMod implements Mod {
 						if(minecraft.isSingleplayer()){	
 							minecraft.thePlayer.swingItem();		
 							if(addToInventory){
-								minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.addItemStackToInventory(new ItemStack(minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock().getItem(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()))));	
+								Block block = minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock();	
+								ItemStack newitem = new ItemStack(minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock().getItem(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())),1,block.getDamageValue(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())));
+								minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.addItemStackToInventory(newitem);	
 								minecraft.getIntegratedServer().getEntityWorld().destroyBlock(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), false);
 							}else{
 								minecraft.getIntegratedServer().getEntityWorld().destroyBlock(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), dropblock);
@@ -220,6 +262,34 @@ public class RangeMod implements Mod {
 					lastplaced = System.currentTimeMillis();
 				}
 			}				
+			//Picks the BLock you are looking at
+		}else if(minecraft.gameSettings.keyBindPickBlock.isKeyDown()){
+			if(reachPick){
+				MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
+				if(objpos != null){
+					if(objpos.getBlockPos() != null){
+						if(minecraft.isSingleplayer()){
+							if(System.currentTimeMillis() - lastpicked >= pickdelay){
+								Block block = minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock();	
+								if(!block.getMaterial().equals(Material.air)){
+									ItemStack newitem;
+									if(block.getMaterial().equals(Material.lava)){
+										newitem = new ItemStack(Item.getByNameOrId("minecraft:lava_bucket"));
+									}else if(block.getMaterial().equals(Material.water)){
+										newitem = new ItemStack(Item.getByNameOrId("minecraft:water_bucket"));
+									}else{
+										newitem = new ItemStack(minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock().getItem(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())),1,block.getDamageValue(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())));
+									}
+									if(newitem != null){										
+										minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.mainInventory[minecraft.thePlayer.inventory.currentItem] = newitem;
+									}
+								}
+							}
+						}
+					}
+				}
+				lastpicked = System.currentTimeMillis();
+			}
 		}
 	}
 	private void markBlock(int x, int y, int z){
@@ -334,7 +404,7 @@ public class RangeMod implements Mod {
 
 	@Override
 	public void manupulateValue(String ValueToManupulate, int value) {
-		System.out.println(ValueToManupulate);
+		//System.out.println(ValueToManupulate);
 		if(ValueToManupulate.equalsIgnoreCase("range")){
 			if(value > 0){
 				range = value;
@@ -342,8 +412,9 @@ public class RangeMod implements Mod {
 				range = 2;
 			}			
 			main.getConfig().replaceData("RangeMod.Range", "" + range);
-		}else if(ValueToManupulate.equalsIgnoreCase("range")){
-			
+		}else if(ValueToManupulate.equalsIgnoreCase("EnablePick-Key")){
+			reachPickonkey = value;
+			main.getConfig().replaceData("RangeMod.reachpickonkey", reachPickonkey + "");
 		}else{
 			System.out.println("Unknown Value + " + ValueToManupulate);
 		}
@@ -351,7 +422,6 @@ public class RangeMod implements Mod {
 
 	@Override
 	public void manupulateValue(String valueToManupulate, boolean b) {
-		System.out.println(valueToManupulate + " " + b);
 		if(valueToManupulate.equalsIgnoreCase("togglereachplace")){
 			reachplace = b;
 			main.getConfig().replaceData("RangeMod.reachplace", "" + b);
@@ -373,6 +443,9 @@ public class RangeMod implements Mod {
 		}else if(valueToManupulate.equalsIgnoreCase("showinfo")){	
 			showinfo = b;
 			main.getConfig().replaceData("RangeMod.showinfo", "" + b);
+		}else if(valueToManupulate.equalsIgnoreCase("togglereachpick")){
+			reachPick = b;
+			main.getConfig().replaceData("RangeMod.reachpick", reachPick+"");
 		}else{
 			System.out.println(valueToManupulate + " " + b);
 		}
@@ -380,7 +453,6 @@ public class RangeMod implements Mod {
 
 	@Override
 	public void manupulateValue(String valueToManupulate, String value) {
-		System.out.println(valueToManupulate);
 		if(valueToManupulate.equalsIgnoreCase("infopos")){
 			main.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);
 			pos = GuiPositions.valueOf(value);
@@ -396,7 +468,7 @@ class RangeModGui extends GuiScreen{
 	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
-	private GuiChooseKeyButton chooseEnableBlockPlace,chooseEnableBlockBreak;
+	private GuiChooseKeyButton chooseEnableBlockPlace,chooseEnableBlockBreak,chooseEnableBlockPick;
 	
 	public RangeModGui(LiteModMain speicher){
 		this.speicher = speicher;
@@ -423,6 +495,7 @@ class RangeModGui extends GuiScreen{
 		GuiBooleanButton toggleplace = new GuiBooleanButton(2, 80, height/4-40, 150, 20, "Toggle Reachplace", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachplace(), "togglereachplace", ModData.RangeMod, speicher);
 		GuiBooleanButton togglebreak = new GuiBooleanButton(2, 80, height/4-20, 150, 20, "Toggle Reachbreak", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachbreak(), "togglereachbreak", ModData.RangeMod, speicher);
 		GuiBooleanButton togglemark = new GuiBooleanButton(2, 80, height/4, 150, 20, "Toggle Marker", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isMarkblock(), "togglemark", ModData.RangeMod, speicher);
+		GuiBooleanButton togglerangepick = new GuiBooleanButton(2, 250, height/4+20, 150, 20, "Toggle ReachPick", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachPick(), "togglereachpick", ModData.RangeMod, speicher);
 		
 		GuiBooleanButton dropblock = new GuiBooleanButton(2, 250, height/4-40, 150, 20, "Drop Blocks", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isDropblock(), "dropblock", ModData.RangeMod, speicher);
 		GuiBooleanButton removefrominventory = new GuiBooleanButton(2, 250, height/4-20, 150, 20, "Remove From Inv", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isRemoveFromInventory(), "removefrominventory", ModData.RangeMod, speicher);
@@ -432,10 +505,15 @@ class RangeModGui extends GuiScreen{
 
 		chooseEnableBlockPlace = new GuiChooseKeyButton(2, 80, height/4+60, 150, 20, "Enableplace-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachplaceonkey());
 		chooseEnableBlockBreak = new GuiChooseKeyButton(2, 80, height/4+80, 150, 20, "Enablebreak-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachbreakonkey());
+		chooseEnableBlockPick = new GuiChooseKeyButton(2, 250, height/4+40, 150, 20, "EnablePick-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachPickonkey());
 		
 		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, 80, height/4+40, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.RangeMod, speicher, GuiPositions.getPos(((RangeMod)speicher.getMod(ModData.RangeMod.name())).getPos()));
+		
 		GuiBooleanButton showInfo = new GuiBooleanButton(8, 80, height/4+20, 150, 20, "Show-Info", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isShowinfo(), "showinfo", ModData.RangeMod, speicher);
-			
+				
+		
+		//Enable key,enable Button,
+		
 		GuiButton back = new GuiButton(9, 60,height-50 , "back to game");
 
 		buttonList.add(slider);
@@ -443,6 +521,7 @@ class RangeModGui extends GuiScreen{
 		
 		buttonList.add(chooseEnableBlockBreak);
 		buttonList.add(chooseEnableBlockPlace);
+		buttonList.add(chooseEnableBlockPick);
 		
 		buttonList.add(choosepos);		
 		
@@ -453,6 +532,7 @@ class RangeModGui extends GuiScreen{
 		buttonList.add(togglebreak);
 		buttonList.add(togglemark);
 		buttonList.add(toggleplace);
+		buttonList.add(togglerangepick);
 		
 		buttonList.add(back);
 	}
@@ -463,10 +543,14 @@ class RangeModGui extends GuiScreen{
 				valueToManupulate = valueToManupulate.replace(" ", "");
 				((RangeMod)speicher.getMod(ModData.RangeMod.name())).manupulateValue(valueToManupulate, key);
 				
+				//System.out.println(valueToManupulate);
+				
 				if(valueToManupulate.equalsIgnoreCase("togglereachplace")){
 					chooseEnableBlockPlace.setButtonkey(key);
 				}else if(valueToManupulate.equalsIgnoreCase("togglereachbreak")){
 					chooseEnableBlockBreak.setButtonkey(key);
+				}else if(valueToManupulate.equalsIgnoreCase("EnablePick-Key")){
+					chooseEnableBlockPick.setButtonkey(key);
 				}
 				GivingKey = false;
 			}
