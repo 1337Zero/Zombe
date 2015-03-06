@@ -1,0 +1,16 @@
+0.0.4.2
++changed the update annoucer, now it only shows txt if update ist true
++Added Range-Pickup for Blocks
++added antiSwimm for creative fly
++Fixed Range-Break to Inventory ignoring sub-ids 
+
++added near Command showing you all loaded Mobs
++added killall Command to remove ALL loaded Entities
++added help Command to show all Commands
++added Selection
++added sel Command to remove the Selection
++added replace command to replace a specific block with another Block
++added set Command to set the Selection to a Block
++added move Command to move the Selected Blocks
++added shift Command to shift the Selection
++added expand Command to expand the Selection

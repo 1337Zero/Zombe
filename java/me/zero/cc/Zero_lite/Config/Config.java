@@ -15,7 +15,7 @@ public class Config {
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Main.searchupdates:true","Main.debug:false","Main.cmdControlCharacter:#",
+			"Main.searchupdates:true","Main.debug:false","Main.cmdControlCharacter:#","Main.selectionR:1.0F","Main.selectionG:1.0F","Main.selectionB:1.0F","Main.selectionAlpha:0.5F","Main.enableSelection:true","Main.firstMarkR:1.0F","Main.firstMarkG:0.0F","Main.firstMarkB:1.0F","Main.firstMarkAlpha:1.0F","Main.secondMarkR:0.0F","Main.secondMarkG:1.0F","Main.secondMarkB:1.0F","Main.secondMarkAlpha:1.0F",
 			"Fly-Mod.Key-Down:16","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:57","Fly-Mod.key-Toggle-fly:46","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false","Fly-Mod.nerfcreaetivefly:true",
 			"Speed-Mod.Toggle-speed:21","Speed-Mod.maxspeed:10","Speed-Mod.speed:1","Speed-Mod.showspeed:true","Speed-Mod.speed-Pos:UP_LEFT","Speed-Mod.togglespeed:false","Speed-Mod.speed-enabled:false","Speed-Mod.enabled:false",
 			"Info-Mod.FPS-Pos:UP_CENTER","Info-Mod.showFPS:false","Info-Mod.Dir-POS:UP_RIGHT","Info-Mod.showdir:false","Info-Mod.Coor-Pos:UP_RIGHT","Info-Mod.showcoor:false","Info-Mod.Worldage-Pos:UP_LEFT","Info-Mod.showworldage:false",
