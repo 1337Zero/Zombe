@@ -253,13 +253,14 @@ public class RangeMod implements Mod {
 										}									
 									}
 								}
+								lastplaced = System.currentTimeMillis();
 							}	
 						}				
 					}else{		
 						//Don't know how to make this in MP
 						//Maybe sending a packet but idk
 					}
-					lastplaced = System.currentTimeMillis();
+					
 				}
 			}				
 			//Picks the BLock you are looking at
@@ -284,11 +285,11 @@ public class RangeMod implements Mod {
 										minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.mainInventory[minecraft.thePlayer.inventory.currentItem] = newitem;
 									}
 								}
+								lastpicked = System.currentTimeMillis();
 							}
 						}
 					}
-				}
-				lastpicked = System.currentTimeMillis();
+				}				
 			}
 		}
 	}
