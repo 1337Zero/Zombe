@@ -1,5 +1,10 @@
 package me.zero.cc.Zero_lite.utils;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,6 +29,7 @@ public class CommandListener {
 
 	private Minecraft minecraft;
 	private LiteModMain main;
+	private Schematic schematics = null;
 	
 	public CommandListener(Minecraft minecraft,LiteModMain main){
 		this.minecraft = minecraft;
@@ -38,9 +44,18 @@ public class CommandListener {
 			}else if(cmd.equalsIgnoreCase("copy")){
 				return onCopyCommand();
 			}else if(cmd.equalsIgnoreCase("paste")){
-				return onPasteCommand();
+				if(schematics != null){
+					return onPasteCommand();
+				}else{
+					sendMessage("Please load a schematic first");
+					return true;
+				}
 			}else if(cmd.equalsIgnoreCase("save")){
 				return onSaveCommand();
+			}else if(cmd.contains("load")){
+				if(para.length == 2){	
+					return onLoadCommand(para[1]);					
+				}
 			}else if(cmd.contains("set")){
 				if(para.length == 2){		
 					try{
@@ -178,15 +193,31 @@ public class CommandListener {
 		return true;
 	}
 	private boolean onPasteCommand(){
-		sendMessage("Coding hard on this, try again later...:)");
+		schematics.pasteSchematic();
+		sendMessage("Pasted " + schematics.blocks.length + " Blocks/" + schematics.tileentity.tagCount() + " TileEntites/" + schematics.entities.tagCount() + " Entities");
+		schematics = null;
 		return true;
 	}
 	private boolean onSaveCommand(){
 		sendMessage("Coding hard on this, try again later...:)");
+		String path = System.getProperty("user.dir") + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe" + System.getProperty("file.separator") + "schematics";
 		return true;
 	}
-	private boolean onLoadCommand(){
-		sendMessage("Coding hard on this, try again later...:)");
+	private boolean onLoadCommand(String filename){
+		//TODO: Why is this not working on linux?
+		String path = System.getProperty("user.dir") + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe" + System.getProperty("file.separator") + "schematics" + System.getProperty("file.separator") + filename;
+		
+		File f = new File(path);
+		if(f.exists()){
+			try {
+				schematics = new Schematic(minecraft.theWorld, minecraft.thePlayer.posX, minecraft.thePlayer.posY, minecraft.thePlayer.posZ, f);
+				sendMessage("loaded " + schematics.blocks.length + " blocks");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else{
+			sendMessage(filename + " was not found in mods/Lite_Zombe/schematics");
+		}
 		return true;
 	}
 	private boolean onKillAll(){
@@ -219,7 +250,7 @@ public class CommandListener {
 				"&6paste --> &f Paste the Selectuion",
 				"&6sel --> &f Clears the Selection",
 				"&6save --> &f Saves from a Schematic",
-				"&6load --> &f Loads from a Schematic",
+				"&6load <name> --> &f Loads from a Schematic",
 				"&6replace <id> {meta} <id2> {meta2} --> &f Replaces a give Block with the given id");
 		
 		for(String s : cmdhelp){

@@ -67,6 +67,7 @@ public class FlyMod implements Mod{
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(flyenabled){
 					flyenabled = false;
+					//minecraft.thePlayer.hurtResistantTime = 1000;
 					speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);					
 				}else{				
 					flyenabled = true;				
@@ -96,6 +97,7 @@ public class FlyMod implements Mod{
 		}
 	}
 	private void Updatefly(){
+		minecraft.getIntegratedServer().getEntityWorld().getPlayerEntityByName(minecraft.thePlayer.getName()).fallDistance = 0;
 		if(!togglefly){
 			float value = (float) flyValue;
 			if(minecraft.gameSettings.keyBindSneak.isKeyDown() && !ignoreshift){

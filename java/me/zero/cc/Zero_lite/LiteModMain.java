@@ -66,7 +66,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private static KeyBinding Zombe_config = new KeyBinding("Zombe-Config", Keyboard.KEY_F7, "Zombe-Config");
 	private boolean init = false;
 	private ChatMod ch;
-	private Config config;
+	public static Config config;
 	private InfoLineManager ilm;
 	private Minecraft minecraft;
 	private UpdateChecker updatecheck;
@@ -74,7 +74,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private ArrayList<String > messages;
 	private String urlVersion = "";
 	private String downloadURL = "";
-	public String prefix = "&6[Lite-Zombe] ";
+	public static String prefix = "&6[Lite-Zombe] ";
 	private boolean update = true;
 	private ArrayList<Markables> marks = new ArrayList<Markables>();
 	private CommandListener cmdlist;
@@ -89,7 +89,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		return "Zombe-Lite";
 	}
 	public String getVersion() {
-		return "0.0.4.2";
+		return "0.0.4.3";
 	}
 
 	public void init(File configPath) {	
@@ -97,6 +97,9 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		config = new Config();	
 		update = Boolean.valueOf(config.getData("Main.searchupdates"));
 		enableselection = Boolean.valueOf(config.getData("Main.enableSelection"));
+		if(LiteLoader.isDevelopmentEnvironment()){
+			config.replaceData("Main.debug", true + "");
+		}
 	}
 
 	public void upgradeSettings(String version, File configPath,File oldConfigPath) {	
@@ -177,7 +180,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 				if(messages.size() > 0 || urlVersion != "" & downloadURL != ""){					
 					if(!urlVersion.equalsIgnoreCase(getVersion())){
 						minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + "&4A new Lite-Zombe Version is avaible: " + urlVersion)));						
-						minecraft.thePlayer.addChatMessage(new ChatComponentText(downloadURL));
+						minecraft.thePlayer.addChatMessage(new ChatComponentText(downloadURL));		
 						
 						for(String msg : messages){		
 							minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + msg)));								

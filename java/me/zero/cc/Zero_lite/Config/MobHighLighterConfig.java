@@ -63,7 +63,7 @@ public class MobHighLighterConfig {
 	
 	public MobHighLighterConfig(){
 		path = System.getProperty("user.dir");
-		path = path + System.getProperty("file.separator") + "Mods" + System.getProperty("file.separator") + "Lite_Zombe";
+		path = path + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe";
 		try {
 			if(!LiteLoader.isDevelopmentEnvironment()){
 				loadConfig();
@@ -84,7 +84,7 @@ public class MobHighLighterConfig {
 		if(!folder_Lite_Zombe.exists()){
 			folder_Lite_Zombe.mkdir();
 		}
-		File config_File = new File(path + "\\Mobhighlighter.cfg");
+		File config_File = new File(path + System.getProperty("file.separator") + "Mobhighlighter.cfg");
 		if(!config_File.exists()){
 			config_File.createNewFile();
 			createConfigFile(defaultconfig, "");

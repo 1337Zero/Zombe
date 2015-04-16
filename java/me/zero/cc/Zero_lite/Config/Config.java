@@ -16,7 +16,7 @@ public class Config {
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
 			"Main.searchupdates:true","Main.debug:false","Main.cmdControlCharacter:#","Main.selectionR:1.0F","Main.selectionG:1.0F","Main.selectionB:1.0F","Main.selectionAlpha:0.5F","Main.enableSelection:true","Main.firstMarkR:1.0F","Main.firstMarkG:0.0F","Main.firstMarkB:1.0F","Main.firstMarkAlpha:1.0F","Main.secondMarkR:0.0F","Main.secondMarkG:1.0F","Main.secondMarkB:1.0F","Main.secondMarkAlpha:1.0F",
-			"Fly-Mod.Key-Down:16","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:57","Fly-Mod.key-Toggle-fly:46","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false","Fly-Mod.nerfcreaetivefly:true",
+			"Fly-Mod.Key-Down:16","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:57","Fly-Mod.key-Toggle-fly:46","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false","Fly-Mod.nerfcreaetivefly:false",
 			"Speed-Mod.Toggle-speed:21","Speed-Mod.maxspeed:10","Speed-Mod.speed:1","Speed-Mod.showspeed:true","Speed-Mod.speed-Pos:UP_LEFT","Speed-Mod.togglespeed:false","Speed-Mod.speed-enabled:false","Speed-Mod.enabled:false",
 			"Info-Mod.FPS-Pos:UP_CENTER","Info-Mod.showFPS:false","Info-Mod.Dir-POS:UP_RIGHT","Info-Mod.showdir:false","Info-Mod.Coor-Pos:UP_RIGHT","Info-Mod.showcoor:false","Info-Mod.Worldage-Pos:UP_LEFT","Info-Mod.showworldage:false",
 			"Light-Mod.Toggle-Light:38","Light-Mod.lightmod-enabled:false",
@@ -34,7 +34,7 @@ public class Config {
 	
 	public Config(){
 		path = System.getProperty("user.dir");
-		path = path + System.getProperty("file.separator") + "Mods" + System.getProperty("file.separator") + "Lite_Zombe";
+		path = path + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe";
 		try {
 			if(!LiteLoader.isDevelopmentEnvironment()){
 				loadConfig();
@@ -50,12 +50,11 @@ public class Config {
 	 */
 	private void loadConfig() throws Exception{
 		data.clear();
-		File folder_Lite_Zombe = new File(path);		
-		
+		File folder_Lite_Zombe = new File(path);	
 		if(!folder_Lite_Zombe.exists()){
 			folder_Lite_Zombe.mkdir();
 		}
-		File config_File = new File(path + "\\config.cfg");
+		File config_File = new File(path + System.getProperty("file.separator") + "config.cfg");
 		if(!config_File.exists()){
 			config_File.createNewFile();
 			createConfigFile(defaultconfig, "");
