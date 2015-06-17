@@ -76,10 +76,13 @@ public class ReciepeMod implements Mod {
 				for (int i = 1; i < 10; i++) {
 					if (craft.inventorySlots.getInventory().get(i) != null) {
 						items.add((ItemStack) craft.inventorySlots.getInventory().get(i));
+						
+						//System.out.println("found item (" + craft.inventorySlots.getInventory().get(i) + ")");
 					}
 				}
 				// seach for possible outputs				
-				if(items.size() >= 1){
+				if(items.size() != olditems.size()){
+					System.out.println(items.size() + " != " + olditems.size());
 					if (!sortRecept(olditems).equalsIgnoreCase(sortRecept(items))) {
 						aktu = true;
 					}
@@ -89,9 +92,15 @@ public class ReciepeMod implements Mod {
 					}
 				}
 				if (aktu) {
-					try {		
-						olditems = items;
+					System.out.println("aktu");
+					try {				
+						olditems.clear();
+						for(int i = 0; i < items.size();i++){
+							olditems.add(items.get(i));
+						}
+						//olditems = items;
 						founditems = getOutPuts(cfl, items);
+						items.clear();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -145,9 +154,9 @@ public class ReciepeMod implements Mod {
 				List l = (List) f.get(src);
 				ArrayList<String> recept = new ArrayList<String>();
 				for (int x = 0; x < l.size(); x++) {
-					recept.add(l.get(x).toString());
+					recept.add(l.get(x).toString().split("@")[0]);
 				}
-				if (matchRezept(items, recept, src.getRecipeOutput().toString())) {
+				if (matchRezept(items, recept)) {
 					recip.add(src.getRecipeOutput());
 				}
 			} else if (cfl.getRecipeList().get(i) instanceof ShapedRecipes && !(cfl.getRecipeList().get(i) instanceof RecipesMapExtending)) {
@@ -172,10 +181,10 @@ public class ReciepeMod implements Mod {
 				ArrayList<String> recept = new ArrayList<String>();
 				for (int x = 0; x < l.length; x++) {
 					if (l[x] != null) {
-						recept.add(l[x].toString());
+						recept.add(l[x].toString().split("@")[0]);
 					}
 				}
-				if (matchRezept(items, recept, src.getRecipeOutput().toString())) {
+				if (matchRezept(items, recept)) {
 					recip.add(src.getRecipeOutput());
 				}							
 			}
@@ -183,7 +192,7 @@ public class ReciepeMod implements Mod {
 		return recip;
 	}
 
-	private boolean matchRezept(ArrayList<ItemStack> items,ArrayList<String> recept, String output) {
+	private boolean matchRezept(ArrayList<ItemStack> items,ArrayList<String> recept) {
 		boolean[] match = new boolean[sortStringRecept(recept).split(";").length];		
 		if (recept.size() >= 1) {
 			if (sortRecept(items).contains(sortStringRecept(recept))) {
@@ -207,6 +216,7 @@ public class ReciepeMod implements Mod {
 							}
 							if(itemamount <= Integer.parseInt(sorteditems[x].split(":")[1])){
 								betweenmatch[x] = true;
+								//System.out.println(sorteditems[x]);
 							}							
 						}
 					}
@@ -231,9 +241,10 @@ public class ReciepeMod implements Mod {
 		String back = "";
 		HashMap<String, Integer> counts = new HashMap<String, Integer>();
 		ArrayList<String> items = new ArrayList<String>();
-
 		for (ItemStack sitem : receptitems) {
+			//System.out.println(sitem);
 			String item = sitem.toString().split("@")[0];
+			//String item = sitem.toString();
 			if (!items.contains(item)) {
 				items.add(item);
 			}
@@ -268,6 +279,7 @@ public class ReciepeMod implements Mod {
 
 		for (String sitem : receptitems) {
 			String item = sitem.toString().split("@")[0];
+			//String item = sitem.toString();
 			if(item != ""){
 				if (!items.contains(item)) {
 					items.add(item);
@@ -334,7 +346,6 @@ public class ReciepeMod implements Mod {
 
 	@Override
 	public int getOn() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }

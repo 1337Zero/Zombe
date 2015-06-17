@@ -205,6 +205,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 									sendMessage("&6Set Firstmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ());						
 							
 									if(secondmark != null){
+										//selection = new Selection((Math.max(firstmark.getY(), secondmark.getY()) - Math.min(firstmark.getY(), secondmark.getY())), (Math.max(firstmark.getZ(), secondmark.getZ()) - Math.min(firstmark.getZ(), secondmark.getZ())), (Math.max(firstmark.getX(), secondmark.getX()) - Math.min(firstmark.getX(), secondmark.getX())), firstmark, secondmark, Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
 										selection = SelectionHelper.calcSelectedBlocks(minecraft, firstmark, secondmark,Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
 										sendMessage("Selected " + selection.size() + " Blocks");
 									}

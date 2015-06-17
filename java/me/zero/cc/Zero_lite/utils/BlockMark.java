@@ -39,6 +39,7 @@ public class BlockMark implements Markables {
 	    GL.glColor4f(r,g,b,alpha);
 	    AxisAlignedBB axis = minecraft.theWorld.getBlockState(new BlockPos(x,y, z)).getBlock().getSelectedBoundingBox(minecraft.theWorld, new BlockPos(x, y, z));
 	    
+	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.minZ);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.minZ);		

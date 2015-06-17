@@ -10,166 +10,32 @@ import net.minecraft.util.BlockPos;
 public class SelectionHelper {
 
 	public static ArrayList<BlockMark> calcSelectedBlocks(Minecraft minecraft,BlockMark firstMark,BlockMark secondMark,float r,float g,float b,float alpha){
-		
 		ArrayList<BlockMark> marks = new ArrayList<BlockMark>();
 		
-		int movex = (int) (secondMark.getX() - firstMark.getX());
-		int movey = (int) (secondMark.getY() - firstMark.getY());
-		int movez = (int) (secondMark.getZ() - firstMark.getZ());
+		double minX = Math.min(firstMark.getX(), secondMark.getX());
+		double minY = Math.min(firstMark.getY(), secondMark.getY());
+		double minZ = Math.min(firstMark.getZ(), secondMark.getZ());
 		
-		if(movey > 0) movey++;
-		
-		if(movex > 0 & movez > 0){
-			if(movey > 0){
-				for(int y = 0; y < movey;y++){
-					for(int x = 0; x <= movex;x++){
-						for(int z = 0; z <= movez;z++){marks.add(new BlockMark((int)(firstMark.getX() + x), (int)(firstMark.getY() + y), (int)(firstMark.getZ() + z), minecraft, r,g, b, alpha));
-						}
-					}
+		double maxX = Math.max(firstMark.getX(), secondMark.getX());
+		double maxY = Math.max(firstMark.getY(), secondMark.getY());
+		double maxZ = Math.max(firstMark.getZ(), secondMark.getZ());
+
+		for(double y = minY; y <= maxY;y++){
+			for(double x = maxX; x >= minX; x--){			
+				for(double z = maxZ; z >= minZ;z--){					
+					marks.add(new BlockMark((int)(x), (int)(y), (int)(z), minecraft, r,g, b, 1.0f));
 				}
-			}else{
-				for(int y = firstMark.getY(); y >= secondMark.getY();y--){
-					for(int x = 0; x <= movex;x++){
-						for(int z = 0; z <= movez;z++){marks.add(new BlockMark((int)(firstMark.getX() + x), (int)(y), (int)(firstMark.getZ() + z), minecraft, r,g, b, alpha));
-						}
-					}
-				}
-			}			
-		}else if(movex > 0 & movez < 0){			
-			if(movey > 0){
-				for(int y = firstMark.getY(); y <= secondMark.getY();y++){
-					for(int x = 0; x <= movex;x++){
-						for(int z = firstMark.getZ(); z >= secondMark.getZ();z--){
-							marks.add(new BlockMark((int)(firstMark.getX() + x), (int)(y), (int)(z), minecraft, r,g, b, alpha));
-						}
-					}
-				}
-			}else{
-				for(int y = firstMark.getY(); y >= secondMark.getY();y--){
-					for(int x = 0; x <= movex;x++){
-						for(int z = firstMark.getZ(); z >= secondMark.getZ();z--){
-							marks.add(new BlockMark((int)(firstMark.getX() + x), (int)(y), (int)(z), minecraft, r,g, b, alpha));
-						}
-					}
-				}
-			}
-		}else if(movex < 0 & movez > 0){
-			if(movey > 0){
-				for(int y = firstMark.getY(); y <= secondMark.getY();y++){
-					for(int x = firstMark.getX(); x >= secondMark.getX();x--){
-						for(int z = 0; z <= movez;z++){
-							marks.add(new BlockMark((int)(x), (int)(y), (int)(firstMark.getZ() + z), minecraft, r,g, b, alpha));
-						}
-					}
-				}
-			}else{
-				for(int y = firstMark.getY(); y >= secondMark.getY();y--){
-					for(int x = firstMark.getX(); x >= secondMark.getX();x--){
-						for(int z = 0; z <= movez;z++){
-							marks.add(new BlockMark((int)(x), (int)(y), (int)(firstMark.getZ() + z), minecraft, r,g, b, alpha));
-						}
-					}
-				}
-			}
-		}else if(movex < 0 & movez < 0){
-			if(movey > 0){
-				for(int y = firstMark.getY(); y <= secondMark.getY();y++){
-					for(int x = firstMark.getX(); x >= secondMark.getX();x--){
-						for(int z = firstMark.getZ(); z >= secondMark.getZ();z--){
-							marks.add(new BlockMark((int)(x), (int)(y), (int)(z), minecraft, r,g, b, alpha));
-						}
-					}
-				}	
-			}else{
-				for(int y = firstMark.getY(); y >= secondMark.getY();y--){
-					for(int x = firstMark.getX(); x >= secondMark.getX();x--){
-						for(int z = firstMark.getZ(); z >= secondMark.getZ();z--){
-							marks.add(new BlockMark((int)(x), (int)(y), (int)(z), minecraft, r,g, b, alpha));
-						}
-					}
-				}	
-			}					
-		}else{
-			if(movex == 0){
-				if(movey > 0){
-					if(movez > 0){
-						for(int y = firstMark.getY(); y <= secondMark.getY();y++){
-							for(int x = 0; x < 1;x++){
-								for(int z = firstMark.getZ(); z <= secondMark.getZ();z++){
-									marks.add(new BlockMark((int)(firstMark.getX() + x), (int)(y), (int)(z), minecraft, r,g, b, alpha));
-								}
-							}
-						}
-					}else{
-						for(int y = firstMark.getY(); y <= secondMark.getY();y++){
-							for(int x = 0; x < 1;x++){
-								for(int z = firstMark.getZ(); z >= secondMark.getZ();z--){
-									marks.add(new BlockMark((int)(firstMark.getX() + x), (int)(y), (int)(z), minecraft, r,g, b, alpha));
-								}
-							}
-						}	
-					}						
-				}else{
-					if(movez > 0){
-						for(int y = firstMark.getY(); y >= secondMark.getY();y--){
-							for(int x = 0; x < 1;x++){
-								for(int z = firstMark.getZ(); z <= secondMark.getZ();z++){
-									marks.add(new BlockMark((int)(firstMark.getX() + x), (int)(y), (int)(z), minecraft, r,g, b, alpha));
-								}
-							}
-						}
-					}else{
-						for(int y = firstMark.getY(); y >= secondMark.getY();y--){
-							for(int x = 0; x < 1;x++){
-								for(int z = firstMark.getZ(); z >= secondMark.getZ();z--){
-									marks.add(new BlockMark((int)(firstMark.getX() + x), (int)(y), (int)(z), minecraft, r,g, b, alpha));
-								}
-							}
-						}	
-					}
-				}
-			}else if(movez == 0){
-				if(movey > 0){
-					if(movex > 0){
-						for(int y = firstMark.getY(); y <= secondMark.getY();y++){
-							for(int x = firstMark.getX(); x <= secondMark.getX();x++){
-								for(int z = 0; z < 1;z++){
-									marks.add(new BlockMark((int)(x), (int)(y), (int)(firstMark.getZ() + z), minecraft, r,g, b, alpha));
-								}
-							}
-						}
-					}else{
-						for(int y = firstMark.getY(); y <= secondMark.getY();y++){
-							for(int x = firstMark.getX(); x >= secondMark.getX();x--){
-								for(int z = 0; z < 1;z++){
-									marks.add(new BlockMark((int)(x), (int)(y), (int)(firstMark.getZ() + z), minecraft, r,g, b, alpha));
-								}
-							}
-						}
-					}
-				}else{
-					if(movex > 0){
-						for(int y = firstMark.getY(); y >= secondMark.getY();y--){
-							for(int x = firstMark.getX(); x <= secondMark.getX();x++){
-								for(int z = 0; z < 1;z++){	
-									marks.add(new BlockMark((int)(x), (int)(y), (int)(firstMark.getZ() + z), minecraft, r,g, b, alpha));
-								}
-							}
-						}
-					}else{
-						for(int y = firstMark.getY(); y >= secondMark.getY();y--){
-							for(int x = firstMark.getX(); x >= secondMark.getX();x--){
-								for(int z = 0; z < 1;z++){
-									marks.add(new BlockMark((int)(x), (int)(y), (int)(firstMark.getZ() + z), minecraft, r,g, b, alpha));
-								}
-							}
-						}
-					}
-				}
-			}else{
-				System.out.println("dafuq is this?");
 			}
 		}
-		return marks;		
+		return marks;
+	}
+	public static short calcHeight(BlockMark first,BlockMark second){
+		return (short) (((Math.max(first.getY(), second.getY())) - (Math.min(first.getY(), second.getY()))) +1);
+	}
+	public static short calcWidth(BlockMark first,BlockMark second){
+		return (short) (((Math.max(first.getX(), second.getX())) - (Math.min(first.getX(), second.getX()))) +1);
+	}
+	public static short calcLength(BlockMark first,BlockMark second){
+		return (short) (((Math.max(first.getZ(), second.getZ())) - (Math.min(first.getZ(), second.getZ()))) +1);
 	}
 }

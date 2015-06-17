@@ -50,8 +50,10 @@ public class CommandListener {
 					sendMessage("Please load a schematic first");
 					return true;
 				}
-			}else if(cmd.equalsIgnoreCase("save")){
-				return onSaveCommand();
+			}else if(cmd.contains("save")){
+				if(para.length == 2){	
+					return onSaveCommand(para[1]);
+				}				
 			}else if(cmd.contains("load")){
 				if(para.length == 2){	
 					return onLoadCommand(para[1]);					
@@ -78,7 +80,7 @@ public class CommandListener {
 			}else if(cmd.equals("help")){
 				return onHelpCommand();
 			}else if(cmd.equals("sel")){
-				return onSellCommand();
+				return onSelCommand();
 			}else if(cmd.contains("replace")){
 				if(para.length == 3){
 					try{
@@ -147,7 +149,7 @@ public class CommandListener {
 				}						
 			}					
 		}
-		sendMessage(main.formateTextColor("&6found &4" + founds.size() + "&6 diffrent Entities"));
+		sendMessage("&6found &4" + founds.size() + "&6 diffrent Entities");
 		for(int i = 0; i < founds.size();i++){
 			sendMessage("&f" + founds.get(i) + ": " + moblist.get(founds.get(i)));
 		}
@@ -189,23 +191,48 @@ public class CommandListener {
 		return true;
 	}
 	private boolean onCopyCommand(){
-		sendMessage("Coding hard on this, try again later...:)");
+		try{
+			if(main.getSelection().size() > 0){
+				schematics = new Schematic(main.getSelection());
+				sendMessage("Copied " + main.getSelection().size() + " Blocks");
+			}else{
+				sendMessage("&4Make a selection first!");
+			}
+		}catch(Exception e){
+			sendMessage("&4An Error occured while parsing the Selection into a schematic");
+			e.printStackTrace();
+		}
+			
 		return true;
 	}
 	private boolean onPasteCommand(){
-		schematics.pasteSchematic();
-		sendMessage("Pasted " + schematics.blocks.length + " Blocks/" + schematics.tileentity.tagCount() + " TileEntites/" + schematics.entities.tagCount() + " Entities");
-		schematics = null;
+		if(schematics != null){
+			schematics.pasteSchematic();
+			sendMessage("Pasted " + schematics.blocks.length + " Blocks/" + schematics.tileentity.tagCount() + " Tiles/" + schematics.entities.tagCount() + " Entities");
+			sendMessage("Do " + LiteModMain.config.getData("Main.cmdControlCharacter") + "sel to clear your Ram from it!");
+		}
 		return true;
 	}
-	private boolean onSaveCommand(){
-		sendMessage("Coding hard on this, try again later...:)");
-		String path = System.getProperty("user.dir") + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe" + System.getProperty("file.separator") + "schematics";
+	private boolean onSaveCommand(String name){		
+		System.out.println("onsave");
+		if(schematics != null){
+			System.out.println("onsave");
+			try{
+				System.out.println("onsave");
+				sendMessage("Trying to save " + name + ".schematics...");
+				schematics.writeToFile(name, schematics.getNbttag());
+				sendMessage("saving done!");
+			}catch(IOException e){
+				e.printStackTrace();
+			}			
+		}else{
+			sendMessage(LiteModMain.formateTextColor(LiteModMain.prefix + "&4Schematic = null ... there is something wrong :("));
+		}
 		return true;
 	}
 	private boolean onLoadCommand(String filename){
-		//TODO: Why is this not working on linux?
-		String path = System.getProperty("user.dir") + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe" + System.getProperty("file.separator") + "schematics" + System.getProperty("file.separator") + filename;
+		main.getSelection().clear();
+		String path = System.getProperty("user.dir") + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe" + System.getProperty("file.separator") + "schematics" + System.getProperty("file.separator") + filename + ".schematic";
 		
 		File f = new File(path);
 		if(f.exists()){
@@ -384,8 +411,9 @@ public class CommandListener {
 		sendMessage("Moved " + main.getSelection().size() + " Blocks");	
 		return true;
 	}
-	private boolean onSellCommand(){
+	private boolean onSelCommand(){
 		main.getSelection().clear();
+		schematics = null;
 		main.setFirstmark(null);
 		main.setSecondmark(null);
 		return true;
