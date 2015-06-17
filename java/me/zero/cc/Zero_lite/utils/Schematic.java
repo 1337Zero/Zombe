@@ -73,6 +73,7 @@ public class Schematic{
 	   					double zpos = z + playerZ;
 	   					int b = blocks[index] & 0xFF;
 	   					Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(xpos, ypos, zpos), Block.getBlockById(b).getStateFromMeta(data[index]));
+	   					System.out.println(b + ":" + data[index] + "@ " + new BlockPos(xpos, ypos, zpos));
 	   				}
 	   			}
 	   		}
@@ -161,11 +162,12 @@ public class Schematic{
 			int i = 0;
 			
 			for(double y = minY; y <= maxY;y++){
-				for(double z = maxZ; z >= minZ;z--){
-					for(double x = maxX; x >= minX; x--){						
+				for(double z = minZ; z <= maxZ;z++){
+					for(double x = minX; x <= maxX; x++){						
 						BlockPos mypos = new BlockPos(x,y,z);
 						blocks[i] = (byte) Block.getIdFromBlock(Minecraft.getMinecraft().theWorld.getBlockState(mypos).getBlock());
-						data[i++] = (byte) Block.getStateId(Minecraft.getMinecraft().theWorld.getBlockState(mypos));
+						data[i] = (byte) Minecraft.getMinecraft().theWorld.getBlockState(mypos).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(mypos));
+						i++;
 					}
 				}
 			}

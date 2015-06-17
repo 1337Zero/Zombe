@@ -202,7 +202,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 									firstmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.firstMarkR")), Float.valueOf(config.getData("Main.firstMarkG")), Float.valueOf(config.getData("Main.firstMarkB")), Float.valueOf(config.getData("Main.firstMarkAlpha")));
 									//firstmark = new BlockMark(0, 0, 0, 0, pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ());
 									lastFirstMarkPick = System.currentTimeMillis();
-									sendMessage("&6Set Firstmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ());						
+									sendMessage("&6Set Firstmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ() + ")");						
 							
 									if(secondmark != null){
 										//selection = new Selection((Math.max(firstmark.getY(), secondmark.getY()) - Math.min(firstmark.getY(), secondmark.getY())), (Math.max(firstmark.getZ(), secondmark.getZ()) - Math.min(firstmark.getZ(), secondmark.getZ())), (Math.max(firstmark.getX(), secondmark.getX()) - Math.min(firstmark.getX(), secondmark.getX())), firstmark, secondmark, Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
@@ -222,7 +222,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 									MovingObjectPosition pos = minecraft.thePlayer.rayTrace(5,1.0F);
 									secondmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.secondMarkR")), Float.valueOf(config.getData("Main.secondMarkG")), Float.valueOf(config.getData("Main.secondMarkB")), Float.valueOf(config.getData("Main.secondMarkAlpha")));
 									lastSecondMarkPick = System.currentTimeMillis();
-									sendMessage("&6Set Secondmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ());	
+									sendMessage("&6Set Secondmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ() + ")");	
 								
 									if(firstmark != null){
 										selection = SelectionHelper.calcSelectedBlocks(minecraft, firstmark, secondmark,Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
