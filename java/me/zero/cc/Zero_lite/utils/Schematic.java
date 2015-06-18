@@ -46,11 +46,8 @@ public class Schematic{
 	public NBTTagList entities,tileentity;
 	private NBTTagCompound compound;
 	
-	public Schematic(WorldClient world,double playerX,double playerY,double playerZ,File f) throws IOException{
+	public Schematic(WorldClient world,File f) throws IOException{
 		this.world = world;
-		this.playerX = playerX;
-		this.playerY = playerY;
-		this.playerZ = playerZ;		
 		load(f);
 	}
 	/**
@@ -62,42 +59,41 @@ public class Schematic{
 		loadFromSelection(selection);
 	}
 	
-	 public void pasteSchematic(){ 
-		 try{
-	   		for(int x = 0; x < width; ++x){
-	   			for(int y = 0; y < height; ++y){
-	   				for(int z = 0; z < length; ++z){
-	   					int index = y * width * length + z * width + x;	   					
-	   					double xpos = x + playerX;
-	   					double ypos = y + playerY;
-	   					double zpos = z + playerZ;
-	   					int b = blocks[index] & 0xFF;
-	   					Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(xpos, ypos, zpos), Block.getBlockById(b).getStateFromMeta(data[index]));
-	   					System.out.println(b + ":" + data[index] + "@ " + new BlockPos(xpos, ypos, zpos));
-	   				}
-	   			}
-	   		}
-	   		if(tileentity != null){
-	   			for(int i = 0; i < tileentity.tagCount();i++){
-		   			TileEntity enti = TileEntity.createAndLoadEntity(tileentity.getCompoundTagAt(i));
-		   			enti.setPos(new BlockPos(enti.getPos().getX() + Minecraft.getMinecraft().thePlayer.posX,enti.getPos().getY() + Minecraft.getMinecraft().thePlayer.posY, enti.getPos().getZ() + Minecraft.getMinecraft().thePlayer.posZ));
-		   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setTileEntity(enti.getPos(), enti);
-		   		}
-	   		}
-	   		if(entities != null){
-	   			for(int i = 0; i < entities.tagCount();i++){	   			
-		   			Entity ent = createEntityFromNBT(entities.getCompoundTagAt(i));
-		   			if(ent != null){
-		   				Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().spawnEntityInWorld(ent);
-		   			}	   			
-		   		}
-	   		}
-	   		
-   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().updateEntities();
-	   }catch(Exception e){
-		   e.printStackTrace();
-	   }
-	 }
+	 public void pasteSchematic(double px,double py,double pz){ 
+			 try{
+			   		for(int x = 0; x < width; ++x){
+			   			for(int y = 0; y < height; ++y){
+			   				for(int z = 0; z < length; ++z){
+			   					int index = y * width * length + z * width + x;	   					
+			   					double xpos = x + px;
+			   					double ypos = y + py;
+			   					double zpos = z + pz;
+			   					int b = blocks[index] & 0xFF;
+			   					Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(xpos, ypos, zpos), Block.getBlockById(b).getStateFromMeta(data[index]));
+			   				}
+			   			}
+			   		}
+			   		if(tileentity != null){
+			   			for(int i = 0; i < tileentity.tagCount();i++){
+				   			TileEntity enti = TileEntity.createAndLoadEntity(tileentity.getCompoundTagAt(i));
+				   			enti.setPos(new BlockPos(enti.getPos().getX() + Minecraft.getMinecraft().thePlayer.posX,enti.getPos().getY() + Minecraft.getMinecraft().thePlayer.posY, enti.getPos().getZ() + Minecraft.getMinecraft().thePlayer.posZ));
+				   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setTileEntity(enti.getPos(), enti);
+				   		}
+			   		}
+			   		if(entities != null){
+			   			for(int i = 0; i < entities.tagCount();i++){	   			
+				   			Entity ent = createEntityFromNBT(entities.getCompoundTagAt(i));
+				   			if(ent != null){
+				   				Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().spawnEntityInWorld(ent);
+				   			}	   			
+				   		}
+			   		}
+			   		
+		   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().updateEntities();
+			   }catch(Exception e){
+				   e.printStackTrace();
+			   } 
+		 }
 	 private void load(File f) throws IOException{
 		 FileInputStream fis = new FileInputStream(f);
 		 NBTTagCompound nbt = null;
@@ -135,18 +131,16 @@ public class Schematic{
 	  * @param selection
 	  */
 	 public void loadFromSelection(ArrayList<BlockMark> selection){
-		 System.out.println("creating nbttag....");
-		 compound = new NBTTagCompound();
-		 byte[] blocks = new byte[selection.size()];
-		 byte[] data = new byte[selection.size()];
-		 NBTTagList tileentities = new NBTTagList();
-		 width = SelectionHelper.calcWidth(selection.get(0), selection.get(selection.size()-1));
-		 height = SelectionHelper.calcHeight(selection.get(0), selection.get(selection.size()-1));
-		 length = SelectionHelper.calcLength(selection.get(0), selection.get(selection.size()-1));
-		 compound.setShort("Width", width);
-		 compound.setShort("Height", height);
-		 compound.setShort("Length", length);
-		//System.out.println(selection);
+		compound = new NBTTagCompound();
+		blocks = new byte[selection.size()];
+		data = new byte[selection.size()];
+		NBTTagList tileentities = new NBTTagList();
+		width = SelectionHelper.calcWidth(selection.get(0), selection.get(selection.size()-1));
+		height = SelectionHelper.calcHeight(selection.get(0), selection.get(selection.size()-1));
+		length = SelectionHelper.calcLength(selection.get(0), selection.get(selection.size()-1));
+		compound.setShort("Width", width);
+		compound.setShort("Height", height);
+		compound.setShort("Length", length);
 		
 		 BlockMark firstMark = selection.get(0);
 		 BlockMark secondMark = selection.get(selection.size()-1);
@@ -171,6 +165,7 @@ public class Schematic{
 					}
 				}
 			}
+			System.out.println("loaded " + blocks.length + " blocks");
 		
 		/* for(int i = 0; i < selection.size();i++){
 			 blocks[i] = (byte) Block.getIdFromBlock(Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(selection.get(i).getX(), selection.get(i).getY(), selection.get(i).getZ())).getBlock());
@@ -211,7 +206,6 @@ public class Schematic{
 		 compound.setByteArray("Blocks", blocks);
 		 compound.setByteArray("Data", data);
 		 compound.setTag("Entities", new NBTTagList());
-		 System.out.println("...done");
 	 }
 	 public void writeToFile(String filename,NBTTagCompound nbttag) throws IOException{
 		 System.out.println("writing to file...");

@@ -207,7 +207,7 @@ public class CommandListener {
 	}
 	private boolean onPasteCommand(){
 		if(schematics != null){
-			schematics.pasteSchematic();
+			schematics.pasteSchematic(minecraft.thePlayer.posX, minecraft.thePlayer.posY, minecraft.thePlayer.posZ);
 			sendMessage("Pasted " + schematics.blocks.length + " Blocks/" + schematics.tileentity.tagCount() + " Tiles/" + schematics.entities.tagCount() + " Entities");
 			sendMessage("Do " + LiteModMain.config.getData("Main.cmdControlCharacter") + "sel to clear your Ram from it!");
 		}
@@ -219,9 +219,9 @@ public class CommandListener {
 			System.out.println("onsave");
 			try{
 				System.out.println("onsave");
-				sendMessage("Trying to save " + name + ".schematics...");
+				//sendMessage("Trying to save " + name + ".schematics...");
 				schematics.writeToFile(name, schematics.getNbttag());
-				sendMessage("saving done!");
+				sendMessage("saved as " + name + ".schematic!");
 			}catch(IOException e){
 				e.printStackTrace();
 			}			
@@ -237,13 +237,13 @@ public class CommandListener {
 		File f = new File(path);
 		if(f.exists()){
 			try {
-				schematics = new Schematic(minecraft.theWorld, minecraft.thePlayer.posX, minecraft.thePlayer.posY, minecraft.thePlayer.posZ, f);
+				schematics = new Schematic(minecraft.theWorld, f);
 				sendMessage("loaded " + schematics.blocks.length + " blocks");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}else{
-			sendMessage(filename + " was not found in mods/Lite_Zombe/schematics");
+			sendMessage(filename + " was not found in &6mods/Lite_Zombe/schematics");
 		}
 		return true;
 	}
