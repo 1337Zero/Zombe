@@ -32,6 +32,8 @@ public class SpeedMod implements Mod {
 	private GuiPositions pos = GuiPositions.UP_LEFT;
 	private boolean showspeed = true;
 
+	private float rotationyaw = 0;
+	
 	public SpeedMod(Minecraft minecraft,LiteModMain speicher){
 		this.minecraft = minecraft;
 		this.speicher = speicher;
@@ -68,6 +70,7 @@ public class SpeedMod implements Mod {
 	}
 	@Override
 	public void use() {		
+		rotationyaw = minecraft.thePlayer.rotationYaw;
 		if(Keyboard.isKeyDown(onkey) && !(minecraft.gameSettings.keyBindRight.isKeyDown() || minecraft.gameSettings.keyBindLeft.isKeyDown() || minecraft.gameSettings.keyBindForward.isKeyDown() || minecraft.gameSettings.keyBindBack.isKeyDown() || (minecraft.currentScreen != null))){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(speedenabled){
@@ -144,35 +147,35 @@ public class SpeedMod implements Mod {
 			int percent = 0;
 			boolean forward = true;
 			boolean pressed = false;
-			if(minecraft.thePlayer.rotationYaw < 0){
-				minecraft.thePlayer.rotationYaw = minecraft.thePlayer.rotationYaw + 360;
+			if(rotationyaw < 0 ){
+				rotationyaw = rotationyaw + 360;
 			}
 			if(minecraft.gameSettings.keyBindRight.isKeyDown() && minecraft.gameSettings.keyBindForward.isKeyDown()){
-				percent = (int)(minecraft.thePlayer.rotationYaw - (((int)minecraft.thePlayer.rotationYaw/360))*360)+45;
+				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)+45;
 				pressed = true;
 			}else if(minecraft.gameSettings.keyBindLeft.isKeyDown() && minecraft.gameSettings.keyBindForward.isKeyDown()){
-				percent = (int)(minecraft.thePlayer.rotationYaw - (((int)minecraft.thePlayer.rotationYaw/360))*360)-45;
+				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)-45;
 				pressed = true;
 			}else if(minecraft.gameSettings.keyBindRight.isKeyDown() && minecraft.gameSettings.keyBindBack.isKeyDown()){
-				percent = (int)(minecraft.thePlayer.rotationYaw - (((int)minecraft.thePlayer.rotationYaw/360))*360)-45;
+				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)-45;
 				pressed = true;
 				forward = false;
 			}else if(minecraft.gameSettings.keyBindLeft.isKeyDown() && minecraft.gameSettings.keyBindBack.isKeyDown()){
-				percent = (int)(minecraft.thePlayer.rotationYaw - (((int)minecraft.thePlayer.rotationYaw/360))*360)+45;
+				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)+45;
 				pressed = true;
 				forward = false;
 			}else if(minecraft.gameSettings.keyBindForward.isKeyDown()){
-				percent = (int)(minecraft.thePlayer.rotationYaw - (((int)minecraft.thePlayer.rotationYaw/360))*360);
+				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360);
 				pressed = true;
 			}else if(minecraft.gameSettings.keyBindBack.isKeyDown()){
-				percent = (int)(minecraft.thePlayer.rotationYaw - (((int)minecraft.thePlayer.rotationYaw/360))*360);
+				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360);
 				forward = false;
 				pressed = true;
 			}else if(minecraft.gameSettings.keyBindLeft.isKeyDown()){
-				percent = (int)(minecraft.thePlayer.rotationYaw - (((int)minecraft.thePlayer.rotationYaw/360))*360)-90;
+				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)-90;
 				pressed = true;
 			}else if(minecraft.gameSettings.keyBindRight.isKeyDown()){
-				percent = (int)(minecraft.thePlayer.rotationYaw - (((int)minecraft.thePlayer.rotationYaw/360))*360)+90;
+				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)+90;
 				pressed = true;
 			}else{
 				minecraft.thePlayer.motionX = 0;
@@ -190,7 +193,7 @@ public class SpeedMod implements Mod {
         mz += -movef * MathHelper.cos(percent * (float)Math.PI / 180.0f);
         if(forward){
         	minecraft.thePlayer.motionX = mx;
-            minecraft.thePlayer.motionZ = mz;	
+            minecraft.thePlayer.motionZ = mz;
         }else{
         	minecraft.thePlayer.motionX = -mx;
             minecraft.thePlayer.motionZ = -mz;

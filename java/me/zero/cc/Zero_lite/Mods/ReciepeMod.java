@@ -82,7 +82,7 @@ public class ReciepeMod implements Mod {
 				}
 				// seach for possible outputs				
 				if(items.size() != olditems.size()){
-					System.out.println(items.size() + " != " + olditems.size());
+					//System.out.println(items.size() + " != " + olditems.size());
 					if (!sortRecept(olditems).equalsIgnoreCase(sortRecept(items))) {
 						aktu = true;
 					}
@@ -92,7 +92,7 @@ public class ReciepeMod implements Mod {
 					}
 				}
 				if (aktu) {
-					System.out.println("aktu");
+					//System.out.println("aktu");
 					try {				
 						olditems.clear();
 						for(int i = 0; i < items.size();i++){
