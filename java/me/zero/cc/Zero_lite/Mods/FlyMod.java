@@ -97,7 +97,9 @@ public class FlyMod implements Mod{
 		}
 	}
 	private void Updatefly(){
-		minecraft.getIntegratedServer().getEntityWorld().getPlayerEntityByName(minecraft.thePlayer.getName()).fallDistance = 0;
+		if(minecraft.isSingleplayer()){
+			minecraft.getIntegratedServer().getEntityWorld().getPlayerEntityByName(minecraft.thePlayer.getName()).fallDistance = 0;
+		}
 		if(!togglefly){
 			float value = (float) flyValue;
 			if(minecraft.gameSettings.keyBindSneak.isKeyDown() && !ignoreshift){
