@@ -1,5 +1,9 @@
 package me.zero.cc.Zero_lite.Mods;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import org.lwjgl.input.Keyboard;
 
 import com.mumfrey.liteloader.core.LiteLoader;
@@ -31,6 +35,7 @@ public class SpeedMod implements Mod {
 	private boolean toggledspeed = false;
 	private GuiPositions pos = GuiPositions.UP_LEFT;
 	private boolean showspeed = true;
+	private boolean intelligentmode = false;
 
 	private float rotationyaw = 0;
 	
@@ -185,10 +190,15 @@ public class SpeedMod implements Mod {
 				doUpDateSpeed(percent, minecraft,forward);			
 			}			
 	}
-	private void doUpDateSpeed(int percent,Minecraft minecraft,boolean forward){
-		float mx = 0; float mz = 0;
-		float move = (float) speedValue;
-		float movef = -move * MathHelper.cos(minecraft.thePlayer.rotationPitch * (float)Math.PI / 180.0f);
+	private void doUpDateSpeed(int percent,Minecraft minecraft,boolean forward){		
+		double mx = 0; double mz = 0;
+		double move =  speedValue;
+		double movef;
+		if(intelligentmode){
+			movef = -move * MathHelper.cos(minecraft.thePlayer.rotationPitch * (float)Math.PI / 180.0f);
+		}else{
+			movef = -move * MathHelper.cos(minecraft.thePlayer.cameraPitch * (float)Math.PI / 180.0f);
+		}		
         mx += movef * MathHelper.sin(percent * (float)Math.PI / 180.0f);
         mz += -movef * MathHelper.cos(percent * (float)Math.PI / 180.0f);
         if(forward){
@@ -226,12 +236,15 @@ public class SpeedMod implements Mod {
 		return new SpeedModGui(speicher);
 	}
 	@Override
-	public void manupulateValue(String ValueToManupulate, int percent) {
+	public void manupulateValue(String ValueToManupulate, double percent) {
 		if(ValueToManupulate.equalsIgnoreCase("Speed")){
-			speedValue = (int) ((maxspeed / 100.0)*percent);
+			speedValue = ((maxspeed / 100.0)*percent);
+			NumberFormat df = NumberFormat.getInstance();
+			df.setMaximumFractionDigits(2);
+			speedValue = Double.valueOf(df.format(speedValue).replace(",", "."));
 			speicher.getConfig().replaceData("Speed-Mod.speed", speedValue + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = percent;
+			onkey = (int)percent;
 			speicher.getConfig().replaceData("Speed-Mod.Toggle-speed", onkey + "");
 		}else{		
 			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
@@ -250,6 +263,9 @@ public class SpeedMod implements Mod {
 		}else if(valueToManupulate.equalsIgnoreCase("showspeed")){
 			showspeed = b;
 			speicher.getConfig().replaceData("Speed-Mod.showspeed", showspeed + "");
+		}else if(valueToManupulate.equalsIgnoreCase("intelligentmode")){
+			intelligentmode = b;
+			speicher.getConfig().replaceData("Speed-Mod.intelligentmode", intelligentmode + "");
 		}else{	
 			System.out.println("Fehler: " + valueToManupulate + " is not a known Value in " + this.getName());
 		}
@@ -279,6 +295,14 @@ public class SpeedMod implements Mod {
 	 */
 	public void setToggledspeed(boolean toggledspeed) {
 		this.toggledspeed = toggledspeed;
+	}
+
+	public boolean isIntelligentmode() {
+		return intelligentmode;
+	}
+
+	public void setIntelligentmode(boolean intelligentmode) {
+		this.intelligentmode = intelligentmode;
 	}
 }
 class SpeedModGui extends GuiScreen{
@@ -311,9 +335,12 @@ class SpeedModGui extends GuiScreen{
 	 */
 	public void drawButtons(){
 		
-		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Speed", (int) ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getSpeedValue() , 150, 20, ModData.SpeedMod, "Speed", speicher);
+		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getSpeedValue() , 150, 20, ModData.SpeedMod, "Speed", speicher);
 		GuiBooleanButton enablespeed = new GuiBooleanButton(1, width/2-170, height/4-10, 150, 20, "Enable Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isEnabled(), "enablespeed", ModData.SpeedMod, speicher);		
 		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isToggledspeed(), "togglespeed", ModData.SpeedMod, speicher);
+		GuiBooleanButton intelligent_mode = new GuiBooleanButton(2, width/2-170, height/4+80, 150, 20, "Intelligent Mode", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isIntelligentmode(), "intelligentmode", ModData.SpeedMod, speicher);
+		
+		
 		
 		GuiChooseStringButton choosepos = new GuiChooseStringButton(4, width/2-170, height/4+50, 150, 20, "Speed-Position" , GuiPositions.getPosList(), "posspeed", ModData.SpeedMod, speicher,GuiPositions.getPos(((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getPos()));
 		GuiBooleanButton showSpeedInfo = new GuiBooleanButton(5, width/2,height/4+50, 150, 20, "Show Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isShowspeed(), "showspeed", ModData.SpeedMod, speicher);
@@ -321,7 +348,9 @@ class SpeedModGui extends GuiScreen{
 		chooseOn = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Enable-Key", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getOn());
 		
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
+		
 		buttonList.add(showSpeedInfo);
+		buttonList.add(intelligent_mode);
 		buttonList.add(chooseOn);
 		buttonList.add(choosepos);
 		buttonList.add(togglespeed);

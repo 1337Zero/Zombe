@@ -120,15 +120,15 @@ public class TimeMod implements Mod {
 	}
 
 	@Override
-	public void manupulateValue(String ValueToManupulate, int value) {
+	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Time-Add")){
-			addtime = value;
+			addtime = (int)value;
 			speicher.getConfig().replaceData("Time-Mod.Key-addtime", addtime + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Time-Sub")){
-			subtime = value;
+			subtime = (int)value;
 			speicher.getConfig().replaceData("Time-Mod.Key-subtime", subtime + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Freeze-Time")){
-			freezekey = value;
+			freezekey = (int)value;
 			speicher.getConfig().replaceData("Time-Mod.Key-freezetime", freezekey +  "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Time-Multiplier")){
 			this.setMultipl((int) ((50 / 100.0)*value));

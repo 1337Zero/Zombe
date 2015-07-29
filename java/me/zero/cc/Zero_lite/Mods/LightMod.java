@@ -94,9 +94,9 @@ public class LightMod implements Mod {
 	}
 
 	@Override
-	public void manupulateValue(String ValueToManupulate, int percent) {	
+	public void manupulateValue(String ValueToManupulate, double percent) {	
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = percent;
+			onkey = (int)percent;
 			speicher.getConfig().replaceData("Light-Mod.Toggle-Light", onkey + "");
 		}else{
 			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());

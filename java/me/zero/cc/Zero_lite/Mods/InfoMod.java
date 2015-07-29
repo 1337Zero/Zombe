@@ -279,7 +279,7 @@ public class InfoMod implements Mod {
 	}
 
 	@Override
-	public void manupulateValue(String ValueToManupulate, int percent) {		
+	public void manupulateValue(String ValueToManupulate, double percent) {		
 		System.out.println("Don't know that " + ValueToManupulate);
 	}
 

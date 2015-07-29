@@ -95,7 +95,7 @@ public class ChatMod implements Mod {
 	}
 
 	@Override
-	public void manupulateValue(String ValueToManupulate, int percent) {
+	public void manupulateValue(String ValueToManupulate, double percent) {
 		
 	}
 

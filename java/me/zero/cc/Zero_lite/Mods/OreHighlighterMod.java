@@ -241,12 +241,12 @@ public class OreHighlighterMod implements Mod {
 	}
 
 	@Override
-	public void manupulateValue(String ValueToManupulate, int value) {
+	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = value;
+			onkey = (int)value;
 			speicher.getConfig().replaceData("OreHighlighter.Toggle-OreHighlighter", onkey + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Radius")){
-			radius = value/10;
+			radius = (int)value/10;
 			speicher.getConfig().replaceData("OreHighlighter.radius", radius + "");
 		}else{
 			System.out.println("Unknown value " + ValueToManupulate);

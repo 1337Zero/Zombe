@@ -1,5 +1,7 @@
 package me.zero.cc.Zero_lite.Mods;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +17,7 @@ import org.lwjgl.input.Mouse;
 import com.mumfrey.liteloader.core.LiteLoader;
 
 import me.zero.cc.Zero_lite.LiteModMain;
+import me.zero.cc.Zero_lite.Config.CustomRecipesConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import net.minecraft.block.Block;
@@ -60,14 +63,22 @@ public class ReciepeMod implements Mod {
 	private boolean aktu = false;
 	private LiteModMain speicher;
 	private int olditemcount = 0;
-	private List<Integer> itemIgnoringSubIDs = Arrays.asList(143,147,281,280,54,58,333,72,96,84,355,25,323,33,29,151,268,269,270,271,290);
-	private long lastaktu = 0;	
+	private boolean loadCustomRecipes = false;
+	private boolean loadedCustomRecipes = false;
+	private boolean showCraftingPattern = false;
 	
 	public ReciepeMod(Minecraft minecraft,LiteModMain speicher) {
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		enabled = Boolean.valueOf(speicher.getConfig().getData("RecipeMod.Enabled"));
-		lastaktu = System.currentTimeMillis();
+		
+		loadCustomRecipes = Boolean.valueOf(speicher.getConfig().getData("RecipeMod.loadCustomRecipes"));
+		showCraftingPattern = Boolean.valueOf(speicher.getConfig().getData("RecipeMod.showCraftingPattern"));
+		
+		if(LiteLoader.isDevelopmentEnvironment() | loadCustomRecipes){
+			loadCustomRecipes();
+			loadedCustomRecipes = true;
+		}
 	}
 
 	@Override
@@ -75,8 +86,11 @@ public class ReciepeMod implements Mod {
 		return enabled;
 	}
 
-
-	public void updateShownItems(ArrayList<ItemStack> array){
+	/**
+	 * This Calculates and shows the Crafting Pattern for the craftable Items it found earlier
+	 * @param array of the found items
+	 */
+	private void updateShownItems(ArrayList<ItemStack> array){
 		ScaledResolution reso = new ScaledResolution(minecraft,minecraft.displayWidth, minecraft.displayHeight);
 		int mousex = Mouse.getX() / reso.getScaleFactor();
 		int mousey = Mouse.getY() / reso.getScaleFactor();
@@ -231,6 +245,12 @@ public class ReciepeMod implements Mod {
 		}
 		return x;
 	}
+	/**
+	 * Returns the Recipe of a given ShapedRecipe
+	 * @param src
+	 * @param withnull
+	 * @return
+	 */
 	private ArrayList<ItemStack> getShapedRecipe(ShapedRecipes src,boolean withnull){
 		try{
 			Field f = null;
@@ -276,6 +296,12 @@ public class ReciepeMod implements Mod {
 		}			
 		return null;
 	}
+	/**
+	 * Returns the Recipe of a given ShaplessRecipe
+	 * @param src
+	 * @param withnull
+	 * @return
+	 */
 	private ArrayList<ItemStack> getShapelessRecipe(ShapelessRecipes src,boolean withnull){
 		try{			
 			Field f = null;
@@ -322,9 +348,12 @@ public class ReciepeMod implements Mod {
 		if (enabled) {
 			CraftingManager cfl = CraftingManager.getInstance();
 			if (minecraft.currentScreen instanceof GuiCrafting) {
+				//Show Possible Pattern ?
+				if(showCraftingPattern){
 					if(renderItems.size() > 0){						
 						updateShownItems(renderItems);									
 					}
+				}					
 				GuiCrafting craft = (GuiCrafting) minecraft.currentScreen;
 
 				ArrayList<ItemStack> items = new ArrayList<ItemStack>();
@@ -387,20 +416,169 @@ public class ReciepeMod implements Mod {
 					itemRenderer.renderItemOverlayIntoGUI(minecraft.fontRendererObj, new ItemStack(Item.getItemById(0)), (x + (x/4)), 0, "Possible craft's:");
 				}
 				for (ItemStack fitem : founditems) {
-					itemRenderer.renderItemIntoGUI(fitem, x, y);
-					renderItems.add(fitem);
-					if (x + 15 <= (posx-15)) {
-						x = x + 15;
-					} else {
-						y = y + 20;
-						x = (posx / 2)+90;
-					}
+					if(fitem != null){
+						itemRenderer.renderItemIntoGUI(fitem, x, y);
+						renderItems.add(fitem);
+						if (x + 15 <= (posx-15)) {
+							x = x + 15;
+						} else {
+							y = y + 20;
+							x = (posx / 2)+90;
+						}
+					}					
 				}
 			}
 		}
 	}
+	/**
+	 * Loads the Recipes out of a file
+	 */
+	private void loadCustomRecipes(){
+		CustomRecipesConfig cfg = LiteModMain.customconfig;
+		CraftingManager cfl = CraftingManager.getInstance();
+		
+		int count = 0;
+				
+		while(cfg.exists(count + "")){			
+			String pattern = cfg.getData(count++ + "");
+			boolean error = false;
+			
+			String recipeoutput = pattern.split(";")[0];
+			String[] recipepattern = pattern.split(";")[1].split(",");
+			String[] recipepatternReplacement = pattern.split(";")[2].split(",");
+						
+			if(recipeoutput.split(":").length != 3){
+				System.out.println("Wrong Format for ID:SUBID:AMOUNT");
+				error = true;
+			}
+			if(recipepattern.length != 3){
+				System.out.println("Wrong Format for Crafting Matrix");
+				error = true;
+			}
+			
+			String lastpart = pattern.split(";")[1];
+			int diffrentChars = 0;
+			String foundchars = "";
+			for(int i = 0; i < lastpart.length();i++){
+				if(!foundchars.contains(lastpart.charAt(i) + "") & lastpart.charAt(i) != ','){
+					diffrentChars++;
+					foundchars = foundchars + lastpart.charAt(i) + "";
+				}
+			}
+			if(recipepatternReplacement.length != diffrentChars){
+				System.out.println("Not enough diffrent Chars in the Replacement part!" + diffrentChars + "!=" + pattern.split(";")[2].split(",").length);
+				error = true;
+			}
+			
+			if(!error){
+				ItemStack b = getBlockFromIdAndMeta(Integer.parseInt(recipeoutput.split(":")[0]), Integer.parseInt(recipeoutput.split(":")[1]));
+				b.stackSize = Integer.parseInt(recipeoutput.split(":")[2]);
+				System.out.println(b + " is null ?");
 
-	private ArrayList<ItemStack> getOutPuts(CraftingManager cfl,ArrayList<ItemStack> items) throws Exception {
+			
+				switch(diffrentChars){
+					case 1:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						});
+						break;
+					case 2: cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1]))
+						});
+						break;
+					case 3:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
+						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1]))
+						});
+						break;
+					case 4:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
+						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
+						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1]))
+						});						
+						break;
+					case 5:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
+						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
+						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
+						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1]))
+						});						
+						break;
+					case 6:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
+						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
+						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
+						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1])),
+						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1]))
+						});	
+						break;
+					case 7:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
+						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
+						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
+						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1])),
+						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1])),
+						recipepatternReplacement[6].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[1]))
+						});	
+						break;
+					case 8:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
+						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
+						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
+						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1])),
+						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1])),
+						recipepatternReplacement[6].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[1])),
+						recipepatternReplacement[7].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[1]))
+						});	
+						break;
+					case 9:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
+						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
+						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
+						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
+						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1])),
+						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1])),
+						recipepatternReplacement[6].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[1])),
+						recipepatternReplacement[7].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[1])),
+						recipepatternReplacement[8].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[8].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[8].split("=")[1].split(":")[1]))
+						});	
+						break;
+				}				
+			}else{
+				System.out.println("error loading recipe");
+			}
+		}		
+	}
+	/**
+	 * Creates an Itemstack out of an Id can be an Itemstack with Block or Item
+	 * @param id
+	 * @param meta
+	 * @return
+	 */
+	private ItemStack getBlockFromIdAndMeta(int id,int meta){
+		ItemStack temp = new ItemStack(Item.getByNameOrId(id + ""));		
+		if(temp != null){
+			return temp;
+		}else{
+			//this is not dead Code but thanks eclipse :)
+			temp = new ItemStack(Block.getBlockById(id).getStateFromMeta(meta).getBlock());
+			return temp;
+		}
+	}
+	/**
+	 * Searches for Outputs 
+	 * @param cfl
+	 * @param items
+	 * @return
+	 * @throws IOException
+	 */
+	private ArrayList<ItemStack> getOutPuts(CraftingManager cfl,ArrayList<ItemStack> items) throws IOException {
 		ArrayList<ItemStack> recip = new ArrayList<ItemStack>();
 		for (int i = 0; i < cfl.getRecipeList().size(); i++) {
 			if (cfl.getRecipeList().get(i) instanceof ShapelessRecipes) {
@@ -462,6 +640,14 @@ public class ReciepeMod implements Mod {
 		}
 		return recip;
 	}
+	/**
+	 * Compares a given List of Itemstacks with another (ignores shape)
+	 * @param items
+	 * @param recept
+	 * @param ignoresubid
+	 * @param goalitem
+	 * @return
+	 */
 	private boolean matchItemStackRezept(ArrayList<ItemStack> items,ArrayList<ItemStack> recept,boolean ignoresubid,int goalitem) {		
 		
 		ArrayList<ItemStack> sortedItems = sortRecept(items);
@@ -508,7 +694,11 @@ public class ReciepeMod implements Mod {
 		}		
 		return true;		
 	}
-
+	/**
+	 * Sort a given Recept and Put stacks of items together
+	 * @param receptitems
+	 * @return
+	 */
 	private ArrayList<ItemStack> sortRecept(ArrayList<ItemStack> receptitems) {
 		HashMap<String, ItemStack> items = new HashMap<String, ItemStack>();
 		
@@ -558,7 +748,7 @@ public class ReciepeMod implements Mod {
 	}
 
 	@Override
-	public void manupulateValue(String ValueToManupulate, int percent) {
+	public void manupulateValue(String ValueToManupulate, double percent) {
 		System.out.println(percent);
 	}
 
@@ -567,6 +757,13 @@ public class ReciepeMod implements Mod {
 		if(valueToManupulate.equalsIgnoreCase("renabled")){
 			enabled = b;
 			speicher.getConfig().replaceData("RecipeMod.Enabled", b + "");
+		}else if(valueToManupulate.equalsIgnoreCase("loadcustomrecipes")){
+			loadCustomRecipes = true;
+			speicher.getConfig().replaceData("RecipeMod.loadCustomRecipes", b + "");
+			loadCustomRecipes();
+		}else if(valueToManupulate.equalsIgnoreCase("showcraftingpattern")){
+			showCraftingPattern = b;
+			speicher.getConfig().replaceData("RecipeMod.showCraftingPattern", b + "");
 		}else{
 			System.out.println(valueToManupulate + " is unknown!");
 		}
@@ -574,12 +771,27 @@ public class ReciepeMod implements Mod {
 	@Override
 	public void manupulateValue(String valueToManupulate, String value) {
 		System.out.println(value);
-
 	}
 
 	@Override
 	public int getOn() {
 		return 0;
+	}
+
+	public boolean isLoadCustomRecipes() {
+		return loadCustomRecipes;
+	}
+
+	public void setLoadCustomRecipes(boolean loadCustomRecipes) {
+		this.loadCustomRecipes = loadCustomRecipes;
+	}
+
+	public boolean isShowCraftingPattern() {
+		return showCraftingPattern;
+	}
+
+	public void setShowCraftingPattern(boolean showCraftingPattern) {
+		this.showCraftingPattern = showCraftingPattern;
 	}
 }
 class ReciepeModGui extends GuiScreen{
@@ -607,10 +819,14 @@ class ReciepeModGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4-10, 150, 20, "Enabled", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isEnabled(), "renabled", ModData.ReciepeMod, speicher);
-
+		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Enabled", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isEnabled(), "renabled", ModData.ReciepeMod, speicher);
+		GuiBooleanButton loadCustomRecipes = new GuiBooleanButton(2, width/2, height/4+20, 150, 20, "loadCustomRecipes", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isLoadCustomRecipes(), "loadcustomrecipes", ModData.ReciepeMod, speicher);
+		GuiBooleanButton showRecipeItems = new GuiBooleanButton(2, width/2-170, height/4+50, 150, 20, "Show Crafting Pattern", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isShowCraftingPattern(), "showcraftingpattern", ModData.ReciepeMod, speicher);
+		
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 		
+		buttonList.add(showRecipeItems);
+		buttonList.add(loadCustomRecipes);
 		buttonList.add(booleanb);
 		buttonList.add(back);
 	}

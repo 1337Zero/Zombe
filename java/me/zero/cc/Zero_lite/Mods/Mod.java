@@ -37,7 +37,7 @@ public interface Mod {
 	 * @param ValueToManupulate
 	 * @param value
 	 */
-	public void manupulateValue(String ValueToManupulate,int value);
+	public void manupulateValue(String ValueToManupulate,double value);
 	/**
 	 * Methode called by the Guiobjects to modify values in the Mod
 	 * @param valueToManupulate

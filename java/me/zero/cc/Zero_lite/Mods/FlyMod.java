@@ -1,5 +1,9 @@
 package me.zero.cc.Zero_lite.Mods;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import org.lwjgl.input.Keyboard;
 
 import com.mumfrey.liteloader.core.LiteLoader;
@@ -86,11 +90,10 @@ public class FlyMod implements Mod{
 		}
 		if(nerfcreaetivefly){
 			if(minecraft.thePlayer.capabilities.isCreativeMode){
-				if(minecraft.thePlayer.motionX != 0 | minecraft.thePlayer.motionZ != 0 | minecraft.thePlayer.motionY != 0 ){
+				if(minecraft.thePlayer.motionX != 0 | minecraft.thePlayer.motionZ != 0 /*| minecraft.thePlayer.motionY != 0 */){
 					if(!minecraft.gameSettings.keyBindForward.isKeyDown() && !minecraft.gameSettings.keyBindBack.isKeyDown() && !minecraft.gameSettings.keyBindLeft.isKeyDown() && !minecraft.gameSettings.keyBindRight.isKeyDown() && !minecraft.gameSettings.keyBindJump.isKeyDown() && !minecraft.gameSettings.keyBindSneak.isKeyDown()){
 						minecraft.thePlayer.motionZ = 0;
 						minecraft.thePlayer.motionX = 0;
-						minecraft.thePlayer.motionY = 0;
 					}
 				}
 			}
@@ -214,18 +217,21 @@ public class FlyMod implements Mod{
 		onkey = on;
 	}
 	@Override
-	public void manupulateValue(String ValueToManupulate, int value) {
+	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("flyValue")){
-			flyValue = (int) ((maxValue / 100.0)*value);
+			flyValue = ((maxValue / 100.0)*value);
+			NumberFormat df = NumberFormat.getInstance();
+			df.setMaximumFractionDigits(2);
+			flyValue = Double.valueOf(df.format(flyValue).replace(",", "."));
 			speicher.getConfig().replaceData("Fly-Mod.flyspeed", flyValue + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("FlyDown-Key")){
-			downkey = value;
+			downkey = (int)value;
 			speicher.getConfig().replaceData("Fly-Mod.Key-Down", downkey + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("FlyUp-Key")){
-			upkey = value;
+			upkey = (int)value;
 			speicher.getConfig().replaceData("Fly-Mod.Key-Up", upkey + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = value;
+			onkey = (int)value;
 			speicher.getConfig().replaceData("Fly-Mod.Toggle-fly", onkey + "");
 		}else{
 			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
@@ -347,7 +353,7 @@ class FlyModGui extends GuiScreen{
 	 */
 	public void drawButtons(){	
 		
-		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-20, "Fly-Speed-Up", (int) ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getFlyValue() , 150, 20, ModData.FlyMod, "Flyvalue", speicher);
+		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-20, "Fly-Speed-Up", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getFlyValue() , 150, 20, ModData.FlyMod, "Flyvalue", speicher);
 		GuiBooleanButton enablefly = new GuiBooleanButton(1, width/2-170, height/4+10, 150, 20, "Toggle Fly", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isTogglefly(), "togglefly", ModData.FlyMod, speicher);		
 		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4-20, 150, 20, "Enable Fly", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isEnabled(), "flyenabled", ModData.FlyMod, speicher);
 		GuiBooleanButton ignoreshift = new GuiBooleanButton(3, width/2-170, height-80, 150, 20, "Ignore Shift", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isIgnoreshift(), "ignoreshift", ModData.FlyMod, speicher);

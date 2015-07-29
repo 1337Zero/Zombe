@@ -73,10 +73,6 @@ public class RangeMod implements Mod {
 	KeySetting reachbreakonkey = new KeySetting("RangeMod.reachplaceonkey");
 	KeySetting reachPickonkey = new KeySetting("RangeMod.reachpickonkey");
 	
-	//private int reachplaceonkey = 55;
-	//private int reachbreakonkey = 55;
-	//private int reachPickonkey = 55;
-	
 	public boolean isReachPick() {
 		return reachPick;
 	}
@@ -109,11 +105,7 @@ public class RangeMod implements Mod {
 		reachbreak = Boolean.valueOf(main.getConfig().getData("RangeMod.reachbreak"));
 		reachplace = Boolean.valueOf(main.getConfig().getData("RangeMod.reachplace"));
 		reachPick = Boolean.valueOf(main.getConfig().getData("RangeMod.reachpick")); 
-		
-		//reachbreakonkey = Integer.valueOf(main.getConfig().getData("RangeMod.reachbreakonkey")); 
-		//reachplaceonkey = Integer.valueOf(main.getConfig().getData("RangeMod.reachplaceonkey")); 
-		//reachPickonkey = Integer.valueOf(main.getConfig().getData("RangeMod.reachpickonkey"));  
-		
+
 		showinfo = Boolean.valueOf(main.getConfig().getData("RangeMod.showinfo"));
 		pos = GuiPositions.valueOf(main.getConfig().getData("RangeMod.info-Pos"));
 		
@@ -260,23 +252,17 @@ public class RangeMod implements Mod {
 										int z = objpos.getBlockPos().getZ();
 										
 										if(objpos.sideHit.equals(EnumFacing.UP)){
-											//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY()+1, objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
 											y = y + 1;
 										}else if(objpos.sideHit.equals(EnumFacing.DOWN)){
-											//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY()-1, objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));	
 											y = y - 1;
 										}else if(objpos.sideHit.equals(EnumFacing.NORTH)){
-											//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()-1), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
 											z = z -1;
 										}else if(objpos.sideHit.equals(EnumFacing.SOUTH)){
-											//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()+1), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
 											z = z + 1;
 										}else if(objpos.sideHit.equals(EnumFacing.WEST)){
-											//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX()-1, objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
-											x = x -1;
+												x = x -1;
 										}else if(objpos.sideHit.equals(EnumFacing.EAST)){
-											//minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(objpos.getBlockPos().getX()+1, objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
-											x = x+1;
+												x = x+1;
 										}
 										if(Block.getIdFromBlock(getBlockinPlayerHand(objpos)) == 93 | Block.getIdFromBlock(getBlockinPlayerHand(objpos)) == 149 | Block.getIdFromBlock(getBlockinPlayerHand(objpos)) == 55){
 
@@ -464,22 +450,22 @@ public class RangeMod implements Mod {
 	}
 
 	@Override
-	public void manupulateValue(String ValueToManupulate, int value) {
+	public void manupulateValue(String ValueToManupulate, double value) {
 		//System.out.println(ValueToManupulate);
 		if(ValueToManupulate.equalsIgnoreCase("range")){
 			if(value > 0){
-				range = value;
+				range = (int)value;
 			}else{
 				range = 2;
 			}			
 			main.getConfig().replaceData("RangeMod.Range", "" + range);
 		}else if(ValueToManupulate.equalsIgnoreCase("EnablePick-Key")){
-			reachPickonkey.setKey(value);
+			reachPickonkey.setKey((int)value);
 			//main.getConfig().replaceData("RangeMod.reachpickonkey", reachPickonkey + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Enableplace-Key")){
-			reachplaceonkey.setKey(value);
+			reachplaceonkey.setKey((int)value);
 		}else if(ValueToManupulate.equalsIgnoreCase("Enablebreak-Key")){
-			reachbreakonkey.setKey(value);
+			reachbreakonkey.setKey((int)value);
 		}else{
 			System.out.println("Unknown Value + " + ValueToManupulate);
 		}

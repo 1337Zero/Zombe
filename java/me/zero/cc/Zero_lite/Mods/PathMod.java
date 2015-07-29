@@ -205,9 +205,9 @@ public class PathMod implements Mod{
 	}
 
 	@Override
-	public void manupulateValue(String ValueToManupulate, int value) {
+	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = value;
+			onkey = (int)value;
 			speicher.getConfig().replaceData("PathMod.Toggle-PathMod", onkey + "");
 		}else{
 			System.out.println("Unknown value " + ValueToManupulate);

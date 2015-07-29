@@ -10,6 +10,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Drawable;
 
 import me.zero.cc.Zero_lite.Config.Config;
+import me.zero.cc.Zero_lite.Config.CustomRecipesConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Mods.RangeMod;
 import me.zero.cc.Zero_lite.Mods.ChatMod;
@@ -67,6 +68,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private boolean init = false;
 	private ChatMod ch;
 	public static Config config;
+	public static CustomRecipesConfig customconfig;
 	private InfoLineManager ilm;
 	private Minecraft minecraft;
 	private UpdateChecker updatecheck;
@@ -95,6 +97,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	public void init(File configPath) {	
 		LiteLoader.getInput().registerKeyBinding(Zombe_config);
 		config = new Config();	
+		customconfig = new CustomRecipesConfig();
 		update = Boolean.valueOf(config.getData("Main.searchupdates"));
 		enableselection = Boolean.valueOf(config.getData("Main.enableSelection"));
 		if(LiteLoader.isDevelopmentEnvironment()){
@@ -125,8 +128,8 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			this.addMod(new OreHighlighterMod(minecraft,this));
 			this.addMod(new PathMod(minecraft,this));
 			this.addMod(new RangeMod(minecraft,this));
-			ch = new ChatMod(minecraft,this);
-			this.addMod(ch);
+			//ch = new ChatMod(minecraft,this);
+			//this.addMod(ch);
 			init = true;
 			cmdlist = new CommandListener(minecraft,this);
 			lastFirstMarkPick = System.currentTimeMillis();

@@ -1,5 +1,9 @@
 package me.zero.cc.Zero_lite.Gui.Buttons;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import org.lwjgl.opengl.GL11;
 
 import me.zero.cc.Zero_lite.LiteModMain;
@@ -27,7 +31,7 @@ public class SimpleSlider extends GuiButton{
       private LiteModMain speicher;
       
       
-	public SimpleSlider(int id, int x, int y, String label, int startingValue,int width,int height,ModData modname,String valueNameToManupulate,LiteModMain speicher) {
+	public SimpleSlider(int id, int x, int y, String label, double startingValue,int width,int height,ModData modname,String valueNameToManupulate,LiteModMain speicher) {
 		super(id, x, y, width, height, label);		
 		xstart = x;
 		xPosition = (int) ((((double)width/10.0)*(double)startingValue) + (double)xstart);
@@ -35,11 +39,11 @@ public class SimpleSlider extends GuiButton{
 		this.height = height;
 		this.width = width;
 		this.sliderValue = 0.0F;
-		int value = 0 ;
+		double value = 0 ;
 		if(modname.name().equalsIgnoreCase(ModData.FlyMod.name())){
-			value =  (int)((FlyMod)speicher.getMod(modname.name())).getFlyValue();
+			value =  ((FlyMod)speicher.getMod(modname.name())).getFlyValue();
 		}else if(modname.name().equalsIgnoreCase(ModData.SpeedMod.name())){
-			value =  (int)((SpeedMod)speicher.getMod(modname.name())).getSpeedValue();
+			value =  ((SpeedMod)speicher.getMod(modname.name())).getSpeedValue();
 		}else if(modname.name().equalsIgnoreCase(ModData.TimeMod.name())){
 			 value = ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl();
 		}else if(modname.name().equalsIgnoreCase(ModData.OreHighLighter.name())){
@@ -94,11 +98,11 @@ public class SimpleSlider extends GuiButton{
         	xPosition = x;
          }
 		 speicher.getMod(modname.name()).manupulateValue(valueToManupulate, getPercent());
-		 int value = 0;
+		 double value = 0;
 		 if(modname.name().equalsIgnoreCase(ModData.FlyMod.name())){
-			 value =  (int)((FlyMod)speicher.getMod(modname.name())).getFlyValue();
+			 value =  ((FlyMod)speicher.getMod(modname.name())).getFlyValue();
 		 }else if(modname.name().equalsIgnoreCase(ModData.SpeedMod.name())){
-			 value =  (int)((SpeedMod)speicher.getMod(modname.name())).getSpeedValue();
+			 value =  ((SpeedMod)speicher.getMod(modname.name())).getSpeedValue();
 		 }else if(modname.name().equalsIgnoreCase(ModData.TimeMod.name())){
 			 value = ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl();
 		 }else if(modname.name().equalsIgnoreCase(ModData.OreHighLighter.name())){
@@ -106,14 +110,15 @@ public class SimpleSlider extends GuiButton{
 		 }else if(modname.name().equalsIgnoreCase(ModData.RangeMod.name())){
 			 value = ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange();
 		 }		
-		 
-		 this.setText(valueToManupulate + ": " + value);
+		 NumberFormat df = NumberFormat.getInstance();
+		 df.setMaximumFractionDigits(2);
+		 this.setText(valueToManupulate + ": " + df.format(value));
 	 }	 
 	 /**
 	  * 
 	  * @return the value in percent where the sliders is at the moment,not 100% accurate
 	  */
-	 public int getPercent(){		
+	 public double getPercent(){		
 		int xvalue = xPosition - xstart;
 		if(xvalue == 1){
 			xvalue = 0;
@@ -121,6 +126,6 @@ public class SimpleSlider extends GuiButton{
 		if(xvalue == 141){
 			xvalue = width;
 		}
-		 return (int) (xvalue / (width / 100.0));
+		return (xvalue / (width / 100.0));
 	 }
 }

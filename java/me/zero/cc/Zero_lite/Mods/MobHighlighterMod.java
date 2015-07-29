@@ -249,9 +249,9 @@ public class MobHighlighterMod implements Mod {
 		return showinfo;
 	}
 	@Override
-	public void manupulateValue(String ValueToManupulate, int value) {
+	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = value;
+			onkey = (int)value;
 			speicher.getConfig().replaceData("MobHighlighter.Toggle-Mobhighlighter", onkey + "");
 		}else{
 			System.out.println("Unknown value " + ValueToManupulate);

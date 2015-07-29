@@ -17,11 +17,11 @@ public class Config {
 	private List<String> defaultconfig = Arrays.asList(
 			"Main.searchupdates:true","Main.debug:false","Main.cmdControlCharacter:#","Main.selectionR:1.0F","Main.selectionG:1.0F","Main.selectionB:1.0F","Main.selectionAlpha:0.5F","Main.enableSelection:true","Main.firstMarkR:1.0F","Main.firstMarkG:0.0F","Main.firstMarkB:1.0F","Main.firstMarkAlpha:1.0F","Main.secondMarkR:0.0F","Main.secondMarkG:1.0F","Main.secondMarkB:1.0F","Main.secondMarkAlpha:1.0F",
 			"Fly-Mod.Key-Down:16","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:57","Fly-Mod.key-Toggle-fly:46","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false","Fly-Mod.nerfcreaetivefly:false",
-			"Speed-Mod.Toggle-speed:21","Speed-Mod.maxspeed:10","Speed-Mod.speed:1","Speed-Mod.showspeed:true","Speed-Mod.speed-Pos:UP_LEFT","Speed-Mod.togglespeed:false","Speed-Mod.speed-enabled:false","Speed-Mod.enabled:false",
+			"Speed-Mod.Toggle-speed:21","Speed-Mod.maxspeed:10","Speed-Mod.speed:1","Speed-Mod.showspeed:true","Speed-Mod.speed-Pos:UP_LEFT","Speed-Mod.togglespeed:false","Speed-Mod.speed-enabled:false","Speed-Mod.enabled:false","Speed-Mod.intelligentmode:false",
 			"Info-Mod.FPS-Pos:UP_CENTER","Info-Mod.showFPS:false","Info-Mod.Dir-POS:UP_RIGHT","Info-Mod.showdir:false","Info-Mod.Coor-Pos:UP_RIGHT","Info-Mod.showcoor:false","Info-Mod.Worldage-Pos:UP_LEFT","Info-Mod.showworldage:false",
 			"Light-Mod.Toggle-Light:38","Light-Mod.lightmod-enabled:false",
 			"Time-Mod.Key-addtime:78","Time-Mod.Key-subtime:74","Time-Mod.Key-freezetime:55","Time-Mod.timetoadd:0","Time-Mod.Time-Mod-enabled:false","Time-Mod.time-freezed:false","Time-Mod.time-multiplier:0","Time-Mod.showTimeinfo:false","Time-Mod.showtimepos:UP_CENTER",
-			"RecipeMod.Enabled:false",
+			"RecipeMod.Enabled:false","RecipeMod.loadCustomRecipes:false","RecipeMod.showCraftingPattern:false",
 			"MobHighlighter.enabled:false","MobHighlighter.Toggle-Mobhighlighter:55","MobHighlighter.info-Pos:UP_LEFT","MobHighlighter.showinfo:false",
 			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:27","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2",
 			"PathMod.info-Pos:UP_LEFT","PathMod.showinfo:false","PathMod.enabled:false","PathMod.Toggle-PathMod:11","PathMod.seethroughwall:true","PathMod.mark.r:1.0F","PathMod.mark.g:0.0F","PathMod.mark.b:1.0F","PathMod.mark.alpha:1.0F",
