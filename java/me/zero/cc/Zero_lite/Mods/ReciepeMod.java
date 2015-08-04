@@ -26,7 +26,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiCrafting;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,7 +75,7 @@ public class ReciepeMod implements Mod {
 		showCraftingPattern = Boolean.valueOf(speicher.getConfig().getData("RecipeMod.showCraftingPattern"));
 		
 		if(LiteLoader.isDevelopmentEnvironment() | loadCustomRecipes){
-			loadCustomRecipes();
+			//loadCustomRecipes();
 			loadedCustomRecipes = true;
 		}
 	}
@@ -98,7 +97,10 @@ public class ReciepeMod implements Mod {
 		int posx = reso.getScaledWidth();
 		int posy = reso.getScaledHeight();
 	
-		RenderItem itemRenderer = minecraft.getRenderItem();
+		
+		RenderItem itemRenderer = new RenderItem();
+		//itemRenderer.renderItemOverlayIntoGUI(minecraft.fontRendererObj, minecraft.getTextureManager(), new ItemStack(Blocks.anvil), 5, 5);
+
 		int x = (posx/2)+90;
 		int y = 20;		
 			for (ItemStack fitem : renderItems) {
@@ -119,11 +121,12 @@ public class ReciepeMod implements Mod {
 											}if(recipe.get(ix).getMetadata() == 32767){
 												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).stackSize, 0);
 												if(tempstack.getItem() != null){
-													itemRenderer.renderItemIntoGUI(tempstack, renderposx, renderposy);
+													//itemRenderer.renderItemOverlayIntoGUI(minecraft.fontRendererObj, minecraft.getTextureManager(), new ItemStack(Blocks.anvil), 5, 5);
+													itemRenderer.renderItemIntoGUI(minecraft.fontRendererObj, minecraft.getTextureManager(), tempstack, renderposx, renderposy);
 												}											
 											}else{
 												if(recipe.get(ix).getItem() != null){
-													itemRenderer.renderItemIntoGUI(recipe.get(ix), renderposx, renderposy);
+													itemRenderer.renderItemIntoGUI(minecraft.fontRendererObj, minecraft.getTextureManager(), recipe.get(ix), renderposx, renderposy);
 												}
 											}
 											renderposx += 20;
@@ -147,11 +150,11 @@ public class ReciepeMod implements Mod {
 											if(recipe.get(ix).getMetadata() == 32767){
 												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).stackSize, 0);
 												if(tempstack.getItem() != null){
-													itemRenderer.renderItemIntoGUI(tempstack, renderposx, renderposy);	
+													itemRenderer.renderItemIntoGUI(minecraft.fontRendererObj, minecraft.getTextureManager(), tempstack, renderposx, renderposy);	
 												}
 											}else{
 												if(recipe.get(ix).getItem() != null){
-													itemRenderer.renderItemIntoGUI(recipe.get(ix), renderposx, renderposy);
+													itemRenderer.renderItemIntoGUI(minecraft.fontRendererObj, minecraft.getTextureManager(), recipe.get(ix), renderposx, renderposy);
 												}
 											}	
 											renderposx += 20;
@@ -406,18 +409,18 @@ public class ReciepeMod implements Mod {
 				int posx = reso.getScaledWidth();
 				int posy = reso.getScaledHeight();
 
-				RenderItem itemRenderer = minecraft.getRenderItem();
+				RenderItem itemRenderer = new RenderItem();
 
 				int x = (posx / 2)+90;
 				int y = 20;
 				renderItems.clear();	
 				if(founditems.size() > 0){
-					//minecraft.fontRendererObj.drawString("you can craft this:", x, 0, 0xFFFFFF);
-					itemRenderer.renderItemOverlayIntoGUI(minecraft.fontRendererObj, new ItemStack(Item.getItemById(0)), (x + (x/4)), 0, "Possible craft's:");
+					minecraft.fontRendererObj.drawString("you can craft this:", x, 0, 0xFFFFFF);
+					//itemRenderer.renderItemOverlayIntoGUI(minecraft.fontRendererObj,minecraft.getTextureManager(), new ItemStack(Item.getItemById(0)), (x + (x/4)), 0, "Possible craft's:");
 				}
 				for (ItemStack fitem : founditems) {
 					if(fitem != null){
-						itemRenderer.renderItemIntoGUI(fitem, x, y);
+						itemRenderer.renderItemIntoGUI(minecraft.fontRendererObj,minecraft.getTextureManager(), fitem, x, y);
 						renderItems.add(fitem);
 						if (x + 15 <= (posx-15)) {
 							x = x + 15;
@@ -477,29 +480,30 @@ public class ReciepeMod implements Mod {
 
 			
 				switch(diffrentChars){
-					case 1:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					
+					case 1:cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						});
 						break;
-					case 2: cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					case 2: cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1]))
 						});
 						break;
-					case 3:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					case 3:cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
 						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1]))
 						});
 						break;
-					case 4:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					case 4:cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
 						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
 						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1]))
 						});						
 						break;
-					case 5:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					case 5:cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
 						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
@@ -507,7 +511,7 @@ public class ReciepeMod implements Mod {
 						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1]))
 						});						
 						break;
-					case 6:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					case 6:cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
 						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
@@ -516,7 +520,7 @@ public class ReciepeMod implements Mod {
 						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1]))
 						});	
 						break;
-					case 7:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					case 7:cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
 						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
@@ -526,7 +530,7 @@ public class ReciepeMod implements Mod {
 						recipepatternReplacement[6].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[1]))
 						});	
 						break;
-					case 8:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					case 8:cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
 						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
@@ -537,7 +541,7 @@ public class ReciepeMod implements Mod {
 						recipepatternReplacement[7].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[1]))
 						});	
 						break;
-					case 9:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
+					case 9:cfl.getRecipeList().add(Item.getIdFromItem(b.getItem()), new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
 						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
@@ -561,13 +565,17 @@ public class ReciepeMod implements Mod {
 	 * @param meta
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private ItemStack getBlockFromIdAndMeta(int id,int meta){
-		ItemStack temp = new ItemStack(Item.getByNameOrId(id + ""));		
+		//ItemStack temp = new ItemStack(Item.getItemById(id));		
+		ItemStack temp = new ItemStack(Item.getItemById(id),meta);		
+		
 		if(temp != null){
 			return temp;
 		}else{
 			//this is not dead Code but thanks eclipse :)
-			temp = new ItemStack(Block.getBlockById(id).getStateFromMeta(meta).getBlock());
+			//temp = new ItemStack(Block.getBlockById(id).getStateFromMeta(meta).getBlock());
+			temp = new ItemStack(Block.getBlockById(id), meta);
 			return temp;
 		}
 	}
@@ -824,7 +832,7 @@ class ReciepeModGui extends GuiScreen{
 		GuiBooleanButton showRecipeItems = new GuiBooleanButton(2, width/2-170, height/4+50, 150, 20, "Show Crafting Pattern", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isShowCraftingPattern(), "showcraftingpattern", ModData.ReciepeMod, speicher);
 		
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
-		
+
 		buttonList.add(showRecipeItems);
 		buttonList.add(loadCustomRecipes);
 		buttonList.add(booleanb);

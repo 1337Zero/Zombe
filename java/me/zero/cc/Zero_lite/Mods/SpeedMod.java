@@ -76,7 +76,7 @@ public class SpeedMod implements Mod {
 	@Override
 	public void use() {		
 		rotationyaw = minecraft.thePlayer.rotationYaw;
-		if(Keyboard.isKeyDown(onkey) && !(minecraft.gameSettings.keyBindRight.isKeyDown() || minecraft.gameSettings.keyBindLeft.isKeyDown() || minecraft.gameSettings.keyBindForward.isKeyDown() || minecraft.gameSettings.keyBindBack.isKeyDown() || (minecraft.currentScreen != null))){
+		if(Keyboard.isKeyDown(onkey) && !(minecraft.gameSettings.keyBindRight.isPressed() || minecraft.gameSettings.keyBindLeft.isPressed() || minecraft.gameSettings.keyBindForward.isPressed() || minecraft.gameSettings.keyBindBack.isPressed() || (minecraft.currentScreen != null))){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(speedenabled){
 					speedenabled = false;
@@ -155,31 +155,32 @@ public class SpeedMod implements Mod {
 			if(rotationyaw < 0 ){
 				rotationyaw = rotationyaw + 360;
 			}
-			if(minecraft.gameSettings.keyBindRight.isKeyDown() && minecraft.gameSettings.keyBindForward.isKeyDown()){
+			
+			if(minecraft.gameSettings.keyBindRight.getIsKeyPressed() && minecraft.gameSettings.keyBindForward.getIsKeyPressed()){
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)+45;
 				pressed = true;
-			}else if(minecraft.gameSettings.keyBindLeft.isKeyDown() && minecraft.gameSettings.keyBindForward.isKeyDown()){
+			}else if(minecraft.gameSettings.keyBindLeft.getIsKeyPressed() && minecraft.gameSettings.keyBindForward.getIsKeyPressed()){
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)-45;
 				pressed = true;
-			}else if(minecraft.gameSettings.keyBindRight.isKeyDown() && minecraft.gameSettings.keyBindBack.isKeyDown()){
+			}else if(minecraft.gameSettings.keyBindRight.getIsKeyPressed() && minecraft.gameSettings.keyBindBack.getIsKeyPressed()){
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)-45;
 				pressed = true;
 				forward = false;
-			}else if(minecraft.gameSettings.keyBindLeft.isKeyDown() && minecraft.gameSettings.keyBindBack.isKeyDown()){
+			}else if(minecraft.gameSettings.keyBindLeft.getIsKeyPressed() && minecraft.gameSettings.keyBindBack.getIsKeyPressed()){
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)+45;
 				pressed = true;
 				forward = false;
-			}else if(minecraft.gameSettings.keyBindForward.isKeyDown()){
+			}else if(minecraft.gameSettings.keyBindForward.getIsKeyPressed()){
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360);
 				pressed = true;
-			}else if(minecraft.gameSettings.keyBindBack.isKeyDown()){
+			}else if(minecraft.gameSettings.keyBindBack.getIsKeyPressed()){
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360);
 				forward = false;
 				pressed = true;
-			}else if(minecraft.gameSettings.keyBindLeft.isKeyDown()){
+			}else if(minecraft.gameSettings.keyBindLeft.getIsKeyPressed()){
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)-90;
 				pressed = true;
-			}else if(minecraft.gameSettings.keyBindRight.isKeyDown()){
+			}else if(minecraft.gameSettings.keyBindRight.getIsKeyPressed()){
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)+90;
 				pressed = true;
 			}else{
@@ -194,11 +195,13 @@ public class SpeedMod implements Mod {
 		double mx = 0; double mz = 0;
 		double move =  speedValue;
 		double movef;
+		
 		if(intelligentmode){
 			movef = -move * MathHelper.cos(minecraft.thePlayer.rotationPitch * (float)Math.PI / 180.0f);
 		}else{
 			movef = -move * MathHelper.cos(minecraft.thePlayer.cameraPitch * (float)Math.PI / 180.0f);
 		}		
+		
         mx += movef * MathHelper.sin(percent * (float)Math.PI / 180.0f);
         mz += -movef * MathHelper.cos(percent * (float)Math.PI / 180.0f);
         if(forward){
@@ -335,7 +338,7 @@ class SpeedModGui extends GuiScreen{
 	 */
 	public void drawButtons(){
 		
-		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getSpeedValue() , 150, 20, ModData.SpeedMod, "Speed", speicher);
+		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getSpeedValue() , 150, 20, ModData.SpeedMod, "Speed", speicher,"Das ist ein Test;Das ist ein Test2".split(";"));
 		GuiBooleanButton enablespeed = new GuiBooleanButton(1, width/2-170, height/4-10, 150, 20, "Enable Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isEnabled(), "enablespeed", ModData.SpeedMod, speicher);		
 		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isToggledspeed(), "togglespeed", ModData.SpeedMod, speicher);
 		GuiBooleanButton intelligent_mode = new GuiBooleanButton(2, width/2-170, height/4+80, 150, 20, "Intelligent Mode", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isIntelligentmode(), "intelligentmode", ModData.SpeedMod, speicher);

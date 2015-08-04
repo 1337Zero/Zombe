@@ -23,7 +23,7 @@ public class InfoMod implements Mod {
 	private Minecraft minecraft;
 	private double percent = 0;
 	private int rotation = 0;
-	private String Facing = "";
+	public static String Facing = "";
 	private int onkey = 0;
 	private LiteModMain speicher;
 	
@@ -84,10 +84,10 @@ public class InfoMod implements Mod {
 		if(showdir){
 			if(System.currentTimeMillis() - lastdiraktu >= 60){
 				//Old but Gold -> if Enumfacing will be removed this should also calc the facing...
-				//rotationyam = minecraft.thePlayer.rotationYawHead;			
-				//UpdateDirection(getPercent());
-				//UpdateRotation(minecraft);
-				Facing = EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().toUpperCase();
+				rotationyam = minecraft.thePlayer.rotationYawHead;			
+				UpdateDirection(getPercent());
+				UpdateRotation(minecraft);
+				//Facing = EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().toUpperCase();
 				lastdiraktu = System.currentTimeMillis();
 			}			
 		}	

@@ -25,6 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -34,7 +35,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 
 public class Schematic{
@@ -69,15 +69,17 @@ public class Schematic{
 			   					double ypos = y + py;
 			   					double zpos = z + pz;
 			   					int b = blocks[index] & 0xFF;
-			   					Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(xpos, ypos, zpos), Block.getBlockById(b).getStateFromMeta(data[index]));
+			   					//Minecraft.getMinecraft().theWorld.getbk
+			   					Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setBlock(x, y, z, Block.getBlockById(b));
+			   					//Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(xpos, ypos, zpos), Block.getBlockById(b).getStateFromMeta(data[index]));
 			   				}
 			   			}
 			   		}
 			   		if(tileentity != null){
 			   			for(int i = 0; i < tileentity.tagCount();i++){
-				   			TileEntity enti = TileEntity.createAndLoadEntity(tileentity.getCompoundTagAt(i));
+				   			/*TileEntity enti = TileEntity.createAndLoadEntity(tileentity.getCompoundTagAt(i));
 				   			enti.setPos(new BlockPos(enti.getPos().getX() + Minecraft.getMinecraft().thePlayer.posX,enti.getPos().getY() + Minecraft.getMinecraft().thePlayer.posY, enti.getPos().getZ() + Minecraft.getMinecraft().thePlayer.posZ));
-				   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setTileEntity(enti.getPos(), enti);
+				   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setTileEntity(enti.getPos(), enti);*/
 				   		}
 			   		}
 			   		if(entities != null){
@@ -158,9 +160,9 @@ public class Schematic{
 			for(double y = minY; y <= maxY;y++){
 				for(double z = minZ; z <= maxZ;z++){
 					for(double x = minX; x <= maxX; x++){						
-						BlockPos mypos = new BlockPos(x,y,z);
-						blocks[i] = (byte) Block.getIdFromBlock(Minecraft.getMinecraft().theWorld.getBlockState(mypos).getBlock());
-						data[i] = (byte) Minecraft.getMinecraft().theWorld.getBlockState(mypos).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(mypos));
+						//BlockPos mypos = new BlockPos(x,y,z);
+						blocks[i] = (byte) Block.getIdFromBlock(Minecraft.getMinecraft().theWorld.getBlock((int)x, (int)y, (int)z));
+						data[i] = (byte) Minecraft.getMinecraft().theWorld.getBlockMetadata((int)x, (int)y, (int)z);						
 						i++;
 					}
 				}

@@ -11,6 +11,7 @@ import org.lwjgl.opengl.Drawable;
 
 import me.zero.cc.Zero_lite.Config.Config;
 import me.zero.cc.Zero_lite.Config.CustomRecipesConfig;
+import me.zero.cc.Zero_lite.Config.LanguageConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Mods.RangeMod;
 import me.zero.cc.Zero_lite.Mods.ChatMod;
@@ -32,20 +33,16 @@ import me.zero.cc.Zero_lite.utils.Mark;
 import me.zero.cc.Zero_lite.utils.Markables;
 import me.zero.cc.Zero_lite.utils.SelectionHelper;
 import me.zero.cc.Zero_lite.utils.UpdateChecker;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S02PacketChat;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.HttpUtil;
@@ -58,7 +55,6 @@ import com.mumfrey.liteloader.PostRenderListener;
 import com.mumfrey.liteloader.RenderListener;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
-import com.mumfrey.liteloader.core.LiteLoaderEventBroker.ReturnValue;
 import com.mumfrey.liteloader.transformers.event.ReturnEventInfo;
 
 public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
@@ -68,6 +64,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private boolean init = false;
 	private ChatMod ch;
 	public static Config config;
+	public static LanguageConfig lconfig;
 	public static CustomRecipesConfig customconfig;
 	private InfoLineManager ilm;
 	private Minecraft minecraft;
@@ -97,6 +94,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	public void init(File configPath) {	
 		LiteLoader.getInput().registerKeyBinding(Zombe_config);
 		config = new Config();	
+		lconfig = new LanguageConfig();
 		customconfig = new CustomRecipesConfig();
 		update = Boolean.valueOf(config.getData("Main.searchupdates"));
 		enableselection = Boolean.valueOf(config.getData("Main.enableSelection"));
@@ -169,7 +167,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		initMods(minecraft);
 		if(minecraft.thePlayer != null){
 			ilm.use(minecraft);
-			if(Zombe_config.isKeyDown()){
+			if(Zombe_config.isPressed()){
 				minecraft.displayGuiScreen(new ConfigMainFrame(this));
 			}			
 			if(!checkedupdate && minecraft.theWorld != null && minecraft.currentScreen == null){
@@ -182,11 +180,11 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			if(messages != null){
 				if(messages.size() > 0 || urlVersion != "" & downloadURL != ""){					
 					if(!urlVersion.equalsIgnoreCase(getVersion())){
-						minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + "&4A new Lite-Zombe Version is avaible: " + urlVersion)));						
+						sendMessage(prefix + lconfig.getData("Main.updateMSG").replace("<urlversion>", urlVersion));
 						minecraft.thePlayer.addChatMessage(new ChatComponentText(downloadURL));		
 						
 						for(String msg : messages){		
-							minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + msg)));								
+							sendMessage(prefix + msg);
 						}
 					}
 					messages = null;
@@ -196,21 +194,20 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 				this.getMods().get(i).use();
 			}
 			if(isEnableselection()){
-				if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
+				if(minecraft.gameSettings.keyBindUseItem.isPressed()){
 					if((System.currentTimeMillis() - lastFirstMarkPick) >=500){
 						if(minecraft.thePlayer.getCurrentEquippedItem() != null){
 							if(minecraft.thePlayer.getCurrentEquippedItem().getItem() != null){
-								if(minecraft.thePlayer.getCurrentEquippedItem().getItem().equals(Item.getByNameOrId("wooden_shovel"))){
+								if(minecraft.thePlayer.getCurrentEquippedItem().getItem().equals(Item.getItemById(269))){
 									MovingObjectPosition pos = minecraft.thePlayer.rayTrace(5,1.0F);
-									firstmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.firstMarkR")), Float.valueOf(config.getData("Main.firstMarkG")), Float.valueOf(config.getData("Main.firstMarkB")), Float.valueOf(config.getData("Main.firstMarkAlpha")));
+									firstmark = new BlockMark(pos.blockX, pos.blockY, pos.blockZ, minecraft, Float.valueOf(config.getData("Main.firstMarkR")), Float.valueOf(config.getData("Main.firstMarkG")), Float.valueOf(config.getData("Main.firstMarkB")), Float.valueOf(config.getData("Main.firstMarkAlpha")));
 									//firstmark = new BlockMark(0, 0, 0, 0, pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ());
 									lastFirstMarkPick = System.currentTimeMillis();
-									sendMessage("&6Set Firstmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ() + ")");						
-							
+									sendMessage(lconfig.getData("Selection.firstmark").replace("<x>",  pos.blockX + "").replace("<y>", pos.blockY + "").replace("<z>", pos.blockZ + ""));
 									if(secondmark != null){
 										//selection = new Selection((Math.max(firstmark.getY(), secondmark.getY()) - Math.min(firstmark.getY(), secondmark.getY())), (Math.max(firstmark.getZ(), secondmark.getZ()) - Math.min(firstmark.getZ(), secondmark.getZ())), (Math.max(firstmark.getX(), secondmark.getX()) - Math.min(firstmark.getX(), secondmark.getX())), firstmark, secondmark, Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
 										selection = SelectionHelper.calcSelectedBlocks(minecraft, firstmark, secondmark,Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
-										sendMessage("Selected " + selection.size() + " Blocks");
+										sendMessage(lconfig.getData("Selection.selected").replace("<size>", selection.size() + ""));
 									}
 								}
 							}
@@ -218,18 +215,18 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 					}
 				}			
 				if((System.currentTimeMillis() - lastSecondMarkPick) >=500){
-					if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
+					if(minecraft.gameSettings.keyBindUseItem.isPressed()){
 						if(minecraft.thePlayer.getCurrentEquippedItem() != null){
 							if(minecraft.thePlayer.getCurrentEquippedItem().getItem() != null){
-								if(minecraft.thePlayer.getCurrentEquippedItem().getItem().equals(Item.getByNameOrId("wooden_axe"))){
+								if(minecraft.thePlayer.getCurrentEquippedItem().getItem().equals(Item.getItemById(271))){
 									MovingObjectPosition pos = minecraft.thePlayer.rayTrace(5,1.0F);
-									secondmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.secondMarkR")), Float.valueOf(config.getData("Main.secondMarkG")), Float.valueOf(config.getData("Main.secondMarkB")), Float.valueOf(config.getData("Main.secondMarkAlpha")));
+									secondmark = new BlockMark(pos.blockX, pos.blockY, pos.blockZ, minecraft, Float.valueOf(config.getData("Main.secondMarkR")), Float.valueOf(config.getData("Main.secondMarkG")), Float.valueOf(config.getData("Main.secondMarkB")), Float.valueOf(config.getData("Main.secondMarkAlpha")));
 									lastSecondMarkPick = System.currentTimeMillis();
-									sendMessage("&6Set Secondmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ() + ")");	
-								
+									sendMessage(lconfig.getData("Selection.secondmark").replace("<x>",  pos.blockX + "").replace("<y>", pos.blockY + "").replace("<z>", pos.blockZ + ""));
+									
 									if(firstmark != null){
 										selection = SelectionHelper.calcSelectedBlocks(minecraft, firstmark, secondmark,Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
-										sendMessage("Selected " + selection.size() + " Blocks");
+										sendMessage(lconfig.getData("Selection.selected").replace("<size>", selection.size() + ""));
 									}
 								}
 							}	
@@ -267,10 +264,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + msg)));
 	}
 	
-	@Override
-	public boolean onChat(IChatComponent chat, String message,ReturnValue<IChatComponent> newMessage) {
-		return !cmdlist.onCommand(chat.getUnformattedText().replace("<" + minecraft.thePlayer.getName() + "> ", ""),chat.getUnformattedText().replace("<" + minecraft.thePlayer.getName() + "> ", "").split(" "));
-	}
+
 
 	@Override
 	public void onPostRenderEntities(float partialTicks) {
@@ -404,6 +398,11 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			secondmark = null;
 		}
 	}
+	@Override
+	public boolean onChat(S02PacketChat chatPacket, IChatComponent chat,String message) {
+		return !cmdlist.onCommand(chat.getUnformattedText().replace("<" + minecraft.thePlayer.getCommandSenderName() + "> ", ""),chat.getUnformattedText().replace("<" + minecraft.thePlayer.getCommandSenderName()+ "> ", "").split(" "));
+	}
+	
 }
 class ConfigMainFrame extends GuiScreen{
 	private LiteModMain lmm;

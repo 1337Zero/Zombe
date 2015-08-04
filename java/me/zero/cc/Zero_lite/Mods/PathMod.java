@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import com.mumfrey.liteloader.gl.GL;
-
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
+import me.zero.cc.Zero_lite.utils.GL;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
 import me.zero.cc.Zero_lite.utils.Mark;
 import net.minecraft.client.Minecraft;
@@ -178,15 +177,15 @@ public class PathMod implements Mod{
 	
 	public void renderMark(Mark m){
 	    
-	    Tessellator tessellator = Tessellator.getInstance();
-	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+	    Tessellator worldRenderer = Tessellator.instance;
+	   // WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 	    GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
 		worldRenderer.startDrawing(2);
 	    
 	    worldRenderer.addVertex( m.getX(), m.getY(),  m.getZ());
 	    worldRenderer.addVertex( m.getLastx(), m.getLasty(), m.getLastz());
 
-	    tessellator.draw();
+	    worldRenderer.draw();
 	}
 	
 	@Override
@@ -307,7 +306,7 @@ class PathModGui extends GuiScreen{
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 
 		GuiButton clear = new GuiButton(7, width/2-170,height/4+80 , "clear Marks");	
-		clear.setWidth(150);
+		//clear.setWidth(150);
 		
 		buttonList.add(clear);
 		buttonList.add(seeThroughwall);

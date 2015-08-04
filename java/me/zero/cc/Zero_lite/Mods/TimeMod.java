@@ -312,7 +312,7 @@ class TimeModGui extends GuiScreen{
 		key_add = new GuiChooseKeyButton(2, width/2-170, height/4+20, 150, 20, "Time-Add", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getAddtime());
 		key_sub = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Time-Sub", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getSubtime());
 		key_freeze = new GuiChooseKeyButton(4, width/2, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getFreezetimekey());
-		SimpleSlider slider = new SimpleSlider(5, width/2, height/4+50, "Time-Multiplier",(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl()/5), 150, 20, ModData.TimeMod, "Time-Multiplier", speicher);
+		SimpleSlider slider = new SimpleSlider(5, width/2, height/4+50, "Time-Multiplier",(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl()/5), 150, 20, ModData.TimeMod, "Time-Multiplier", speicher,"Das ist ein Test;Das ist ein Test2".split(";"));
 		//(int) ((50 / 100.0)*value)
 		GuiBooleanButton enable = new GuiBooleanButton(7, width/2-170, height/4+50, 150, 20, "Enabled", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isEnabled(), "enable", ModData.TimeMod, speicher);
 		

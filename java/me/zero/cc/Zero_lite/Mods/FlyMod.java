@@ -91,7 +91,7 @@ public class FlyMod implements Mod{
 		if(nerfcreaetivefly){
 			if(minecraft.thePlayer.capabilities.isCreativeMode){
 				if(minecraft.thePlayer.motionX != 0 | minecraft.thePlayer.motionZ != 0 /*| minecraft.thePlayer.motionY != 0 */){
-					if(!minecraft.gameSettings.keyBindForward.isKeyDown() && !minecraft.gameSettings.keyBindBack.isKeyDown() && !minecraft.gameSettings.keyBindLeft.isKeyDown() && !minecraft.gameSettings.keyBindRight.isKeyDown() && !minecraft.gameSettings.keyBindJump.isKeyDown() && !minecraft.gameSettings.keyBindSneak.isKeyDown()){
+					if(!minecraft.gameSettings.keyBindForward.isPressed() && !minecraft.gameSettings.keyBindBack.isPressed() && !minecraft.gameSettings.keyBindLeft.isPressed() && !minecraft.gameSettings.keyBindRight.isPressed() && !minecraft.gameSettings.keyBindJump.isPressed() && !minecraft.gameSettings.keyBindSneak.isPressed()){
 						minecraft.thePlayer.motionZ = 0;
 						minecraft.thePlayer.motionX = 0;
 					}
@@ -101,11 +101,11 @@ public class FlyMod implements Mod{
 	}
 	private void Updatefly(){
 		if(minecraft.isSingleplayer()){
-			minecraft.getIntegratedServer().getEntityWorld().getPlayerEntityByName(minecraft.thePlayer.getName()).fallDistance = 0;
+			minecraft.getIntegratedServer().getEntityWorld().getPlayerEntityByName(minecraft.thePlayer.getCommandSenderName()).fallDistance = 0;
 		}
 		if(!togglefly){
 			float value = (float) flyValue;
-			if(minecraft.gameSettings.keyBindSneak.isKeyDown() && !ignoreshift){
+			if(minecraft.gameSettings.keyBindSneak.isPressed() && !ignoreshift){
 				value = (float) (flyValue /10);
 			}
 			if(Keyboard.isKeyDown(upkey) && (minecraft.currentScreen == null)){
@@ -117,7 +117,7 @@ public class FlyMod implements Mod{
 			}
 		}else{
 			float value = (float) flyValue;
-			if(minecraft.gameSettings.keyBindSneak.isKeyDown() && (minecraft.currentScreen == null)){
+			if(minecraft.gameSettings.keyBindSneak.isPressed() && (minecraft.currentScreen == null)){
 				value = (float) (flyValue /10);
 			}
 			if(Keyboard.isKeyDown(upkey) && Keyboard.isKeyDown(onkey)  && (minecraft.currentScreen == null)){
@@ -353,7 +353,7 @@ class FlyModGui extends GuiScreen{
 	 */
 	public void drawButtons(){	
 		
-		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-20, "Fly-Speed-Up", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getFlyValue() , 150, 20, ModData.FlyMod, "Flyvalue", speicher);
+		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-20, "Fly-Speed-Up", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getFlyValue() , 150, 20, ModData.FlyMod, "Flyvalue", speicher ,"Das ist ein Test;Das ist ein Test2".split(";"));
 		GuiBooleanButton enablefly = new GuiBooleanButton(1, width/2-170, height/4+10, 150, 20, "Toggle Fly", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isTogglefly(), "togglefly", ModData.FlyMod, speicher);		
 		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4-20, 150, 20, "Enable Fly", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isEnabled(), "flyenabled", ModData.FlyMod, speicher);
 		GuiBooleanButton ignoreshift = new GuiBooleanButton(3, width/2-170, height-80, 150, 20, "Ignore Shift", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isIgnoreshift(), "ignoreshift", ModData.FlyMod, speicher);

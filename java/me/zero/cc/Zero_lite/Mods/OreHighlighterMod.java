@@ -6,7 +6,7 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import com.mumfrey.liteloader.gl.GL;
+
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Config.OreHighLighterModConfig;
@@ -14,6 +14,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
+import me.zero.cc.Zero_lite.utils.GL;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
 import me.zero.cc.Zero_lite.utils.Mark;
 import net.minecraft.block.Block;
@@ -28,7 +29,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -159,33 +159,34 @@ public class OreHighlighterMod implements Mod {
 	 */
 	public void renderBlock(Mark block){
 	    
-	    Tessellator tessellator = Tessellator.getInstance();
-	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+	    Tessellator worldRenderer = Tessellator.instance;
+	    //WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 	    
 
 	    
 	    GL.glColor4f(block.getR(), block.getG(),block.getB(),block.getAlpha());
-	    AxisAlignedBB axis = minecraft.theWorld.getBlockState(new BlockPos(block.getX(),block.getY(), block.getZ())).getBlock().getSelectedBoundingBox(minecraft.theWorld, new BlockPos(block.getX(), block.getY(), block.getZ()));
-
+	    //AxisAlignedBB axis = minecraft.theWorld.getBlockState(new BlockPos(block.getX(),block.getY(), block.getZ())).getBlock().getSelectedBoundingBox(minecraft.theWorld, new BlockPos(block.getX(), block.getY(), block.getZ()));
+	    AxisAlignedBB axis = minecraft.theWorld.getBlock((int)block.getX(),(int)block.getY(),(int)block.getZ()).getSelectedBoundingBoxFromPool(minecraft.theWorld, (int)block.getX(), (int)block.getY(), (int)block.getZ());
+	    		
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.minZ);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.maxZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.maxZ);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.minZ);
-	    tessellator.draw();
+		worldRenderer.draw();
 
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.maxZ);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.minZ);
-	    tessellator.draw();
+		worldRenderer.draw();
 	    
 		worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.minZ);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.maxZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    	    
 	}
 	
@@ -200,8 +201,8 @@ public class OreHighlighterMod implements Mod {
 			
 			for(double y = posy; y < (posy + (radius *10)*2);y++){				
 				for(double z = posz; z < (posz + (radius *10)*2);z++){
-					Block block = minecraft.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
-					
+					//Block block = minecraft.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
+					Block block = minecraft.theWorld.getBlock((int)x, (int)y, (int)z);
 					if(isInConfig("" + Block.getIdFromBlock(block))){
 						String color = config.getData("Color."+ Block.getIdFromBlock(block));
 						if(color != null){	
@@ -343,7 +344,7 @@ class OreHighLighterGui extends GuiScreen{
 	 */
 	public void drawButtons(){
 		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Highlighter", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEnabled(), "togglehighlighter", ModData.OreHighLighter, speicher);
-		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Radius", (int) ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius() , 150, 20, ModData.OreHighLighter, "Radius", speicher);
+		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Radius", (int) ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius() , 150, 20, ModData.OreHighLighter, "Radius", speicher,"Das ist ein Test;Das ist ein Test2".split(";"));
 		
 		chooseOn = new GuiChooseKeyButton(2, width/2, height/4+20, 150, 20, "Enable-Key", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getOn());
 		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.OreHighLighter, speicher, GuiPositions.getPos(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getPos()));

@@ -12,7 +12,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import com.mumfrey.liteloader.core.LiteLoader;
-import com.mumfrey.liteloader.gl.GL;
 import com.mumfrey.liteloader.modconfig.Exposable;
 
 import me.zero.cc.Zero_lite.LiteModMain;
@@ -20,6 +19,7 @@ import me.zero.cc.Zero_lite.Config.MobHighLighterConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
+import me.zero.cc.Zero_lite.utils.GL;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
 import me.zero.cc.Zero_lite.utils.Mark;
 import me.zero.cc.Zero_lite.utils.Mobs;
@@ -30,7 +30,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
@@ -202,15 +201,15 @@ public class MobHighlighterMod implements Mod {
 	 */
 	public void renderMob(Mark m){
 		    //float r,float g,float b,float alpha,double x,double y,double z,double maxy
-	    Tessellator tessellator = Tessellator.getInstance();
-	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+	    Tessellator worldRenderer = Tessellator.instance;
+	   // WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 	    GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
 		worldRenderer.startDrawing(2);
 	    
 	    worldRenderer.addVertex( m.getEntity().posX, m.getEntity().posY,  m.getEntity().posZ);
 	    worldRenderer.addVertex( m.getEntity().posX, m.getEntity().posY + m.getEntity().getEyeHeight(), m.getEntity().posZ);
 
-	    tessellator.draw();
+	    worldRenderer.draw();
 	}
 	/**
 	 * Get the key to enable

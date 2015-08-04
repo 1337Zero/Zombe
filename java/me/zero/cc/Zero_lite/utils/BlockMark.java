@@ -8,9 +8,6 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-
-import com.mumfrey.liteloader.gl.GL;
 
 public class BlockMark implements Markables {
 
@@ -33,72 +30,73 @@ public class BlockMark implements Markables {
 	public void draw(float partialTicks) {
 		setUpRenderer(partialTicks);
 		
-		Tessellator tessellator = Tessellator.getInstance();
-	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+		Tessellator worldRenderer = Tessellator.instance;
+	    //WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 	    	    
 	    GL.glColor4f(r,g,b,alpha);
-	    AxisAlignedBB axis = minecraft.theWorld.getBlockState(new BlockPos(x,y, z)).getBlock().getSelectedBoundingBox(minecraft.theWorld, new BlockPos(x, y, z));
+	   // AxisAlignedBB axis = minecraft.theWorld.getBlock(x,y, z).getSelectedBoundingBox(minecraft.theWorld,x, y, z);
+	    AxisAlignedBB axis = minecraft.theWorld.getBlock(x,y, z).getSelectedBoundingBoxFromPool(minecraft.theWorld, x, y, z);
 	    
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.minZ);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.minZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.minZ);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.maxZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.maxZ);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.minZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.maxZ);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.maxZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.minZ);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.minZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.minZ);
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.maxZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.maxZ);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.minZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.maxZ);
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.maxZ);		
-	    tessellator.draw();
+		worldRenderer.draw();
 	    	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.minZ);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.minZ);	
-	    tessellator.draw();
+		worldRenderer.draw();
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.maxZ);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.maxZ);	
-	    tessellator.draw();	
+		worldRenderer.draw();	
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.minZ);
 		worldRenderer.addVertex(axis.maxX, axis.minY, axis.minZ);	
-	    tessellator.draw();	
+		worldRenderer.draw();	
 	    
 	    worldRenderer.startDrawing(2);
 		worldRenderer.addVertex(axis.minX, axis.maxY, axis.maxZ);
 		worldRenderer.addVertex(axis.minX, axis.minY, axis.maxZ);	
-	    tessellator.draw();	
+		worldRenderer.draw();	
 	    
 	    normalizeRenderer();
 	}
