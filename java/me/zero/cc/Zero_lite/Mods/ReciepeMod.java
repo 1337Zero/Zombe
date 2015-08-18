@@ -561,6 +561,7 @@ public class ReciepeMod implements Mod {
 	 * @param meta
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private ItemStack getBlockFromIdAndMeta(int id,int meta){
 		ItemStack temp = new ItemStack(Item.getByNameOrId(id + ""));		
 		if(temp != null){
@@ -819,12 +820,12 @@ class ReciepeModGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Enabled", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isEnabled(), "renabled", ModData.ReciepeMod, speicher);
-		GuiBooleanButton loadCustomRecipes = new GuiBooleanButton(2, width/2, height/4+20, 150, 20, "loadCustomRecipes", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isLoadCustomRecipes(), "loadcustomrecipes", ModData.ReciepeMod, speicher);
-		GuiBooleanButton showRecipeItems = new GuiBooleanButton(2, width/2-170, height/4+50, 150, 20, "Show Crafting Pattern", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isShowCraftingPattern(), "showcraftingpattern", ModData.ReciepeMod, speicher);
+		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Enabled", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isEnabled(), "renabled", ModData.ReciepeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.enable").split(";"));
+		GuiBooleanButton loadCustomRecipes = new GuiBooleanButton(2, width/2, height/4+20, 150, 20, "loadCustomRecipes", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isLoadCustomRecipes(), "loadcustomrecipes", ModData.ReciepeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.loadcustomrecipes").split(";"));
+		GuiBooleanButton showRecipeItems = new GuiBooleanButton(2, width/2-170, height/4+50, 150, 20, "Show Crafting Pattern", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isShowCraftingPattern(), "showcraftingpattern", ModData.ReciepeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.showcraftinpattern").split(";"));
 		
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
-		
+
 		buttonList.add(showRecipeItems);
 		buttonList.add(loadCustomRecipes);
 		buttonList.add(booleanb);

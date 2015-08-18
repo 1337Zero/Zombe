@@ -21,6 +21,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
+import me.zero.cc.Zero_lite.utils.KeySetting;
 import me.zero.cc.Zero_lite.utils.Mark;
 import me.zero.cc.Zero_lite.utils.Mobs;
 import net.minecraft.block.Block;
@@ -51,7 +52,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class MobHighlighterMod implements Mod {
 
 	private boolean enabled = false;
-	private int onkey = 0;
+	private KeySetting onkey = new KeySetting("MobHighlighter.Toggle-Mobhighlighter");
 	
 	private Minecraft minecraft;
 	private MobHighLighterConfig config;
@@ -72,7 +73,7 @@ public class MobHighlighterMod implements Mod {
 		lastpressed = System.currentTimeMillis();
 		lastaktu = System.currentTimeMillis();
 		
-		onkey = Integer.parseInt(speicher.getConfig().getData("MobHighlighter.Toggle-Mobhighlighter"));
+		//onkey = Integer.parseInt(speicher.getConfig().getData("MobHighlighter.Toggle-Mobhighlighter"));
 		enabled = Boolean.valueOf(speicher.getConfig().getData("MobHighlighter.enabled"));
 		
 		pos = GuiPositions.valueOf(speicher.getConfig().getData("MobHighlighter.info-Pos"));
@@ -90,7 +91,7 @@ public class MobHighlighterMod implements Mod {
 	@Override
 	public void use() {
 		
-		if(Keyboard.isKeyDown(onkey) && (minecraft.currentScreen == null)){
+		if(onkey.isKeyDown() && (minecraft.currentScreen == null)){
 			if((System.currentTimeMillis() - lastpressed) >= 100){
 				if(enabled){
 					enabled = false;
@@ -217,7 +218,7 @@ public class MobHighlighterMod implements Mod {
 	 * @return Integer
 	 */
 	public int getOn(){
-		return onkey;
+		return onkey.getKey();
 	}
 	
 	@Override
@@ -251,8 +252,7 @@ public class MobHighlighterMod implements Mod {
 	@Override
 	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = (int)value;
-			speicher.getConfig().replaceData("MobHighlighter.Toggle-Mobhighlighter", onkey + "");
+			onkey.setKey((int)value);
 		}else{
 			System.out.println("Unknown value " + ValueToManupulate);
 		}		
@@ -312,11 +312,11 @@ class MobHighLighterGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Highlighter", ((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).isEnabled(), "togglehighlighter", ModData.MobHighLighter, speicher);
+		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Highlighter", ((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).isEnabled(), "togglehighlighter", ModData.MobHighLighter, speicher,LiteModMain.lconfig.getData("MobHighLighter.toggle").split(";"));
 		
-		chooseOn = new GuiChooseKeyButton(2, width/2, height/4+20, 150, 20, "Enable-Key", ((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).getOn());
-		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.MobHighLighter, speicher, GuiPositions.getPos(((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).getPos()));
-		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+70, 150, 20, "Show-Info", ((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).isShowInfo(), "showinfo", ModData.MobHighLighter, speicher);
+		chooseOn = new GuiChooseKeyButton(2, width/2, height/4+20, 150, 20, "Enable-Key", ((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).getOn(),LiteModMain.lconfig.getData("MobHighLighter.chooseonkey").split(";"));
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.MobHighLighter, speicher, GuiPositions.getPos(((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
+		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+70, 150, 20, "Show-Info", ((MobHighlighterMod)speicher.getMod(ModData.MobHighLighter.name())).isShowInfo(), "showinfo", ModData.MobHighLighter, speicher,LiteModMain.lconfig.getData("MobHighLighter.showinfo").split(";"));
 			
 		GuiButton back = new GuiButton(9, width/2-100,height-50 , "back to game");
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
+import com.mumfrey.liteloader.LiteMod;
 import com.mumfrey.liteloader.core.LiteLoader;
 
 import me.zero.cc.Zero_lite.LiteModMain;
@@ -24,6 +25,7 @@ public class InfoMod implements Mod {
 	private double percent = 0;
 	private int rotation = 0;
 	private String Facing = "";
+	//unused
 	private int onkey = 0;
 	private LiteModMain speicher;
 	
@@ -470,17 +472,17 @@ class InfoModGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton showDirection = new GuiBooleanButton(1, 10, 20, 150, 20, "Show Direction", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowdir(), "showdir", ModData.InfoMod, speicher);
-		GuiChooseStringButton dirpos = new GuiChooseStringButton(2, width/2+50, 20, 150, 20, "Dir-Position", GuiPositions.getPosList(), "posdir", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosDir()));
+		GuiBooleanButton showDirection = new GuiBooleanButton(1, 10, 20, 150, 20, "Show Direction", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowdir(), "showdir", ModData.InfoMod, speicher,LiteModMain.lconfig.getData("InfoMod.showdir").split(";"));
+		GuiChooseStringButton dirpos = new GuiChooseStringButton(2, width/2+50, 20, 150, 20, "Dir-Position", GuiPositions.getPosList(), "posdir", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosDir()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
 		
-		GuiBooleanButton showFPS= new GuiBooleanButton(3, 10, 45, 150, 20, "Show FPS", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowfps(), "showfps", ModData.InfoMod, speicher);
-		GuiChooseStringButton fpspos = new GuiChooseStringButton(4, width/2+50, 45, 150, 20, "FPS-Position", GuiPositions.getPosList(), "posfps", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosFPS()));
+		GuiBooleanButton showFPS= new GuiBooleanButton(3, 10, 45, 150, 20, "Show FPS", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowfps(), "showfps", ModData.InfoMod, speicher,LiteModMain.lconfig.getData("InfoMod.showfps").split(";"));
+		GuiChooseStringButton fpspos = new GuiChooseStringButton(4, width/2+50, 45, 150, 20, "FPS-Position", GuiPositions.getPosList(), "posfps", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosFPS()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
 		
-		GuiBooleanButton showCoor = new GuiBooleanButton(5, 10, 70, 150, 20, "Show Coor", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowcoor(), "showcoor", ModData.InfoMod, speicher);
-		GuiChooseStringButton coorpos = new GuiChooseStringButton(6, width/2+50, 70, 150, 20, "Coor-Position", GuiPositions.getPosList(), "poscoor", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosCoor()));
+		GuiBooleanButton showCoor = new GuiBooleanButton(5, 10, 70, 150, 20, "Show Coor", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowcoor(), "showcoor", ModData.InfoMod, speicher,LiteModMain.lconfig.getData("InfoMod.showcoor").split(";"));
+		GuiChooseStringButton coorpos = new GuiChooseStringButton(6, width/2+50, 70, 150, 20, "Coor-Position", GuiPositions.getPosList(), "poscoor", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosCoor()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
 		
-		GuiBooleanButton showworldage = new GuiBooleanButton(7, 10, 95, 150, 20, "Show WorldAge", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowWorldAge(), "showworldage", ModData.InfoMod, speicher);
-		GuiChooseStringButton worldagepos = new GuiChooseStringButton(8, width/2+50, 95, 150, 20, "WorldAge-Position", GuiPositions.getPosList(), "posworldage", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosWorldAge()));
+		GuiBooleanButton showworldage = new GuiBooleanButton(7, 10, 95, 150, 20, "Show WorldAge", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowWorldAge(), "showworldage", ModData.InfoMod, speicher,LiteModMain.lconfig.getData("InfoMod.showworldage").split(";"));
+		GuiChooseStringButton worldagepos = new GuiChooseStringButton(8, width/2+50, 95, 150, 20, "WorldAge-Position", GuiPositions.getPosList(), "posworldage", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosWorldAge()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
 		
 		GuiButton back = new GuiButton(9, width/2-100,height-50 , "back to game");
 		

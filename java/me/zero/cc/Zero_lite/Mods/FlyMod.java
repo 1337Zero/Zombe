@@ -14,6 +14,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
+import me.zero.cc.Zero_lite.utils.KeySetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundList;
 import net.minecraft.client.gui.GuiButton;
@@ -32,9 +33,9 @@ public class FlyMod implements Mod{
 	
 	private double flyValue = 1;
 	
-	private int downkey = 0;
-	private int upkey = 0;
-	private int onkey = 0;
+	private KeySetting downkey = new KeySetting("Fly-Mod.Key-Down");
+	private KeySetting upkey = new KeySetting("Fly-Mod.Key-Up");
+	private KeySetting onkey = new KeySetting("Fly-Mod.key-Toggle-fly");
 	
 	private LiteModMain speicher;
 	private int infoID = 0;
@@ -49,9 +50,9 @@ public class FlyMod implements Mod{
 		this.speicher = speicher;
 		this.minecraft = minecraft;
 		
-		downkey = Integer.parseInt(speicher.getConfig().getData("Fly-Mod.Key-Down"));
-		upkey = Integer.parseInt(speicher.getConfig().getData("Fly-Mod.Key-Up"));
-		onkey = Integer.parseInt(speicher.getConfig().getData("Fly-Mod.key-Toggle-fly"));
+		//downkey = Integer.parseInt(speicher.getConfig().getData("Fly-Mod.Key-Down"));
+		//upkey = Integer.parseInt(speicher.getConfig().getData("Fly-Mod.Key-Up"));
+		//onkey = Integer.parseInt(speicher.getConfig().getData("Fly-Mod.key-Toggle-fly"));
 		
 		flyValue = Double.valueOf(speicher.getConfig().getData("Fly-Mod.flyspeed"));
 		maxValue = Double.valueOf(speicher.getConfig().getData("Fly-Mod.maxflyspeed"));		
@@ -67,7 +68,7 @@ public class FlyMod implements Mod{
 	}		
 	@Override
 	public void use() {
-		if(Keyboard.isKeyDown(onkey) && !(Keyboard.isKeyDown(upkey) || Keyboard.isKeyDown(downkey) || (minecraft.currentScreen != null))){
+		if(onkey.isKeyDown() && !(upkey.isKeyDown() || downkey.isKeyDown() || (minecraft.currentScreen != null))){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(flyenabled){
 					flyenabled = false;
@@ -108,9 +109,9 @@ public class FlyMod implements Mod{
 			if(minecraft.gameSettings.keyBindSneak.isKeyDown() && !ignoreshift){
 				value = (float) (flyValue /10);
 			}
-			if(Keyboard.isKeyDown(upkey) && (minecraft.currentScreen == null)){
+			if(upkey.isKeyDown() && (minecraft.currentScreen == null)){
 				minecraft.thePlayer.motionY = value;
-			}else if(Keyboard.isKeyDown(downkey) && (minecraft.currentScreen == null)){
+			}else if(downkey.isKeyDown() && (minecraft.currentScreen == null)){
 				minecraft.thePlayer.motionY = -value;
 			}else{
 				minecraft.thePlayer.motionY = 0;
@@ -120,9 +121,9 @@ public class FlyMod implements Mod{
 			if(minecraft.gameSettings.keyBindSneak.isKeyDown() && (minecraft.currentScreen == null)){
 				value = (float) (flyValue /10);
 			}
-			if(Keyboard.isKeyDown(upkey) && Keyboard.isKeyDown(onkey)  && (minecraft.currentScreen == null)){
+			if(upkey.isKeyDown() && onkey.isKeyDown()  && (minecraft.currentScreen == null)){
 				minecraft.thePlayer.motionY = value;
-			}else if(Keyboard.isKeyDown(downkey) && Keyboard.isKeyDown(onkey)  && (minecraft.currentScreen == null)){
+			}else if(downkey.isKeyDown() && onkey.isKeyDown()  && (minecraft.currentScreen == null)){
 				minecraft.thePlayer.motionY = -value;
 			}else{
 				minecraft.thePlayer.motionY = 0;
@@ -179,42 +180,42 @@ public class FlyMod implements Mod{
 	 * @return Integer
 	 */
 	public int getDown() {
-		return downkey;
+		return downkey.getKey();
 	}
 	/**
 	 * Set the key to fly down
 	 * @param down ,the key representing the key on the keyboard
 	 */
 	public void setDown(int down) {
-		downkey = down;
+		downkey.setKey(down);;
 	}
 	/**
 	 * Get the key to fly up
 	 * @return Integer
 	 */
 	public int getUp() {
-		return upkey;
+		return upkey.getKey();
 	}
 	/**
 	 * Set the key to fly up
 	 * @param up ,the key representing the key on the keyboard
 	 */
 	public void setUp(int up) {
-		upkey = up;
+		upkey.setKey(up);
 	}
 	/**
 	 * Get the key to enable
 	 * @return Integer
 	 */
 	public int getOn() {
-		return onkey;
+		return onkey.getKey();
 	}
 	/**
 	 * Set the key to enable
 	 * @param on ,the key representing the key on the keyboard
 	 */
 	public void setOn(int on) {
-		onkey = on;
+		onkey.setKey(on);
 	}
 	@Override
 	public void manupulateValue(String ValueToManupulate, double value) {
@@ -225,14 +226,17 @@ public class FlyMod implements Mod{
 			flyValue = Double.valueOf(df.format(flyValue).replace(",", "."));
 			speicher.getConfig().replaceData("Fly-Mod.flyspeed", flyValue + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("FlyDown-Key")){
-			downkey = (int)value;
-			speicher.getConfig().replaceData("Fly-Mod.Key-Down", downkey + "");
+			//downkey = (int)value;
+			downkey.setKey((int)value);
+			//speicher.getConfig().replaceData("Fly-Mod.Key-Down", downkey + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("FlyUp-Key")){
-			upkey = (int)value;
-			speicher.getConfig().replaceData("Fly-Mod.Key-Up", upkey + "");
+			upkey.setKey((int)value);
+			//upkey = (int)value;
+			//speicher.getConfig().replaceData("Fly-Mod.Key-Up", upkey + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = (int)value;
-			speicher.getConfig().replaceData("Fly-Mod.Toggle-fly", onkey + "");
+			onkey.setKey((int)value);
+			//onkey = (int)value;
+			//speicher.getConfig().replaceData("Fly-Mod.Toggle-fly", onkey + "");
 		}else{
 			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
 			//throw new IllegalArgumentException(ValueToManupulate + " is not a known Value in " + this.getName());
@@ -353,20 +357,20 @@ class FlyModGui extends GuiScreen{
 	 */
 	public void drawButtons(){	
 		
-		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-20, "Fly-Speed-Up", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getFlyValue() , 150, 20, ModData.FlyMod, "Flyvalue", speicher);
-		GuiBooleanButton enablefly = new GuiBooleanButton(1, width/2-170, height/4+10, 150, 20, "Toggle Fly", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isTogglefly(), "togglefly", ModData.FlyMod, speicher);		
-		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4-20, 150, 20, "Enable Fly", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isEnabled(), "flyenabled", ModData.FlyMod, speicher);
-		GuiBooleanButton ignoreshift = new GuiBooleanButton(3, width/2-170, height-80, 150, 20, "Ignore Shift", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isIgnoreshift(), "ignoreshift", ModData.FlyMod, speicher);
-		GuiBooleanButton antiCreativeSwimm  = new GuiBooleanButton(4, width/2, height-80, 150, 20, "Disable Creative Swimm", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isNerfcreaetivefly(), "nerfcreativefly", ModData.FlyMod, speicher);
+		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-20, "Fly-Speed-Up", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getFlyValue() , 150, 20, ModData.FlyMod, "Flyvalue", speicher ,LiteModMain.lconfig.getData("FlyMod.changeflyvalue").split(";"));
+		GuiBooleanButton enablefly = new GuiBooleanButton(1, width/2-170, height/4+10, 150, 20, "Toggle Fly", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isTogglefly(), "togglefly", ModData.FlyMod, speicher,LiteModMain.lconfig.getData("FlyMod.togglefly").split(";"));		
+		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4-20, 150, 20, "Enable Fly", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isEnabled(), "flyenabled", ModData.FlyMod, speicher,LiteModMain.lconfig.getData("FlyMod.enablefly").split(";"));
+		GuiBooleanButton ignoreshift = new GuiBooleanButton(3, width/2-170, height-80, 150, 20, "Ignore Shift", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isIgnoreshift(), "ignoreshift", ModData.FlyMod, speicher,LiteModMain.lconfig.getData("FlyMod.enablefly").split(";"));
+		GuiBooleanButton antiCreativeSwimm  = new GuiBooleanButton(4, width/2, height-80, 150, 20, "Disable Creative Swimm", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isNerfcreaetivefly(), "nerfcreativefly", ModData.FlyMod, speicher,LiteModMain.lconfig.getData("FlyMod.nerfswim").split(";"));
 		
-		chooseUp = new GuiChooseKeyButton(4, width/2-170, height/4+40, 150, 20, "FlyUp-Key", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getUp());
-		choosedown = new GuiChooseKeyButton(5, width/2, height/4+10, 150, 20, "FlyDown-Key", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getDown());
-		chooseOn = new GuiChooseKeyButton(6, width/2, height/4+40, 150, 20, "Enable-Key", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getOn());
+		chooseUp = new GuiChooseKeyButton(5, width/2-170, height/4+40, 150, 20, "FlyUp-Key", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getUp(),LiteModMain.lconfig.getData("FlyMod.chooseflyup").split(";"));
+		choosedown = new GuiChooseKeyButton(6, width/2, height/4+10, 150, 20, "FlyDown-Key", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getDown(),LiteModMain.lconfig.getData("FlyMod.chooseflydown").split(";"));
+		chooseOn = new GuiChooseKeyButton(7, width/2, height/4+40, 150, 20, "Enable-Key", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).getOn(),LiteModMain.lconfig.getData("FlyMod.enable").split(";"));
 		
-		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Fly-Pos", GuiPositions.getPosList(), "flypos", ModData.FlyMod, speicher, GuiPositions.getPos(((FlyMod)speicher.getMod(ModData.FlyMod.name())).getPos()));
-		GuiBooleanButton showFlyInfo = new GuiBooleanButton(8, width/2, height/4+70, 150, 20, "Show-FlyInfo", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isShowFlyinfo(), "showFly", ModData.FlyMod, speicher);
-		
-		GuiButton back = new GuiButton(9, width/2-100,height-50 , "back to game");
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(8, width/2-170, height/4+70, 150, 20, "Fly-Pos", GuiPositions.getPosList(), "flypos", ModData.FlyMod, speicher, GuiPositions.getPos(((FlyMod)speicher.getMod(ModData.FlyMod.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
+		GuiBooleanButton showFlyInfo = new GuiBooleanButton(9, width/2, height/4+70, 150, 20, "Show-FlyInfo", ((FlyMod)speicher.getMod(ModData.FlyMod.name())).isShowFlyinfo(), "showFly", ModData.FlyMod, speicher,LiteModMain.lconfig.getData("FlyMod.Flyinfo").split(";"));
+
+		GuiButton back = new GuiButton(10, width/2-100,height-50 , "back to game");
 		
 		buttonList.add(antiCreativeSwimm);
 		buttonList.add(showFlyInfo);
@@ -378,7 +382,7 @@ class FlyModGui extends GuiScreen{
 		buttonList.add(booleanb);		
 		buttonList.add(ignoreshift);
 		buttonList.add(slider);		
-		buttonList.add(back);		
+		buttonList.add(back);	
 	}
 	protected void keyTyped(char c,int key){
 		System.out.println(c + " : " + key);

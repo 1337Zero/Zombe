@@ -10,6 +10,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
+import me.zero.cc.Zero_lite.utils.KeySetting;
 import me.zero.cc.Zero_lite.utils.SunThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -23,9 +24,9 @@ public class TimeMod implements Mod {
 	private Minecraft minecraft;
 	private String version = "0.1";
 	
-	private int addtime = 0;
-	private int subtime = 0;
-	private int freezekey = 0;
+	private KeySetting addtime = new KeySetting("Time-Mod.Key-addtime");
+	private KeySetting subtime = new KeySetting("Time-Mod.Key-subtime");
+	private KeySetting freezekey = new KeySetting("Time-Mod.Key-freezetime");
 	
 	private double lastpressed = 0;
 	private long timetoadd = 0;
@@ -34,7 +35,7 @@ public class TimeMod implements Mod {
 	private boolean enabled = false;
 	private SunThread st;
 	private boolean freezetime = false;
-	private int multipl = (int) ((50 / 100.0)*1);
+	private KeySetting multipl = new KeySetting((int) ((50 / 100.0)*1),"Time-Mod.time-multiplier");
 	private GuiPositions pos = GuiPositions.UP_CENTER;
 	private boolean showTimeInfo = false;
 	
@@ -43,14 +44,14 @@ public class TimeMod implements Mod {
 		this.speicher = speicher;
 		lastpressed = System.currentTimeMillis();
 				
-		addtime = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-addtime"));
-		subtime = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-subtime"));
-		freezekey = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-freezetime"));
+		//addtime = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-addtime"));
+		//subtime = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-subtime"));
+		//freezekey = Integer.parseInt(speicher.getConfig().getData("Time-Mod.Key-freezetime"));
 		
-		timetoadd = Integer.parseInt(speicher.getConfig().getData("Time-Mod.timetoadd"));
+		timetoadd = Long.valueOf(speicher.getConfig().getData("Time-Mod.timetoadd"));
 		enabled = Boolean.valueOf(speicher.getConfig().getData("Time-Mod.Time-Mod-enabled"));
 		freezetime = Boolean.valueOf(speicher.getConfig().getData("Time-Mod.time-freezed"));
-		multipl = Integer.parseInt(speicher.getConfig().getData("Time-Mod.time-multiplier"));
+		//multipl = Integer.parseInt(speicher.getConfig().getData("Time-Mod.time-multiplier"));
 		showTimeInfo = Boolean.valueOf(speicher.getConfig().getData("Time-Mod.showTimeinfo"));
 		pos = GuiPositions.valueOf(speicher.getConfig().getData("Time-Mod.showtimepos"));
 		
@@ -71,19 +72,19 @@ public class TimeMod implements Mod {
 			}
 		}
 		if((System.currentTimeMillis() - lastpressed) >=100){
-			if(Keyboard.isKeyDown(addtime) && (minecraft.currentScreen == null)){
+			if(addtime.isKeyDown() && (minecraft.currentScreen == null)){
 				timetoadd = timetoadd + 240;
 				if(st != null){
 					st.settime2add(timetoadd);
 				}				
 			}
-			if(Keyboard.isKeyDown(subtime) && (minecraft.currentScreen == null)){
+			if(subtime.isKeyDown() && (minecraft.currentScreen == null)){
 				timetoadd = timetoadd - 240;
 				if(st != null){
 					st.settime2add(timetoadd);
 				}
 			}
-			if(Keyboard.isKeyDown(freezekey) && (minecraft.currentScreen == null)){
+			if(freezekey.isKeyDown() && (minecraft.currentScreen == null)){
 				if(freezetime){
 					freezetime = false;
 				}else{
@@ -122,20 +123,16 @@ public class TimeMod implements Mod {
 	@Override
 	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Time-Add")){
-			addtime = (int)value;
-			speicher.getConfig().replaceData("Time-Mod.Key-addtime", addtime + "");
+			addtime.setKey((int)value);
 		}else if(ValueToManupulate.equalsIgnoreCase("Time-Sub")){
-			subtime = (int)value;
-			speicher.getConfig().replaceData("Time-Mod.Key-subtime", subtime + "");
+			subtime.setKey((int)value);
 		}else if(ValueToManupulate.equalsIgnoreCase("Freeze-Time")){
-			freezekey = (int)value;
-			speicher.getConfig().replaceData("Time-Mod.Key-freezetime", freezekey +  "");
+			freezekey.setKey((int)value);
 		}else if(ValueToManupulate.equalsIgnoreCase("Time-Multiplier")){
 			this.setMultipl((int) ((50 / 100.0)*value));
 			if(st != null){
 				st.setTimemultipliere((int) ((50 / 100.0)*value));
-			}
-			speicher.getConfig().replaceData("Time-Mod.time-multiplier", this.getMultipl() + "");
+			}			
 		}else{
 			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
 		}		
@@ -191,56 +188,56 @@ public class TimeMod implements Mod {
 	 * @return Integer
 	 */
 	public int getAddtime() {
-		return addtime;
+		return addtime.getKey();
 	}
 	/**
 	 * Set the amount which will be added to time
 	 * @param Integer
 	 */
 	public void setAddtime(int addtime) {
-		this.addtime = addtime;
+		this.addtime.setKey(addtime);
 	}
 	/**
 	 * Get the amount which will be remove from time
 	 * @return Integer
 	 */
 	public int getSubtime() {
-		return subtime;
+		return subtime.getKey();
 	}
 	/**
 	 * Set the amount which will be remove from time
 	 * @param Integer
 	 */
 	public void setSubtime(int subtime) {
-		this.subtime = subtime;
+		this.subtime.setKey(subtime);
 	}
 	/**
 	 * Get the key for freeze time
 	 * @return Integer
 	 */
 	public int getFreezetimekey() {
-		return freezekey;
+		return freezekey.getKey();
 	}
 	/**
 	 * Set the key for freeze time
 	 * @param Integer
 	 */
 	public void setFreezetimekey(int freezetimekey) {
-		freezekey = freezetimekey;
+		freezekey.setKey(freezetimekey);;
 	}
 	/**
 	 * Get the time multiplicator
 	 * @return Integer
 	 */
 	public int getMultipl() {
-		return multipl;
+		return multipl.getKey();
 	}
 	/**
 	 * set the time multiplicator
 	 * @param multipl
 	 */
 	public void setMultipl(int multipl) {
-		this.multipl = multipl;
+		this.multipl.setKey(multipl);;
 	}
 	/**
 	 * Get the Position of the info
@@ -307,17 +304,17 @@ class TimeModGui extends GuiScreen{
 	 */
 	public void drawButtons(){	
 		
-		GuiBooleanButton freezetime = new GuiBooleanButton(1, width/2-170, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isFreezetime(), "freezetime", ModData.TimeMod, speicher);
+		GuiBooleanButton freezetime = new GuiBooleanButton(1, width/2-170, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isFreezetime(), "freezetime", ModData.TimeMod, speicher,LiteModMain.lconfig.getData("TimeMod.freezetime").split(";"));
 		
-		key_add = new GuiChooseKeyButton(2, width/2-170, height/4+20, 150, 20, "Time-Add", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getAddtime());
-		key_sub = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Time-Sub", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getSubtime());
-		key_freeze = new GuiChooseKeyButton(4, width/2, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getFreezetimekey());
-		SimpleSlider slider = new SimpleSlider(5, width/2, height/4+50, "Time-Multiplier",(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl()/5), 150, 20, ModData.TimeMod, "Time-Multiplier", speicher);
+		key_add = new GuiChooseKeyButton(2, width/2-170, height/4+20, 150, 20, "Time-Add", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getAddtime(),LiteModMain.lconfig.getData("TimeMod.addtime").split(";"));
+		key_sub = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Time-Sub", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getSubtime(),LiteModMain.lconfig.getData("TimeMod.removetime").split(";"));
+		key_freeze = new GuiChooseKeyButton(4, width/2, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getFreezetimekey(),LiteModMain.lconfig.getData("TimeMod.addtime").split(";"));
+		SimpleSlider slider = new SimpleSlider(5, width/2, height/4+50, "Time-Multiplier",(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl()/5), 150, 20, ModData.TimeMod, "Time-Multiplier", speicher,LiteModMain.lconfig.getData("TimeMod.multiplier").split(";"));
 		//(int) ((50 / 100.0)*value)
-		GuiBooleanButton enable = new GuiBooleanButton(7, width/2-170, height/4+50, 150, 20, "Enabled", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isEnabled(), "enable", ModData.TimeMod, speicher);
+		GuiBooleanButton enable = new GuiBooleanButton(7, width/2-170, height/4+50, 150, 20, "Enabled", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isEnabled(), "enable", ModData.TimeMod, speicher,LiteModMain.lconfig.getData("TimeMod.enable").split(";"));
 		
-		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+80, 150, 20, "TimeInfo-Pos", GuiPositions.getPosList(), "timepos", ModData.TimeMod, speicher, GuiPositions.getPos(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getPos()));
-		GuiBooleanButton showFlyInfo = new GuiBooleanButton(8, width/2, height/4+80, 150, 20, "Show-TimeInfo", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isShowTimeInfo(), "showtime", ModData.TimeMod, speicher);
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+80, 150, 20, "TimeInfo-Pos", GuiPositions.getPosList(), "timepos", ModData.TimeMod, speicher, GuiPositions.getPos(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
+		GuiBooleanButton showFlyInfo = new GuiBooleanButton(8, width/2, height/4+80, 150, 20, "Show-TimeInfo", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isShowTimeInfo(), "showtime", ModData.TimeMod, speicher,LiteModMain.lconfig.getData("TimeMod.showinfo").split(";"));
 		
 		
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");

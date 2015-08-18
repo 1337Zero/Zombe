@@ -14,6 +14,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
+import me.zero.cc.Zero_lite.utils.KeySetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
@@ -25,7 +26,7 @@ public class SpeedMod implements Mod {
 	private Minecraft minecraft;
 	private double speedValue = 1;
 	private LiteModMain speicher;
-	private int onkey = 0;
+	private KeySetting onkey = new KeySetting("Speed-Mod.Toggle-speed");
 	private boolean speedenabled = false;
 	private double lastpressed = 0;
 	private int infoID = 0;
@@ -43,7 +44,7 @@ public class SpeedMod implements Mod {
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		
-		onkey = Integer.parseInt(speicher.getConfig().getData("Speed-Mod.Toggle-speed"));
+		//onkey = Integer.parseInt(speicher.getConfig().getData("Speed-Mod.Toggle-speed"));
 		maxspeed = Double.valueOf(speicher.getConfig().getData("Speed-Mod.maxspeed"));
 		speedValue = Double.valueOf(speicher.getConfig().getData("Speed-Mod.speed"));
 		showspeed = Boolean.valueOf(speicher.getConfig().getData("Speed-Mod.showspeed"));
@@ -76,7 +77,7 @@ public class SpeedMod implements Mod {
 	@Override
 	public void use() {		
 		rotationyaw = minecraft.thePlayer.rotationYaw;
-		if(Keyboard.isKeyDown(onkey) && !(minecraft.gameSettings.keyBindRight.isKeyDown() || minecraft.gameSettings.keyBindLeft.isKeyDown() || minecraft.gameSettings.keyBindForward.isKeyDown() || minecraft.gameSettings.keyBindBack.isKeyDown() || (minecraft.currentScreen != null))){
+		if(onkey.isKeyDown() && !(minecraft.gameSettings.keyBindRight.isKeyDown() || minecraft.gameSettings.keyBindLeft.isKeyDown() || minecraft.gameSettings.keyBindForward.isKeyDown() || minecraft.gameSettings.keyBindBack.isKeyDown() || (minecraft.currentScreen != null))){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(speedenabled){
 					speedenabled = false;
@@ -91,7 +92,7 @@ public class SpeedMod implements Mod {
 		
 		if(speedenabled){
 			if(toggledspeed){
-				if(Keyboard.isKeyDown(onkey) && (minecraft.currentScreen == null)){
+				if(onkey.isKeyDown() && (minecraft.currentScreen == null)){
 					if(showspeed){
 						speicher.getInfoLineManager().getInfoLine(pos).setInfo(infoID, "Speed (" + speedValue + ")");
 					}else{
@@ -138,14 +139,14 @@ public class SpeedMod implements Mod {
 	 * @return Integer
 	 */
 	public int getOn() {
-		return onkey;
+		return onkey.getKey();
 	}
 	/**
 	 * Set the key to enable
 	 * @param Integer
 	 */
 	public void setOn(int on) {
-		onkey = on;
+		onkey.setKey(on);
 	}
 
 	private void UpdateSpeed(Minecraft minecraft){	
@@ -244,8 +245,7 @@ public class SpeedMod implements Mod {
 			speedValue = Double.valueOf(df.format(speedValue).replace(",", "."));
 			speicher.getConfig().replaceData("Speed-Mod.speed", speedValue + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = (int)percent;
-			speicher.getConfig().replaceData("Speed-Mod.Toggle-speed", onkey + "");
+			onkey.setKey((int)percent);
 		}else{		
 			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
 		}		
@@ -335,17 +335,17 @@ class SpeedModGui extends GuiScreen{
 	 */
 	public void drawButtons(){
 		
-		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getSpeedValue() , 150, 20, ModData.SpeedMod, "Speed", speicher);
-		GuiBooleanButton enablespeed = new GuiBooleanButton(1, width/2-170, height/4-10, 150, 20, "Enable Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isEnabled(), "enablespeed", ModData.SpeedMod, speicher);		
-		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isToggledspeed(), "togglespeed", ModData.SpeedMod, speicher);
-		GuiBooleanButton intelligent_mode = new GuiBooleanButton(2, width/2-170, height/4+80, 150, 20, "Intelligent Mode", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isIntelligentmode(), "intelligentmode", ModData.SpeedMod, speicher);
+		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getSpeedValue() , 150, 20, ModData.SpeedMod, "Speed", speicher,LiteModMain.lconfig.getData("SpeedMod.choosespeed").split(";"));
+		GuiBooleanButton enablespeed = new GuiBooleanButton(1, width/2-170, height/4-10, 150, 20, "Enable Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isEnabled(), "enablespeed", ModData.SpeedMod, speicher,LiteModMain.lconfig.getData("SpeedMod.togglespeed").split(";"));		
+		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isToggledspeed(), "togglespeed", ModData.SpeedMod, speicher,LiteModMain.lconfig.getData("SpeedMod.enablespeed").split(";"));
+		GuiBooleanButton intelligent_mode = new GuiBooleanButton(2, width/2-170, height/4+80, 150, 20, "Intelligent Mode", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isIntelligentmode(), "intelligentmode", ModData.SpeedMod, speicher,LiteModMain.lconfig.getData("SpeedMod.inteligendmode").split(";"));
 		
 		
 		
-		GuiChooseStringButton choosepos = new GuiChooseStringButton(4, width/2-170, height/4+50, 150, 20, "Speed-Position" , GuiPositions.getPosList(), "posspeed", ModData.SpeedMod, speicher,GuiPositions.getPos(((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getPos()));
-		GuiBooleanButton showSpeedInfo = new GuiBooleanButton(5, width/2,height/4+50, 150, 20, "Show Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isShowspeed(), "showspeed", ModData.SpeedMod, speicher);
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(4, width/2-170, height/4+50, 150, 20, "Speed-Position" , GuiPositions.getPosList(), "posspeed", ModData.SpeedMod, speicher,GuiPositions.getPos(((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
+		GuiBooleanButton showSpeedInfo = new GuiBooleanButton(5, width/2,height/4+50, 150, 20, "Show Speed", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).isShowspeed(), "showspeed", ModData.SpeedMod, speicher,LiteModMain.lconfig.getData("SpeedMod.showinfo").split(";"));
 		
-		chooseOn = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Enable-Key", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getOn());
+		chooseOn = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Enable-Key", ((SpeedMod)speicher.getMod(ModData.SpeedMod.name())).getOn(),LiteModMain.lconfig.getData("SpeedMod.choosespeedkey").split(";"));
 		
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 		

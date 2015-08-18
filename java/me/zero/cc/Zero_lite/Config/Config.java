@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.StringReader;
 import java.util.*;
 
+import net.minecraft.client.Minecraft;
+
 import com.mumfrey.liteloader.core.LiteLoader;
 
 public class Config {
@@ -117,8 +119,8 @@ public class Config {
 	public String getData(String key){
 		String back = "";
 		if(data.get(key) == null){
-			System.out.println("Your config-File is old, i will try update it for you ;D");
-			for(int i = 0; i < defaultconfig.size();i++){
+			System.out.println("Missing key (" + key + ") in your config ... using default value");
+			for(int i = 0; i < defaultconfig.size();i++){				
 				if(defaultconfig.get(i).split(":")[0].equalsIgnoreCase(key)){
 					data.put(key, defaultconfig.get(i).split(":")[1]);
 					System.out.println("adding " + defaultconfig.get(i));
@@ -129,7 +131,7 @@ public class Config {
 						e.printStackTrace();
 					}
 					return back;
-				}
+				}							
 			}
 		}		
 		return data.get(key);

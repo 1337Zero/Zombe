@@ -8,10 +8,17 @@ public class KeySetting {
 
 	private int key;
 	private String configname;
+	private boolean isKey = false;
 		
 	public KeySetting(int key,String configname){
+		this(configname);
 		this.key = key;
-		this.configname = configname;
+		load();
+	}
+	public KeySetting(String configname,boolean iskey){
+		this(configname);
+		isKey = iskey;
+		load();
 	}
 	
 	public KeySetting(String configname){
@@ -22,6 +29,9 @@ public class KeySetting {
 		this.key = Integer.parseInt(LiteModMain.config.getData(configname));
 	}
 	public boolean isPressed(){
+		return Keyboard.isKeyDown(key);
+	}
+	public boolean isKeyDown(){
 		return Keyboard.isKeyDown(key);
 	}
 	public void replaceKey(String configname,int key){

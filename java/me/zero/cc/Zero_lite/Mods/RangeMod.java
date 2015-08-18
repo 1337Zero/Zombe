@@ -461,7 +461,6 @@ public class RangeMod implements Mod {
 			main.getConfig().replaceData("RangeMod.Range", "" + range);
 		}else if(ValueToManupulate.equalsIgnoreCase("EnablePick-Key")){
 			reachPickonkey.setKey((int)value);
-			//main.getConfig().replaceData("RangeMod.reachpickonkey", reachPickonkey + "");
 		}else if(ValueToManupulate.equalsIgnoreCase("Enableplace-Key")){
 			reachplaceonkey.setKey((int)value);
 		}else if(ValueToManupulate.equalsIgnoreCase("Enablebreak-Key")){
@@ -543,24 +542,24 @@ class RangeModGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton toggleplace = new GuiBooleanButton(2, 80, height/4-40, 150, 20, "Toggle Reachplace", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachplace(), "togglereachplace", ModData.RangeMod, speicher);
-		GuiBooleanButton togglebreak = new GuiBooleanButton(2, 80, height/4-20, 150, 20, "Toggle Reachbreak", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachbreak(), "togglereachbreak", ModData.RangeMod, speicher);
-		GuiBooleanButton togglemark = new GuiBooleanButton(2, 80, height/4, 150, 20, "Toggle Marker", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isMarkblock(), "togglemark", ModData.RangeMod, speicher);
-		GuiBooleanButton togglerangepick = new GuiBooleanButton(2, 250, height/4+20, 150, 20, "Toggle ReachPick", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachPick(), "togglereachpick", ModData.RangeMod, speicher);
+		GuiBooleanButton toggleplace = new GuiBooleanButton(2, 80, height/4-40, 150, 20, "Toggle Reachplace", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachplace(), "togglereachplace", ModData.RangeMod, speicher,LiteModMain.lconfig.getData("RangeMod.togglereachplace").split(";"));
+		GuiBooleanButton togglebreak = new GuiBooleanButton(2, 80, height/4-20, 150, 20, "Toggle Reachbreak", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachbreak(), "togglereachbreak", ModData.RangeMod, speicher,LiteModMain.lconfig.getData("RangeMod.togglereachbreak").split(";"));
+		GuiBooleanButton togglemark = new GuiBooleanButton(2, 80, height/4, 150, 20, "Toggle Marker", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isMarkblock(), "togglemark", ModData.RangeMod, speicher,LiteModMain.lconfig.getData("RangeMod.marker").split(";"));
+		GuiBooleanButton togglerangepick = new GuiBooleanButton(2, 250, height/4+20, 150, 20, "Toggle ReachPick", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isReachPick(), "togglereachpick", ModData.RangeMod, speicher,LiteModMain.lconfig.getData("RangeMod.togglereachpick").split(";"));
 		
-		GuiBooleanButton dropblock = new GuiBooleanButton(2, 250, height/4-40, 150, 20, "Drop Blocks", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isDropblock(), "dropblock", ModData.RangeMod, speicher);
-		GuiBooleanButton removefrominventory = new GuiBooleanButton(2, 250, height/4-20, 150, 20, "Remove From Inv", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isRemoveFromInventory(), "removefrominventory", ModData.RangeMod, speicher);
-		GuiBooleanButton addtoinventory = new GuiBooleanButton(2, 250, height/4, 150, 20, "add to Inv", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isAddToInventory(), "addtoinventory", ModData.RangeMod, speicher);
+		GuiBooleanButton dropblock = new GuiBooleanButton(2, 250, height/4-40, 150, 20, "Drop Blocks", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isDropblock(), "dropblock", ModData.RangeMod, speicher,LiteModMain.lconfig.getData("RangeMod.dropblock").split(";"));
+		GuiBooleanButton removefrominventory = new GuiBooleanButton(2, 250, height/4-20, 150, 20, "Remove From Inv", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isRemoveFromInventory(), "removefrominventory", ModData.RangeMod, speicher,LiteModMain.lconfig.getData("RangeMod.removefrominv").split(";"));
+		GuiBooleanButton addtoinventory = new GuiBooleanButton(2, 250, height/4, 150, 20, "add to Inv", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isAddToInventory(), "addtoinventory", ModData.RangeMod, speicher,LiteModMain.lconfig.getData("RangeMod.addtoinv").split(";"));
 					
-		SimpleSlider slider = new SimpleSlider(0,80, height/4+100, "range", (int) ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange()/10 , 150, 20, ModData.RangeMod, "Range", speicher);
+		SimpleSlider slider = new SimpleSlider(0,80, height/4+100, "range", (int) ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange()/10 , 150, 20, ModData.RangeMod, "Range", speicher,LiteModMain.lconfig.getData("RangeMod.range").split(";"));
 
-		chooseEnableBlockPlace = new GuiChooseKeyButton(2, 80, height/4+60, 150, 20, "Enableplace-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachplaceonkey());
-		chooseEnableBlockBreak = new GuiChooseKeyButton(2, 80, height/4+80, 150, 20, "Enablebreak-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachbreakonkey());
-		chooseEnableBlockPick = new GuiChooseKeyButton(2, 250, height/4+40, 150, 20, "EnablePick-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachPickonkey());
+		chooseEnableBlockPlace = new GuiChooseKeyButton(2, 80, height/4+60, 150, 20, "Enableplace-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachplaceonkey(),LiteModMain.lconfig.getData("RangeMod.chooseplacekey").split(";"));
+		chooseEnableBlockBreak = new GuiChooseKeyButton(2, 80, height/4+80, 150, 20, "Enablebreak-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachbreakonkey(),LiteModMain.lconfig.getData("RangeMod.choosebreakkey").split(";"));
+		chooseEnableBlockPick = new GuiChooseKeyButton(2, 250, height/4+40, 150, 20, "EnablePick-Key", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getReachPickonkey(),LiteModMain.lconfig.getData("RangeMod.choosepickkey").split(";"));
 		
-		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, 80, height/4+40, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.RangeMod, speicher, GuiPositions.getPos(((RangeMod)speicher.getMod(ModData.RangeMod.name())).getPos()));
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, 80, height/4+40, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.RangeMod, speicher, GuiPositions.getPos(((RangeMod)speicher.getMod(ModData.RangeMod.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
 		
-		GuiBooleanButton showInfo = new GuiBooleanButton(8, 80, height/4+20, 150, 20, "Show-Info", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isShowinfo(), "showinfo", ModData.RangeMod, speicher);
+		GuiBooleanButton showInfo = new GuiBooleanButton(8, 80, height/4+20, 150, 20, "Show-Info", ((RangeMod)speicher.getMod(ModData.RangeMod.name())).isShowinfo(), "showinfo", ModData.RangeMod, speicher,LiteModMain.lconfig.getData("RangeMod.showinfo").split(";"));
 				
 		
 		//Enable key,enable Button,

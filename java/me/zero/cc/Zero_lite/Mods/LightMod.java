@@ -8,6 +8,7 @@ import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
+import me.zero.cc.Zero_lite.utils.KeySetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
@@ -18,7 +19,9 @@ public class LightMod implements Mod {
 
 	private Minecraft minecraft;
 	private boolean enabled = false;
-	private int onkey = 0;
+	
+	private KeySetting onkey = new KeySetting("Light-Mod.Toggle-Light");
+	
 	private float gamasetting = 0;
 	private double lastpressed = 0;
 	private String version = "0.1";
@@ -28,7 +31,7 @@ public class LightMod implements Mod {
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		
-		onkey = Integer.parseInt(speicher.getConfig().getData("Light-Mod.Toggle-Light"));
+		//onkey = Integer.parseInt(speicher.getConfig().getData("Light-Mod.Toggle-Light"));
 		enabled = Boolean.valueOf(speicher.getConfig().getData("Light-Mod.lightmod-enabled"));
 		
 		gamasetting = minecraft.gameSettings.gammaSetting;
@@ -43,7 +46,7 @@ public class LightMod implements Mod {
 
 	@Override
 	public void use() {
-		if(Keyboard.isKeyDown(onkey) && (minecraft.currentScreen == null)){
+		if(onkey.isKeyDown() && (minecraft.currentScreen == null)){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(enabled){
 					enabled = false;
@@ -73,14 +76,14 @@ public class LightMod implements Mod {
 	 * @return Integer
 	 */
 	public int getOn() {
-		return onkey;
+		return onkey.getKey();
 	}
 	/**
 	 * Set the key to enable
 	 * @param on
 	 */
 	public void setOn(int on) {
-		onkey = on;
+		onkey.setKey(on);
 	}
 	
 	@Override
@@ -96,8 +99,7 @@ public class LightMod implements Mod {
 	@Override
 	public void manupulateValue(String ValueToManupulate, double percent) {	
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = (int)percent;
-			speicher.getConfig().replaceData("Light-Mod.Toggle-Light", onkey + "");
+			onkey.setKey((int)percent);
 		}else{
 			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
 		}
@@ -149,9 +151,9 @@ class LightModGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Light", ((LightMod)speicher.getMod(ModData.LightMod.name())).isEnabled(), "toggleLight", ModData.LightMod, speicher);
+		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Light", ((LightMod)speicher.getMod(ModData.LightMod.name())).isEnabled(), "toggleLight", ModData.LightMod, speicher,LiteModMain.lconfig.getData("LightMod.togglelight").split(";"));
 		
-		chooseOn = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Enable-Key", ((LightMod)speicher.getMod(ModData.LightMod.name())).getOn());
+		chooseOn = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Enable-Key", ((LightMod)speicher.getMod(ModData.LightMod.name())).getOn(),LiteModMain.lconfig.getData("LightMod.enable").split(";"));
 
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 		

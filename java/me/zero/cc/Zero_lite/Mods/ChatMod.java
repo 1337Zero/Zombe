@@ -184,7 +184,7 @@ class ChatModGui extends GuiScreen{
 	}
 	
 	public void drawButtons(){
-		GuiBooleanButton enableKick = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Kick on Ip", ((ChatMod)speicher.getMod(ModData.ChatMod.name())).isEnablekick(), "enablekick", ModData.ChatMod, speicher);
+		GuiBooleanButton enableKick = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Kick on Ip", ((ChatMod)speicher.getMod(ModData.ChatMod.name())).isEnablekick(), "enablekick", ModData.ChatMod, speicher,"A player will be kicked;if he writes an IP".split(";"));
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 	
 		buttonList.add(back);

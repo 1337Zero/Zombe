@@ -11,6 +11,7 @@ import org.lwjgl.opengl.Drawable;
 
 import me.zero.cc.Zero_lite.Config.Config;
 import me.zero.cc.Zero_lite.Config.CustomRecipesConfig;
+import me.zero.cc.Zero_lite.Config.LanguageConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Mods.RangeMod;
 import me.zero.cc.Zero_lite.Mods.ChatMod;
@@ -68,6 +69,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private boolean init = false;
 	private ChatMod ch;
 	public static Config config;
+	public static LanguageConfig lconfig;
 	public static CustomRecipesConfig customconfig;
 	private InfoLineManager ilm;
 	private Minecraft minecraft;
@@ -97,6 +99,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	public void init(File configPath) {	
 		LiteLoader.getInput().registerKeyBinding(Zombe_config);
 		config = new Config();	
+		lconfig = new LanguageConfig();
 		customconfig = new CustomRecipesConfig();
 		update = Boolean.valueOf(config.getData("Main.searchupdates"));
 		enableselection = Boolean.valueOf(config.getData("Main.enableSelection"));
@@ -182,11 +185,11 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			if(messages != null){
 				if(messages.size() > 0 || urlVersion != "" & downloadURL != ""){					
 					if(!urlVersion.equalsIgnoreCase(getVersion())){
-						minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + "&4A new Lite-Zombe Version is avaible: " + urlVersion)));						
+						sendMessage(prefix + lconfig.getData("Main.updateMSG").replace("<urlversion>", urlVersion));
 						minecraft.thePlayer.addChatMessage(new ChatComponentText(downloadURL));		
 						
 						for(String msg : messages){		
-							minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + msg)));								
+							sendMessage(prefix + msg);
 						}
 					}
 					messages = null;
@@ -205,12 +208,11 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 									firstmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.firstMarkR")), Float.valueOf(config.getData("Main.firstMarkG")), Float.valueOf(config.getData("Main.firstMarkB")), Float.valueOf(config.getData("Main.firstMarkAlpha")));
 									//firstmark = new BlockMark(0, 0, 0, 0, pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ());
 									lastFirstMarkPick = System.currentTimeMillis();
-									sendMessage("&6Set Firstmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ() + ")");						
-							
+									sendMessage(lconfig.getData("Selection.firstmark").replace("<x>",  pos.getBlockPos().getX() + "").replace("<y>", pos.getBlockPos().getY() + "").replace("<z>", pos.getBlockPos().getZ() + ""));
 									if(secondmark != null){
 										//selection = new Selection((Math.max(firstmark.getY(), secondmark.getY()) - Math.min(firstmark.getY(), secondmark.getY())), (Math.max(firstmark.getZ(), secondmark.getZ()) - Math.min(firstmark.getZ(), secondmark.getZ())), (Math.max(firstmark.getX(), secondmark.getX()) - Math.min(firstmark.getX(), secondmark.getX())), firstmark, secondmark, Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
 										selection = SelectionHelper.calcSelectedBlocks(minecraft, firstmark, secondmark,Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
-										sendMessage("Selected " + selection.size() + " Blocks");
+										sendMessage(lconfig.getData("Selection.selected").replace("<size>", selection.size() + ""));
 									}
 								}
 							}
@@ -225,11 +227,11 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 									MovingObjectPosition pos = minecraft.thePlayer.rayTrace(5,1.0F);
 									secondmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.secondMarkR")), Float.valueOf(config.getData("Main.secondMarkG")), Float.valueOf(config.getData("Main.secondMarkB")), Float.valueOf(config.getData("Main.secondMarkAlpha")));
 									lastSecondMarkPick = System.currentTimeMillis();
-									sendMessage("&6Set Secondmark to (" + pos.getBlockPos().getX() + ":" + pos.getBlockPos().getY() + ":" + pos.getBlockPos().getZ() + ")");	
-								
+									sendMessage(lconfig.getData("Selection.secondmark").replace("<x>",  pos.getBlockPos().getX() + "").replace("<y>", pos.getBlockPos().getY() + "").replace("<z>", pos.getBlockPos().getZ() + ""));
+									
 									if(firstmark != null){
 										selection = SelectionHelper.calcSelectedBlocks(minecraft, firstmark, secondmark,Float.valueOf(config.getData("Main.selectionR")),Float.valueOf(config.getData("Main.selectionG")),Float.valueOf(config.getData("Main.selectionB")),Float.valueOf(config.getData("Main.selectionAlpha")));
-										sendMessage("Selected " + selection.size() + " Blocks");
+										sendMessage(lconfig.getData("Selection.selected").replace("<size>", selection.size() + ""));
 									}
 								}
 							}	
@@ -454,9 +456,9 @@ class ConfigMainFrame extends GuiScreen{
 		}	
 		buttonList.add(new GuiButton(lmm.getMods().size(), width -100, height-20, 100, 20,"back to game..."));
 		
-		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 2, width-150, height-60, 150, 20, "Enable Selection", Boolean.valueOf(lmm.getConfig().getData("Main.enableSelection")), "enableselection", ModData.Nil, lmm));
+		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 2, width-150, height-60, 150, 20, "Enable Selection", Boolean.valueOf(lmm.getConfig().getData("Main.enableSelection")), "enableselection", ModData.Nil, lmm,"Enables the Selection Part;Use a &6Wood Shovel;and a &6Wood Axe;to make a Selection".split(";")));
 		
-		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 1, width-100, height-40, 100, 20, "Update-Check", Boolean.valueOf(lmm.getConfig().getData("Main.searchupdates")), "check-updates", ModData.Nil, lmm));
+		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 1, width-100, height-40, 100, 20, "Update-Check", Boolean.valueOf(lmm.getConfig().getData("Main.searchupdates")), "check-updates", ModData.Nil, lmm,"Enables the Update Check;".split(";")));
 	}
 	protected void keyTyped(char c,int key){
 		//F7 equals Button 65, so close Gui on key 65

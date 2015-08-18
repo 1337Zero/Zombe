@@ -15,6 +15,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
+import me.zero.cc.Zero_lite.utils.KeySetting;
 import me.zero.cc.Zero_lite.utils.Mark;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
@@ -42,7 +43,7 @@ public class OreHighlighterMod implements Mod {
 	private Minecraft minecraft;
 	private OreHighLighterModConfig config;
 	
-	private int onkey = 27;
+	private KeySetting onkey = new KeySetting("OreHighlighter.Toggle-OreHighlighter");
 	private boolean enabled = false;
 	
 	private int infoID;
@@ -55,7 +56,7 @@ public class OreHighlighterMod implements Mod {
 	private int lastPlayerChunkX = 0;
 	private int lastPlayerChunkZ = 0;
 	
-	private int radius = 2;
+	private KeySetting radius = new KeySetting(2,"OreHighlighter.radius");
 	
 	public OreHighlighterMod(Minecraft minecraft,LiteModMain speicher) {
 		this.minecraft = minecraft;
@@ -64,7 +65,7 @@ public class OreHighlighterMod implements Mod {
 		lastpressed = System.currentTimeMillis();
 		lastaktu = System.currentTimeMillis();
 		
-		onkey = Integer.parseInt(speicher.getConfig().getData("OreHighlighter.Toggle-OreHighlighter"));
+		//onkey = Integer.parseInt(speicher.getConfig().getData("OreHighlighter.Toggle-OreHighlighter"));
 		enabled = Boolean.valueOf(speicher.getConfig().getData("OreHighlighter.enabled"));
 		
 		pos = GuiPositions.valueOf(speicher.getConfig().getData("OreHighlighter.info-Pos"));
@@ -72,7 +73,7 @@ public class OreHighlighterMod implements Mod {
 
 		showinfo = Boolean.valueOf(speicher.getConfig().getData("OreHighlighter.showinfo"));	
 		
-		radius = Integer.parseInt(speicher.getConfig().getData("OreHighlighter.radius"));
+		//radius = Integer.parseInt(speicher.getConfig().getData("OreHighlighter.radius"));
 	}
 	
 	@Override
@@ -83,7 +84,7 @@ public class OreHighlighterMod implements Mod {
 	@Override
 	public void use() {
 		
-		if(Keyboard.isKeyDown(onkey) && (minecraft.currentScreen == null)){
+		if(onkey.isKeyDown() && (minecraft.currentScreen == null)){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(enabled){
 					enabled = false;
@@ -192,14 +193,14 @@ public class OreHighlighterMod implements Mod {
 	private void updateRenderPos() throws Exception{	
 		blocks.clear();
 				
-		double posx = minecraft.thePlayer.posX - radius*10;
-		double posy = minecraft.thePlayer.posY - radius*10;
-		double posz = minecraft.thePlayer.posZ - radius*10;
+		double posx = minecraft.thePlayer.posX - radius.getKey()*10;
+		double posy = minecraft.thePlayer.posY - radius.getKey()*10;
+		double posz = minecraft.thePlayer.posZ - radius.getKey()*10;
 						
-		for(double x = posx; x < (posx + (radius *10)*2);x++){
+		for(double x = posx; x < (posx + (radius.getKey() *10)*2);x++){
 			
-			for(double y = posy; y < (posy + (radius *10)*2);y++){				
-				for(double z = posz; z < (posz + (radius *10)*2);z++){
+			for(double y = posy; y < (posy + (radius.getKey() *10)*2);y++){				
+				for(double z = posz; z < (posz + (radius.getKey() *10)*2);z++){
 					Block block = minecraft.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
 					
 					if(isInConfig("" + Block.getIdFromBlock(block))){
@@ -243,11 +244,9 @@ public class OreHighlighterMod implements Mod {
 	@Override
 	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = (int)value;
-			speicher.getConfig().replaceData("OreHighlighter.Toggle-OreHighlighter", onkey + "");
+			onkey.setKey((int)value);
 		}else if(ValueToManupulate.equalsIgnoreCase("Radius")){
-			radius = (int)value/10;
-			speicher.getConfig().replaceData("OreHighlighter.radius", radius + "");
+			radius.setKey((int)value/10);
 		}else{
 			System.out.println("Unknown value " + ValueToManupulate);
 		}		
@@ -282,14 +281,14 @@ public class OreHighlighterMod implements Mod {
 	 * @return Integer
 	 */
 	public int getRadius() {
-		return radius;
+		return radius.getKey();
 	}
 	/**
 	 * Sets the Radius of the search-area
 	 * @param radius
 	 */
 	public void setRadius(int radius) {
-		this.radius = radius;
+		this.radius.setKey(radius);
 	}
 	/**
 	 * Get if the info is shown
@@ -310,7 +309,7 @@ public class OreHighlighterMod implements Mod {
 	 * @return Integer
 	 */
 	public int getOn() {
-		return onkey;
+		return onkey.getKey();
 	}
 }
 class OreHighLighterGui extends GuiScreen{
@@ -342,12 +341,12 @@ class OreHighLighterGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Highlighter", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEnabled(), "togglehighlighter", ModData.OreHighLighter, speicher);
-		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Radius", (int) ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius() , 150, 20, ModData.OreHighLighter, "Radius", speicher);
+		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Highlighter", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEnabled(), "togglehighlighter", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.toggle").split(";"));
+		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Radius", (int) ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius() , 150, 20, ModData.OreHighLighter, "Radius", speicher,LiteModMain.lconfig.getData("OreHighLighter.radius").split(";"));
 		
-		chooseOn = new GuiChooseKeyButton(2, width/2, height/4+20, 150, 20, "Enable-Key", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getOn());
-		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.OreHighLighter, speicher, GuiPositions.getPos(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getPos()));
-		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+70, 150, 20, "Show-Info", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isShowInfo(), "showinfo", ModData.OreHighLighter, speicher);
+		chooseOn = new GuiChooseKeyButton(2, width/2, height/4+20, 150, 20, "Enable-Key", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getOn(),LiteModMain.lconfig.getData("OreHighLighter.chooseonkey").split(";"));
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.OreHighLighter, speicher, GuiPositions.getPos(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
+		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+70, 150, 20, "Show-Info", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isShowInfo(), "showinfo", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.showinfo").split(";"));
 			
 		GuiButton back = new GuiButton(9, width/2-100,height-50 , "back to game");
 

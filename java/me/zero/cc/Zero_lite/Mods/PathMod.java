@@ -13,6 +13,7 @@ import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
+import me.zero.cc.Zero_lite.utils.KeySetting;
 import me.zero.cc.Zero_lite.utils.Mark;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -32,7 +33,7 @@ public class PathMod implements Mod{
 	private Minecraft minecraft;
 	private double lastx,lasty,lastz;
 	private GuiPositions pos = GuiPositions.DOWN_CENTER;
-	private int onkey = 11;
+	private KeySetting onkey = new KeySetting(11,"PathMod.Toggle-PathMod");
 	private int infoID = 0;
 	private boolean showinfo;
 	private LiteModMain speicher;
@@ -47,7 +48,7 @@ public class PathMod implements Mod{
 		this.minecraft = minecraft;
 		this.speicher = speicher;
 		
-		onkey = Integer.parseInt(speicher.getConfig().getData("PathMod.Toggle-PathMod"));
+		//onkey = Integer.parseInt(speicher.getConfig().getData("PathMod.Toggle-PathMod"));
 		enabled = Boolean.valueOf(speicher.getConfig().getData("PathMod.enabled"));
 		
 		pos = GuiPositions.valueOf(speicher.getConfig().getData("PathMod.info-Pos"));
@@ -71,7 +72,7 @@ public class PathMod implements Mod{
 	@Override
 	public void use() {
 		
-		if(Keyboard.isKeyDown(onkey) && (minecraft.currentScreen == null)){
+		if(onkey.isKeyDown() && (minecraft.currentScreen == null)){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(enabled){
 					enabled = false;
@@ -207,8 +208,8 @@ public class PathMod implements Mod{
 	@Override
 	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
-			onkey = (int)value;
-			speicher.getConfig().replaceData("PathMod.Toggle-PathMod", onkey + "");
+			onkey.setKey((int)value);
+			//speicher.getConfig().replaceData("PathMod.Toggle-PathMod", onkey + "");
 		}else{
 			System.out.println("Unknown value " + ValueToManupulate);
 		}		
@@ -244,7 +245,7 @@ public class PathMod implements Mod{
 
 	@Override
 	public int getOn() {
-		return onkey;
+		return onkey.getKey();
 	}
 	public boolean isShowInfo(){
 		return showinfo;
@@ -296,13 +297,13 @@ class PathModGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton togglespeed = new GuiBooleanButton(1, width/2-170, height/4, 150, 20, "Toggle Highlighter", ((PathMod)speicher.getMod(ModData.PathMod.name())).isEnabled(), "togglehighlighter", ModData.PathMod, speicher);
+		GuiBooleanButton togglespeed = new GuiBooleanButton(1, width/2-170, height/4, 150, 20, "Toggle Highlighter", ((PathMod)speicher.getMod(ModData.PathMod.name())).isEnabled(), "togglehighlighter", ModData.PathMod, speicher,LiteModMain.lconfig.getData("PathMod.toggle").split(";"));
 
-		chooseOn = new GuiChooseKeyButton(2, width/2, height/4, 150, 20, "Enable-Key", ((PathMod)speicher.getMod(ModData.PathMod.name())).getOn());
-		GuiChooseStringButton choosepos = new GuiChooseStringButton(3, width/2-170, height/4+40, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.PathMod, speicher, GuiPositions.getPos(((PathMod)speicher.getMod(ModData.PathMod.name())).getPos()));
-		GuiBooleanButton showInfo = new GuiBooleanButton(4, width/2, height/4+40, 150, 20, "Show-Info", ((PathMod)speicher.getMod(ModData.PathMod.name())).isShowInfo(), "showinfo", ModData.PathMod, speicher);
+		chooseOn = new GuiChooseKeyButton(2, width/2, height/4, 150, 20, "Enable-Key", ((PathMod)speicher.getMod(ModData.PathMod.name())).getOn(),LiteModMain.lconfig.getData("PathMod.enablekey").split(";"));
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(3, width/2-170, height/4+40, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.PathMod, speicher, GuiPositions.getPos(((PathMod)speicher.getMod(ModData.PathMod.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
+		GuiBooleanButton showInfo = new GuiBooleanButton(4, width/2, height/4+40, 150, 20, "Show-Info", ((PathMod)speicher.getMod(ModData.PathMod.name())).isShowInfo(), "showinfo", ModData.PathMod, speicher,LiteModMain.lconfig.getData("PathMod.showinfo").split(";"));
 		
-		GuiBooleanButton seeThroughwall = new GuiBooleanButton(5, width/2, height/4+80, 150, 20, "See Thorugh Walls", ((PathMod)speicher.getMod(ModData.PathMod.name())).isSeethroughwall(), "seethroughwall", ModData.PathMod, speicher);
+		GuiBooleanButton seeThroughwall = new GuiBooleanButton(5, width/2, height/4+80, 150, 20, "See Thorugh Walls", ((PathMod)speicher.getMod(ModData.PathMod.name())).isSeethroughwall(), "seethroughwall", ModData.PathMod, speicher,LiteModMain.lconfig.getData("PathMod.seethroughwall").split(";"));
 			
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 
