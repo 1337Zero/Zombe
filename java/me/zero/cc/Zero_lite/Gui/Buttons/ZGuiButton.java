@@ -10,57 +10,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 
-public class GuiBooleanButton extends GuiButton{
+public class ZGuiButton extends GuiButton{
 
-	private boolean value = false;
-	private int xstart = 0;
-	private int ystart = 0;
-	private int width = 0;
-	private int height = 0;
-	private String txt = "";
-	private ModData moddata;
-	private String valueToManupulate;
-	private LiteModMain speicher;
 	private String[] overlayText;
 	
-	public GuiBooleanButton(int id, int x, int y, int width, int height,String label, boolean value,String valueToManupulate,ModData moddata,LiteModMain speicher,String[] overlayText) {
+	public ZGuiButton(int id, int x, int y, int width, int height,String label,String[] overlayText) {
 		super(id, x, y, width, height, label);
-		this.value = value;
-		this.xstart = x;
-		this.ystart = y;
-		this.width = width;
-		this.height = height;
-		this.txt = label;
-		this.moddata = moddata;
-		this.valueToManupulate = valueToManupulate;
-		this.speicher = speicher;
 		this.overlayText = overlayText;
-		this.displayString = txt + ": " + value;
 	}
 	protected void mouseDragged(Minecraft mc, int x, int y) {		 
 		 if(this.isMouseOver()){            	  
         	 RenderTooltip(x+10, y+10, overlayText);
          }
-	}
-	public boolean mousePressed(Minecraft mc, int x, int y) {		 
-		 if(x > xstart && x < (xstart + width)){			 
-			 if(y > ystart && y < (ystart + height)){
-				 if(value){
-					 value = false;
-				 }else{
-					value = true;
-				 }
-				 if(!moddata.equals(ModData.Nil)){
-					 speicher.getMod(moddata.name()).manupulateValue(valueToManupulate, value);						 
-				 }			
-				 this.displayString = txt + ": " + value;
-				 return true;
-			 }			 
-		 }		 
-		 return false;
-	}
-	public void mouseReleased(int x, int y) {
-		//Unused
 	}
 	/**
 	 * This methode was orignally writte by Zyin055

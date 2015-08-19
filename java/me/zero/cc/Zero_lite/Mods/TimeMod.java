@@ -308,7 +308,7 @@ class TimeModGui extends GuiScreen{
 		
 		key_add = new GuiChooseKeyButton(2, width/2-170, height/4+20, 150, 20, "Time-Add", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getAddtime(),LiteModMain.lconfig.getData("TimeMod.addtime").split(";"));
 		key_sub = new GuiChooseKeyButton(3, width/2, height/4+20, 150, 20, "Time-Sub", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getSubtime(),LiteModMain.lconfig.getData("TimeMod.removetime").split(";"));
-		key_freeze = new GuiChooseKeyButton(4, width/2, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getFreezetimekey(),LiteModMain.lconfig.getData("TimeMod.addtime").split(";"));
+		key_freeze = new GuiChooseKeyButton(4, width/2, height/4-10, 150, 20, "Freeze-Time", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getFreezetimekey(),LiteModMain.lconfig.getData("TimeMod.choosefreeze").split(";"));
 		SimpleSlider slider = new SimpleSlider(5, width/2, height/4+50, "Time-Multiplier",(((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl()/5), 150, 20, ModData.TimeMod, "Time-Multiplier", speicher,LiteModMain.lconfig.getData("TimeMod.multiplier").split(";"));
 		//(int) ((50 / 100.0)*value)
 		GuiBooleanButton enable = new GuiBooleanButton(7, width/2-170, height/4+50, 150, 20, "Enabled", ((TimeMod)speicher.getMod(ModData.TimeMod.name())).isEnabled(), "enable", ModData.TimeMod, speicher,LiteModMain.lconfig.getData("TimeMod.enable").split(";"));

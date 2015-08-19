@@ -13,6 +13,7 @@ import me.zero.cc.Zero_lite.Config.Config;
 import me.zero.cc.Zero_lite.Config.CustomRecipesConfig;
 import me.zero.cc.Zero_lite.Config.LanguageConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
+import me.zero.cc.Zero_lite.Gui.Buttons.ZGuiButton;
 import me.zero.cc.Zero_lite.Mods.RangeMod;
 import me.zero.cc.Zero_lite.Mods.ChatMod;
 import me.zero.cc.Zero_lite.Mods.FlyMod;
@@ -23,7 +24,7 @@ import me.zero.cc.Zero_lite.Mods.Mod;
 import me.zero.cc.Zero_lite.Mods.ModData;
 import me.zero.cc.Zero_lite.Mods.OreHighlighterMod;
 import me.zero.cc.Zero_lite.Mods.PathMod;
-import me.zero.cc.Zero_lite.Mods.ReciepeMod;
+import me.zero.cc.Zero_lite.Mods.RecipeMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
 import me.zero.cc.Zero_lite.utils.BlockMark;
@@ -125,7 +126,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			this.addMod(new InfoMod(minecraft,this));
 			this.addMod(new SpeedMod(minecraft,this));
 			this.addMod(new LightMod(minecraft, this));
-			this.addMod(new ReciepeMod(minecraft,this));
+			this.addMod(new RecipeMod(minecraft,this));
 			this.addMod(new TimeMod(minecraft, this));
 			this.addMod(new MobHighlighterMod(minecraft,this));
 			this.addMod(new OreHighlighterMod(minecraft,this));
@@ -449,7 +450,7 @@ class ConfigMainFrame extends GuiScreen{
 	public void drawButtons(){
 		int xvalue = 0;
 		for(int i = 0; i < lmm.getMods().size();i++){
-			buttonList.add(new GuiButton(i, xvalue, height/lmm.getMods().size() -10 + (i*20), 100, 20, lmm.getMods().get(i).getName()));
+			buttonList.add(new ZGuiButton(i, xvalue, height/lmm.getMods().size() -10 + (i*20), 100, 20, lmm.getMods().get(i).getName(), LiteModMain.lconfig.getData(lmm.getMods().get(i).getName()).split(";")));
 			if(height/lmm.getMods().size() -10 + (i*20) > height){
 				xvalue = 120;
 			}

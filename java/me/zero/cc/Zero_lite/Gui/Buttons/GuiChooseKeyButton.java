@@ -2,6 +2,8 @@ package me.zero.cc.Zero_lite.Gui.Buttons;
 
 import org.lwjgl.input.Keyboard;
 
+import com.mumfrey.liteloader.gl.GL;
+
 import me.zero.cc.Zero_lite.LiteModMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -93,9 +95,12 @@ public class GuiChooseKeyButton extends GuiButton{
 	private void RenderTooltip(int x, int y, String[] text){	
         int tooltipX = x -10;
         int tooltipY = y -10;
-        int tooltipWidth = maxStringLength(text) +10;       
+        int tooltipWidth = GuiUtils.maxStringLength(text) +10;       
         
         int tooltipHeight = 10 + (text.length * 10);
+        
+        float tempzlevel = this.zLevel;      
+        this.zLevel = 1;
         
         //render the background inside box
         int innerAlpha = -0xFEFFFF0;
@@ -112,23 +117,15 @@ public class GuiChooseKeyButton extends GuiButton{
         drawGradientRect(tooltipX + tooltipWidth + 5, tooltipY + 1, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6 - 1, outerAlpha1, outerAlpha2);
         drawGradientRect(tooltipX, tooltipY, tooltipX + tooltipWidth + 3, tooltipY + 1, outerAlpha1, outerAlpha1);
         drawGradientRect(tooltipX, tooltipY + tooltipHeight + 5, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6, outerAlpha2, outerAlpha2);
-       float tempzlevel = this.zLevel;
-        this.zLevel = 10;
+      
+        this.zLevel = tempzlevel;
+        GL.glDisableDepthTest();
+        
         int posy = y;
         for(String localtext: text){ 
         	this.drawString(Minecraft.getMinecraft().fontRendererObj, LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
    		 	posy += 10;
    	 	}
-        this.zLevel = tempzlevel;
-	}
-	private int maxStringLength(String[] textarray){
-		int maxlength = 0;
-		
-		 for(String text: textarray){    
-			 if(Minecraft.getMinecraft().fontRendererObj.getStringWidth(text) > maxlength){
-				 maxlength = Minecraft.getMinecraft().fontRendererObj.getStringWidth(LiteModMain.formateTextColor(text));
-			 }
-		 }		
-		return maxlength;
+        GL.glEnableDepthTest();
 	}
 }
