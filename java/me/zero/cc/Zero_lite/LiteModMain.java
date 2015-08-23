@@ -277,6 +277,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 
 	@Override
 	public void onPostRenderEntities(float partialTicks) {
+
 		for(Markables m : marks){
 			m.draw(partialTicks);
 		}
@@ -289,10 +290,31 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		}
 		if(secondmark != null){
 			secondmark.draw(partialTicks);
-		}		
+		}			
 		if(selection.size() > 0){
+			
+			 double minX = Math.min(firstmark.getX(), secondmark.getX());
+			 double minY = Math.min(firstmark.getY(), secondmark.getY());
+			 double minZ = Math.min(firstmark.getZ(), secondmark.getZ());
+			 
+			 double maxX = Math.max(firstmark.getX(), secondmark.getX());
+			 double maxY = Math.max(firstmark.getY(), secondmark.getY());
+			 double maxZ = Math.max(firstmark.getZ(), secondmark.getZ());
+			
 			for(BlockMark mark : selection){
-				mark.draw(partialTicks);
+				boolean render = false;
+				if(mark.getX() == minX | mark.getX() == maxX){
+					render = true;
+				}
+				if(mark.getY() == minY | mark.getY() == maxY){
+					render = true;					
+				}
+				if(mark.getZ() == minZ | mark.getZ() == maxZ){
+					render = true;						
+				}	
+				if(render){
+					mark.draw(partialTicks);	
+				}
 			}
 		}
 	}

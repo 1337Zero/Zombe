@@ -56,7 +56,6 @@ public class Schematic{
 	private WorldClient world;
 	private double playerX,playerY,playerZ;
 	public NBTTagList entities,tileentity;
-	private NBTTagCompound compound;
 	private CompoundTag Cschematic;
 	
 	public Schematic(WorldClient world,File f) throws IOException{
@@ -223,8 +222,4 @@ public class Schematic{
 				+ playerX + ", playerY=" + playerY + ", playerZ=" + playerZ
 				+ ", entities=" + entities + ", tileentity=" + tileentity + "]";
 	}
-	public NBTTagCompound getNbttag() {
-		return compound;
-	}
-
 	}
