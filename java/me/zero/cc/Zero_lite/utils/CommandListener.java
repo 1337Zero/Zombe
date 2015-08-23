@@ -220,7 +220,7 @@ public class CommandListener {
 			try{
 				System.out.println("onsave");
 				//sendMessage("Trying to save " + name + ".schematics...");
-				schematics.writeToFile(name, schematics.getNbttag());
+				schematics.writeToFile(name);
 				sendMessage("saved as " + name + ".schematic!");
 			}catch(IOException e){
 				e.printStackTrace();
