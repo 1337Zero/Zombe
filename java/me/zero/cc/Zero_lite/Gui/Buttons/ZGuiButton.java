@@ -30,12 +30,18 @@ public class ZGuiButton extends GuiButton{
 	 * @param y
 	 * @param text
 	 */
-	private void RenderTooltip(int x, int y, String[] text){	
+	protected void RenderTooltip(int x, int y, String[] text){	
         int tooltipX = x -10;
         int tooltipY = y -10;
-        int tooltipWidth = GuiUtils.maxStringLength(text) +10;       
-        
+        int tooltipWidth = GuiUtils.maxStringLength(text) +10;
         int tooltipHeight = 10 + (text.length * 10);
+        
+        if(GuiUtils.isOverScreenWidth(Minecraft.getMinecraft(), (tooltipWidth + x-5))){
+            tooltipX = x - tooltipWidth -15;
+        }
+        if(GuiUtils.isOverScreenHeight(Minecraft.getMinecraft(), (tooltipHeight + y-5))){
+            tooltipY = y -tooltipHeight -15;
+        }
         
         float tempzlevel = this.zLevel;
         this.zLevel = 1;
@@ -60,10 +66,10 @@ public class ZGuiButton extends GuiButton{
      
         this.zLevel = tempzlevel;
         GL.glDisableDepthTest();
-        int posy = y;
+        int posy = tooltipY+10;
         for(String localtext: text){ 
         	//this.drawString(Minecraft.getMinecraft().fontRendererObj, LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
-        	Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
+        	Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(LiteModMain.formateTextColor(localtext), tooltipX+10, posy, 0xFFFFFF);
         	//Minecraft.getMinecraft().fontRendererObj.drawString(LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
    		 	posy += 10;
    	 	}

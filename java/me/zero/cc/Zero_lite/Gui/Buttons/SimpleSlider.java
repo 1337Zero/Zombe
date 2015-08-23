@@ -23,7 +23,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
-public class SimpleSlider extends GuiButton{
+public class SimpleSlider extends ZGuiButton{
 
 	  public float sliderValue = 1.0F;
       public boolean dragging = false;
@@ -36,19 +36,17 @@ public class SimpleSlider extends GuiButton{
       private ModData modname;
       private String valueToManupulate;
       private LiteModMain speicher;
-      private String[] overlayText;
       
-	public SimpleSlider(int id, int x, int y, String label, double startingValue,int width,
-			int height,ModData modname,String valueNameToManupulate,LiteModMain speicher,String[] overlayText) {
-		super(id, x, y, width, height, label);		
+	public SimpleSlider(int id, int x, int y, String label, double startingValue,int width,int height,ModData modname,String valueNameToManupulate,LiteModMain speicher,String[] overlayText) {
+		super(id, x, y, width, height, label, overlayText);		
 		xstart = x;
 		xPosition = (int) ((((double)width/10.0)*(double)startingValue) + (double)xstart);
 		yPosition = y;
 		this.height = height;
 		this.width = width;
 		this.sliderValue = 0.0F;
-		this.overlayText = overlayText;
 		double value = 0 ;
+		
 		if(modname.name().equalsIgnoreCase(ModData.FlyMod.name())){
 			value =  ((FlyMod)speicher.getMod(modname.name())).getFlyValue();
 		}else if(modname.name().equalsIgnoreCase(ModData.SpeedMod.name())){
@@ -60,73 +58,26 @@ public class SimpleSlider extends GuiButton{
 		}else if(modname.name().equalsIgnoreCase(ModData.RangeMod.name())){
 			 value = ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange();
 		}		
+		
 		txt = valueNameToManupulate + ": " + value;
 		this.valueToManupulate = valueNameToManupulate;
 		this.modname = modname;
 		this.speicher = speicher;
 	}
-	protected void mouseDragged(Minecraft mc, int x, int y) {
+	protected void mouseDragged(Minecraft mc, int x, int y) {		
          if (this.enabled){
         	 if (this.dragging){          	
                  if(xstart < x && (xstart + width)-8 > x){
                 	 xPosition = x;
                  }
         	 }         
-        	 this.displayString = txt;
-        	 
+        	 this.displayString = txt;        	 
         	 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
              this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 66, 4, 20);
              this.drawTexturedModalRect(this.xPosition + 4, this.yPosition, 196, 66, 4, 20);
-             
-             if(this.isMouseOver()){        
-            	 RenderTooltip(x+10, y+10, overlayText);
-             }
          }
-	}
-	/**
-	 * This methode was orignally writte by Zyin055
-	 * <a href=https://github.com/Zyin055/zyinhud/blob/master/src/main/java/com/zyin/zyinhud/gui/GuiTooltipScreen.java>https://github.com/Zyin055/zyinhud/blob/master/src/main/java/com/zyin/zyinhud/gui/GuiTooltipScreen.java</a>
-	 * @param x
-	 * @param y
-	 * @param text
-	 */
-	private void RenderTooltip(int x, int y, String[] text){	
-        int tooltipX = x -10;
-        int tooltipY = y -10;
-        int tooltipWidth = GuiUtils.maxStringLength(text) +10;       
-        
-        int tooltipHeight = 10 + (text.length * 10);
-
-        float tempzlevel = this.zLevel;
-        this.zLevel = 1;
-        
-        //render the background inside box
-        int innerAlpha = -0xFEFFFF0;
-        drawGradientRect(tooltipX, tooltipY - 1, tooltipX + tooltipWidth + 6, tooltipY, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX, tooltipY + tooltipHeight + 6, tooltipX + tooltipWidth + 6, tooltipY + tooltipHeight + 7, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX, tooltipY, tooltipX + tooltipWidth + 6, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX - 1, tooltipY, tooltipX, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-        drawGradientRect(tooltipX + tooltipWidth + 6, tooltipY, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6, innerAlpha, innerAlpha);
-               
-        //render the background outside box
-        int outerAlpha1 = 0x505000FF;
-        int outerAlpha2 = (outerAlpha1 & 0xFEFEFE) >> 1 | outerAlpha1 & -0x1000000;
-        drawGradientRect(tooltipX, tooltipY + 1, tooltipX + 1, tooltipY + tooltipHeight + 6 - 1, outerAlpha1, outerAlpha2);
-        drawGradientRect(tooltipX + tooltipWidth + 5, tooltipY + 1, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6 - 1, outerAlpha1, outerAlpha2);
-        drawGradientRect(tooltipX, tooltipY, tooltipX + tooltipWidth + 3, tooltipY + 1, outerAlpha1, outerAlpha1);
-        drawGradientRect(tooltipX, tooltipY + tooltipHeight + 5, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6, outerAlpha2, outerAlpha2);
-
-        
-        this.zLevel = tempzlevel;
-        GL.glDisableDepthTest();
-        
-        int posy = y;
-        for(String localtext: text){ 
-        	this.drawString(Minecraft.getMinecraft().fontRendererObj, LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
-   		 	posy += 10;
-   	 	}
-        GL.glEnableDepthTest();
-	}
+         super.mouseDragged(mc, x, y);
+	}	
 	/**
 	 * Set the text of the Slider
 	 * @param text, the Label of the Slider

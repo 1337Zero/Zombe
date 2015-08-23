@@ -77,7 +77,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private UpdateChecker updatecheck;
 	private boolean checkedupdate = false;
 	private ArrayList<String > messages;
-	private String urlVersion = "";
+	private int urlVersion = 0;
 	private String downloadURL = "";
 	public static String prefix = "&6[Lite-Zombe] ";
 	private boolean update = true;
@@ -94,7 +94,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		return "Zombe-Lite";
 	}
 	public String getVersion() {
-		return "0.0.4.6";
+		return "1047";
 	}
 
 	public void init(File configPath) {	
@@ -184,14 +184,18 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 				}
 			}
 			if(messages != null){
-				if(messages.size() > 0 || urlVersion != "" & downloadURL != ""){					
-					if(!urlVersion.equalsIgnoreCase(getVersion())){
-						sendMessage(prefix + lconfig.getData("Main.updateMSG").replace("<urlversion>", urlVersion));
+				if(messages.size() > 0 || urlVersion != 0 & downloadURL != ""){					
+					if(urlVersion > Integer.valueOf(this.getVersion())){
+						sendMessage(prefix + lconfig.getData("Main.updateMSG").replace("<urlversion>", urlVersion + ""));
 						minecraft.thePlayer.addChatMessage(new ChatComponentText(downloadURL));		
 						
 						for(String msg : messages){		
 							sendMessage(prefix + msg);
 						}
+					}else if(urlVersion == Integer.valueOf(this.getVersion())){						
+						sendMessage(lconfig.getData("Main.updatedMSG").replace("<urlversion>", urlVersion + ""));	
+					}else{
+						sendMessage(lconfig.getData("Main.betaMSG").replace("<urlversion>", getVersion()));							
 					}
 					messages = null;
 				}
@@ -267,7 +271,10 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		return msg;
 	}
 	private void sendMessage(String msg){
-		minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + msg)));
+		String[] messages = msg.split(";");
+		for(String text : messages){
+			minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + text)));
+		}		
 	}
 	
 	@Override
@@ -355,14 +362,14 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	 * Returns the newest Version of Zombe
 	 * @return
 	 */
-	public String getUrlVersion() {
+	public int getUrlVersion() {
 		return urlVersion;
 	} 
 	/**
 	 * Sets the newest Version of Zombe
 	 * @param urlVersion
 	 */
-	public void setUrlVersion(String urlVersion) {
+	public void setUrlVersion(int urlVersion) {
 		this.urlVersion = urlVersion;
 	}
 	/**

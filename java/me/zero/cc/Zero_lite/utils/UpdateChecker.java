@@ -25,7 +25,7 @@ public class UpdateChecker extends Thread{
 		this.main = main;
 		
 		try {
-			url = new URL("http://pastebin.com/raw.php?i=nVNLqVWR");
+			url = new URL("http://pastebin.com/raw.php?i=zqa8Y97T");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -48,8 +48,8 @@ public class UpdateChecker extends Thread{
             while(readed != null){  
             	String between = readed;
             	
-            	if(main.getUrlVersion() == ""){
-            		main.setUrlVersion(readed);
+            	if(main.getUrlVersion() == 0){
+            		main.setUrlVersion(Integer.valueOf(readed));
             	}else if(main.getDownloadURL() == ""){
             			main.setDownloadURL(readed);            		
             	}else{
