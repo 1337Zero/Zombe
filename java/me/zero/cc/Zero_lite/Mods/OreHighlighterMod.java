@@ -24,12 +24,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.EnumFaceing;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -49,12 +52,14 @@ public class OreHighlighterMod implements Mod {
 	private int infoID;
 	private GuiPositions pos = GuiPositions.DOWN_RIGHT;
 	
-	private List<Mark> blocks = new ArrayList<Mark>();
+	protected List<Mark> blocks = new ArrayList<Mark>();
 	
 	private boolean showinfo = false;
 	
 	private int lastPlayerChunkX = 0;
 	private int lastPlayerChunkZ = 0;
+	
+	private OreSearchThread orsearh;
 	
 	private KeySetting radius = new KeySetting(2,"OreHighlighter.radius");
 	
@@ -190,15 +195,22 @@ public class OreHighlighterMod implements Mod {
 	    	    
 	}
 	
-	private void updateRenderPos() throws Exception{	
-		blocks.clear();
+	private void updateRenderPos(){	
+		
+		if(orsearh == null){
+			System.out.println("starting new oresearchthread");
+			orsearh = new OreSearchThread(this,config);
+			orsearh.start();			
+		}
+		
+		
+		/*blocks.clear();
 				
 		double posx = minecraft.thePlayer.posX - radius.getKey()*10;
 		double posy = minecraft.thePlayer.posY - radius.getKey()*10;
 		double posz = minecraft.thePlayer.posZ - radius.getKey()*10;
 						
-		for(double x = posx; x < (posx + (radius.getKey() *10)*2);x++){
-			
+		for(double x = posx; x < (posx + (radius.getKey() *10)*2);x++){			
 			for(double y = posy; y < (posy + (radius.getKey() *10)*2);y++){				
 				for(double z = posz; z < (posz + (radius.getKey() *10)*2);z++){
 					Block block = minecraft.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
@@ -213,10 +225,10 @@ public class OreHighlighterMod implements Mod {
 					}
 				}
 			}
-		}
+		}*/
 	}	
 
-	private boolean isInConfig(String key){
+	protected boolean isInConfig(String key){
 		String[] founds = config.getData("Blocklist").split(",");
 		for(int i = 0; i < founds.length;i++){
 			if(founds[i].equals(key)){
@@ -257,9 +269,18 @@ public class OreHighlighterMod implements Mod {
 		if(valueToManupulate.equalsIgnoreCase("togglehighlighter")){
 			enabled = b;
 			speicher.getConfig().replaceData("OreHighlighter.enabled", "" + b);
+			if(orsearh != null){
+				orsearh.interrupt();
+				orsearh = null;
+			}
 		}else if(valueToManupulate.equalsIgnoreCase("showinfo")){
 			showinfo = b;
 			speicher.getConfig().replaceData("OreHighlighter.showinfo", "" + b);
+		}else if(valueToManupulate.equalsIgnoreCase("dselection")){
+			speicher.getConfig().replaceData("OreHighlighter.selectivesearch", "" + b);	
+			if(orsearh != null){
+				orsearh.selectivesearch = b;
+			}
 		}else{
 			System.out.println("Unknown value1 " + valueToManupulate);
 		}			
@@ -311,6 +332,13 @@ public class OreHighlighterMod implements Mod {
 	public int getOn() {
 		return onkey.getKey();
 	}
+	public boolean isSelectiveSearch(){
+		if(orsearh != null){
+			return orsearh.selectivesearch;
+		}else{
+			return false;
+		}
+	}
 }
 class OreHighLighterGui extends GuiScreen{
 	
@@ -341,20 +369,22 @@ class OreHighLighterGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton togglespeed = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Toggle Highlighter", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEnabled(), "togglehighlighter", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.toggle").split(";"));
+		GuiBooleanButton togglehighlighter = new GuiBooleanButton(2, width/2-170, height/4-10, 150, 20, "Toggle Highlighter", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEnabled(), "togglehighlighter", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.toggle").split(";"));
 		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Radius", (int) ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius() , 150, 20, ModData.OreHighLighter, "Radius", speicher,LiteModMain.lconfig.getData("OreHighLighter.radius").split(";"));
 		
 		chooseOn = new GuiChooseKeyButton(2, width/2, height/4+20, 150, 20, "Enable-Key", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getOn(),LiteModMain.lconfig.getData("OreHighLighter.chooseonkey").split(";"));
 		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.OreHighLighter, speicher, GuiPositions.getPos(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
 		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+70, 150, 20, "Show-Info", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isShowInfo(), "showinfo", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.showinfo").split(";"));
+		GuiBooleanButton useselective = new GuiBooleanButton(9, width/2-170, height/4+20, 150, 20, "dynamic selection", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isSelectiveSearch(), "dselection", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.dynamicselection").split(";"));
 			
-		GuiButton back = new GuiButton(9, width/2-100,height-50 , "back to game");
+		GuiButton back = new GuiButton(buttonList.size() + 1, width/2-100,height-50 , "back to game");
 
 		buttonList.add(slider);
 		buttonList.add(showInfo);
 		buttonList.add(chooseOn);
 		buttonList.add(choosepos);
-		buttonList.add(togglespeed);
+		buttonList.add(togglehighlighter);
+		buttonList.add(useselective);
 		buttonList.add(back);
 	}
 	protected void keyTyped(char c,int key){
@@ -375,5 +405,78 @@ class OreHighLighterGui extends GuiScreen{
 			}
 		}		
 	}
+}
+class OreSearchThread extends Thread{
+
+	private OreHighlighterMod omod;
+	private OreHighLighterModConfig config;
+	public boolean selectivesearch;
+	
+	public OreSearchThread(OreHighlighterMod omod,OreHighLighterModConfig config){
+		this.omod = omod;
+		this.config = config;
+		selectivesearch = Boolean.valueOf(LiteModMain.config.getData("OreHighlighter.selectivesearch"));
+	}
+	
+	@Override
+	public void run() {
+
+		while(!this.isInterrupted()){
+			System.out.println("search...");
+			updateRenderPos();
+			try {
+				this.sleep(Long.valueOf(LiteModMain.config.getData("OreHighlighter.threadsleep")));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	private void updateRenderPos(){	
+		
+		ArrayList<Mark> tempblocks = new ArrayList<Mark>();
+			
+		double posx = Minecraft.getMinecraft().thePlayer.posX - omod.getRadius()*10;
+		double posy = Minecraft.getMinecraft().thePlayer.posY - omod.getRadius()*10;
+		double posz = Minecraft.getMinecraft().thePlayer.posZ - omod.getRadius()*10;
+		
+		if(selectivesearch){
+			String facing = EnumFacing.fromAngle(Minecraft.getMinecraft().thePlayer.rotationYawHead).getName().toUpperCase();
+			
+			if(facing.equalsIgnoreCase("north")){
+				//updaten -
+				posz = (Minecraft.getMinecraft().thePlayer.posZ +1) - (omod.getRadius()*10)*2;
+				posx = Minecraft.getMinecraft().thePlayer.posX - omod.getRadius()*10;
+			}else if(facing.equalsIgnoreCase("south")){
+				posz = Minecraft.getMinecraft().thePlayer.posZ;
+			}else if(facing.equalsIgnoreCase("west")){
+				//updaten -
+				posx = (Minecraft.getMinecraft().thePlayer.posX +1) - (omod.getRadius()*10)*2;
+				posz = Minecraft.getMinecraft().thePlayer.posZ - omod.getRadius()*10;
+			}else if(facing.equalsIgnoreCase("east")){
+				posx = Minecraft.getMinecraft().thePlayer.posX;
+			}
+			
+		}
+		for(double x = posx; x < (posx + (omod.getRadius() *10)*2);x++){			
+			for(double y = posy; y < (posy + (omod.getRadius() *10)*2);y++){				
+				for(double z = posz; z < (posz + (omod.getRadius() *10)*2);z++){
+					Block block = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
+					
+					if(omod.isInConfig("" + Block.getIdFromBlock(block))){
+						String color = config.getData("Color."+ Block.getIdFromBlock(block));
+						if(color != null){	
+							tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+						}else{
+							System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
+						}
+					}
+				}
+			}
+		}
+		omod.blocks = tempblocks;
+		System.out.println("overriden blockmarks...");
+	}
+	
 }
 

@@ -94,7 +94,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		return "Zombe-Lite";
 	}
 	public String getVersion() {
-		return "1047";
+		return "1048";
 	}
 
 	public void init(File configPath) {	
