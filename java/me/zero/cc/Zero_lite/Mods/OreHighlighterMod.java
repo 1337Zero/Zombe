@@ -198,34 +198,9 @@ public class OreHighlighterMod implements Mod {
 	private void updateRenderPos(){	
 		
 		if(orsearh == null){
-			System.out.println("starting new oresearchthread");
 			orsearh = new OreSearchThread(this,config);
 			orsearh.start();			
 		}
-		
-		
-		/*blocks.clear();
-				
-		double posx = minecraft.thePlayer.posX - radius.getKey()*10;
-		double posy = minecraft.thePlayer.posY - radius.getKey()*10;
-		double posz = minecraft.thePlayer.posZ - radius.getKey()*10;
-						
-		for(double x = posx; x < (posx + (radius.getKey() *10)*2);x++){			
-			for(double y = posy; y < (posy + (radius.getKey() *10)*2);y++){				
-				for(double z = posz; z < (posz + (radius.getKey() *10)*2);z++){
-					Block block = minecraft.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
-					
-					if(isInConfig("" + Block.getIdFromBlock(block))){
-						String color = config.getData("Color."+ Block.getIdFromBlock(block));
-						if(color != null){	
-							blocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
-						}else{
-							System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
-						}
-					}
-				}
-			}
-		}*/
 	}	
 
 	protected boolean isInConfig(String key){
@@ -270,9 +245,10 @@ public class OreHighlighterMod implements Mod {
 			enabled = b;
 			speicher.getConfig().replaceData("OreHighlighter.enabled", "" + b);
 			if(orsearh != null){
-				orsearh.interrupt();
+				orsearh.enabled = false;
 				orsearh = null;
 			}
+			blocks.clear();
 		}else if(valueToManupulate.equalsIgnoreCase("showinfo")){
 			showinfo = b;
 			speicher.getConfig().replaceData("OreHighlighter.showinfo", "" + b);
@@ -411,6 +387,7 @@ class OreSearchThread extends Thread{
 	private OreHighlighterMod omod;
 	private OreHighLighterModConfig config;
 	public boolean selectivesearch;
+	public boolean enabled = true;
 	
 	public OreSearchThread(OreHighlighterMod omod,OreHighLighterModConfig config){
 		this.omod = omod;
@@ -421,8 +398,7 @@ class OreSearchThread extends Thread{
 	@Override
 	public void run() {
 
-		while(!this.isInterrupted()){
-			System.out.println("search...");
+		while(enabled){
 			updateRenderPos();
 			try {
 				this.sleep(Long.valueOf(LiteModMain.config.getData("OreHighlighter.threadsleep")));
@@ -475,8 +451,6 @@ class OreSearchThread extends Thread{
 			}
 		}
 		omod.blocks = tempblocks;
-		System.out.println("overriden blockmarks...");
-	}
-	
+	}	
 }
 
