@@ -15,7 +15,7 @@ public class OreHighLighterModConfig {
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Blocklist:14,15,16,21,56,73,74,129,153,",
+			"Blocklist:14,15,16,21,56,73,74,129,153,35-5",
 								
 			"Color.14:1.0F, 0.84F, 0.0F, 1.0F",
 			"Color.15:0.82F, 0.41F, 0.11F, 1.0F",
@@ -25,7 +25,8 @@ public class OreHighLighterModConfig {
 			"Color.73:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.74:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.129:0.26F, 0.8F, 0.5F, 1.0F",
-			"Color.153:0.78F, 0.78F, 0.78F, 1.0F"
+			"Color.153:0.78F, 0.78F, 0.78F, 1.0F",
+			"Color.35-5:1.0F, 0.78F, 0.78F, 0.5F"
 			);
 	public OreHighLighterModConfig(){
 		path = System.getProperty("user.dir");
