@@ -205,7 +205,7 @@ public class OreHighlighterMod implements Mod {
 
 	protected boolean isInConfig(String key){
 		String[] founds = config.getData("Blocklist").split(",");
-		for(int i = 0; i < founds.length;i++){
+		for(int i = 0; i < founds.length;i++){			
 			if(founds[i].contains("-")){
 				if(founds[i].split("-")[0].equals(key.split(":")[0])){
 					if(founds[i].split("-")[1].equals(key.split(":")[1])){
@@ -446,18 +446,24 @@ class OreSearchThread extends Thread{
 			for(double y = posy; y < (posy + (omod.getRadius() *10)*2);y++){				
 				for(double z = posz; z < (posz + (omod.getRadius() *10)*2);z++){
 					Block block = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
-					
-					if(omod.isInConfig("" + Block.getIdFromBlock(block) + ":" + Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y,z)).getBlock().getDamageValue(Minecraft.getMinecraft().theWorld, new BlockPos(x, y,z)))){
-						String color = config.getData("Color."+ Block.getIdFromBlock(block));
-						if(color == null) color = config.getData("Color."+ Block.getIdFromBlock(block) + "-" + Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y,z)).getBlock().getDamageValue(Minecraft.getMinecraft().theWorld, new BlockPos(x, y,z)));
-							tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
-						}else{
-							System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
+					if(Block.getIdFromBlock(block) != 0){
+						if(omod.isInConfig("" + Block.getIdFromBlock(block) + ":" + Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y,z)).getBlock().getDamageValue(Minecraft.getMinecraft().theWorld, new BlockPos(x, y,z)))){
+							String color = config.getData("Color."+ Block.getIdFromBlock(block));
+							if(color == null){ 
+								color = config.getData("Color."+ Block.getIdFromBlock(block) + "-" + Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y,z)).getBlock().getDamageValue(Minecraft.getMinecraft().theWorld, new BlockPos(x, y,z)));
+								if(color != null){ 
+									tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+								}else{
+									System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
+								}
+							}else{
+								tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+							}
 						}
 					}
-				}
+				}					
 			}
-		}
+		}		
 		omod.blocks = tempblocks;
 	}	
 }

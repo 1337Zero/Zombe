@@ -735,7 +735,7 @@ public class ReciepeMod implements Mod {
 
 	@Override
 	public String getName() {
-		return ModData.ReciepeMod.name();
+		return ModData.RecipeMod.name();
 	}
 
 	@Override
@@ -745,7 +745,7 @@ public class ReciepeMod implements Mod {
 
 	@Override
 	public GuiScreen drawGui() {		
-		return new ReciepeModGui(speicher);
+		return new RecipeModGui(speicher);
 	}
 
 	@Override
@@ -795,13 +795,13 @@ public class ReciepeMod implements Mod {
 		this.showCraftingPattern = showCraftingPattern;
 	}
 }
-class ReciepeModGui extends GuiScreen{
+class RecipeModGui extends GuiScreen{
 	
 	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
 	
-	public ReciepeModGui(LiteModMain speicher){
+	public RecipeModGui(LiteModMain speicher){
 		this.speicher = speicher;
 	}
 	
@@ -820,9 +820,9 @@ class ReciepeModGui extends GuiScreen{
 	 * Initialize Buttons and add them to the Button list
 	 */
 	public void drawButtons(){
-		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Enabled", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isEnabled(), "renabled", ModData.ReciepeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.enable").split(";"));
-		GuiBooleanButton loadCustomRecipes = new GuiBooleanButton(2, width/2, height/4+20, 150, 20, "loadCustomRecipes", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isLoadCustomRecipes(), "loadcustomrecipes", ModData.ReciepeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.loadcustomrecipes").split(";"));
-		GuiBooleanButton showRecipeItems = new GuiBooleanButton(2, width/2-170, height/4+50, 150, 20, "Show Crafting Pattern", ((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).isShowCraftingPattern(), "showcraftingpattern", ModData.ReciepeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.showcraftinpattern").split(";"));
+		GuiBooleanButton booleanb = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Enabled", ((ReciepeMod)speicher.getMod(ModData.RecipeMod.name())).isEnabled(), "renabled", ModData.RecipeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.enable").split(";"));
+		GuiBooleanButton loadCustomRecipes = new GuiBooleanButton(2, width/2, height/4+20, 150, 20, "loadCustomRecipes", ((ReciepeMod)speicher.getMod(ModData.RecipeMod.name())).isLoadCustomRecipes(), "loadcustomrecipes", ModData.RecipeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.loadcustomrecipes").split(";"));
+		GuiBooleanButton showRecipeItems = new GuiBooleanButton(2, width/2-170, height/4+50, 150, 20, "Show Crafting Pattern", ((ReciepeMod)speicher.getMod(ModData.RecipeMod.name())).isShowCraftingPattern(), "showcraftingpattern", ModData.RecipeMod, speicher,LiteModMain.lconfig.getData("RecipeMod.showcraftinpattern").split(";"));
 		
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 
@@ -835,7 +835,7 @@ class ReciepeModGui extends GuiScreen{
 		if(GivingKey){
 			if(key != 65 && key != 1){	
 				valueToManupulate = valueToManupulate.replace(" ", "");
-				((ReciepeMod)speicher.getMod(ModData.ReciepeMod.name())).manupulateValue(valueToManupulate, key);
+				((ReciepeMod)speicher.getMod(ModData.RecipeMod.name())).manupulateValue(valueToManupulate, key);
 			}
 		}else{
 			if(key == 65 || key == 1){

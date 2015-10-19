@@ -41,6 +41,9 @@ public class SimpleSlider extends ZGuiButton{
 		super(id, x, y, width, height, label, overlayText);		
 		xstart = x;
 		xPosition = (int) ((((double)width/10.0)*(double)startingValue) + (double)xstart);
+		if(xPosition +8 > (xstart + width)){
+			xPosition -=8;
+		}
 		yPosition = y;
 		this.height = height;
 		this.width = width;
@@ -64,14 +67,18 @@ public class SimpleSlider extends ZGuiButton{
 		this.modname = modname;
 		this.speicher = speicher;
 	}
-	protected void mouseDragged(Minecraft mc, int x, int y) {		
+	protected void mouseDragged(Minecraft mc, int x, int y) {	
+		
          if (this.enabled){
         	 if (this.dragging){          	
-                 if(xstart < x && (xstart + width)-8 > x){
+                 if(xstart < x && (xstart + width) > x){
                 	 xPosition = x;
+                	 if((xPosition+8) > (xstart + width)){
+                		 xPosition = (xstart + width)-8;
+                	 }
                  }
-        	 }         
-        	 this.displayString = txt;        	 
+        	 }                	 
+        	 this.displayString = txt;          	 
         	 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
              this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 66, 4, 20);
              this.drawTexturedModalRect(this.xPosition + 4, this.yPosition, 196, 66, 4, 20);
@@ -95,11 +102,13 @@ public class SimpleSlider extends ZGuiButton{
 	
 	 public boolean mousePressed(Minecraft mc, int x, int y) {
 		 if(y > yPosition && y < (yPosition + height)){
-			 this.dragging = true;
-			 return true;
-		 }else{
-			 return false;
+			 if(x > xstart && x < (xstart + width)){
+				 this.dragging = true;
+				 return true;
+			 }
+			 
 		 }
+		 return false;
 	 } 
 	 public void mouseReleased(int x, int y) {
 		 this.dragging = false;
@@ -128,11 +137,17 @@ public class SimpleSlider extends ZGuiButton{
 	  * @return the value in percent where the sliders is at the moment,not 100% accurate
 	  */
 	 public double getPercent(){		
-		int xvalue = xPosition - xstart;
+		 int xvalue = 0;
+		 if(xPosition == (xstart + width -8)){
+			 xvalue = xPosition + 8;
+		 }else{
+			xvalue = xPosition - xstart;
+		 }
+		 
 		if(xvalue == 1){
 			xvalue = 0;
 		}
-		if(xvalue == 141){
+		if(xvalue >= 141){
 			xvalue = width;
 		}
 		return (xvalue / (width / 100.0));

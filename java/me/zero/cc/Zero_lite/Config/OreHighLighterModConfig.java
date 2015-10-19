@@ -112,7 +112,9 @@ public class OreHighLighterModConfig {
 	public String getData(String key){
 		String back = "";
 		if(data.get(key) == null){
-			System.out.println(key + " was not found in your config,i will try update it for you ;D");
+			if(!LiteLoader.isDevelopmentEnvironment()){
+				System.out.println(key + " was not found in your config,i will try update it for you ;D");
+			}
 			for(int i = 0; i < defaultconfig.size();i++){
 				if(defaultconfig.get(i).split(":")[0].equalsIgnoreCase(key)){
 					data.put(key, defaultconfig.get(i).split(":")[1]);
