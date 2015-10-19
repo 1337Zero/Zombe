@@ -82,7 +82,7 @@ public class LanguageConfig {
 	 * @throws Exception
 	 */
 	private void createConfigFile(List<String> list,String valuetochange) throws Exception{
-		File config_File = new File(path + "\\language.cfg");
+		File config_File = new File(path + System.getProperty("file.separator") +  "language.cfg");
 		config_File.createNewFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(config_File));
@@ -103,7 +103,7 @@ public class LanguageConfig {
 	 */
 	private void saveConfig(String changedpart) throws Exception{
 		if(!LiteLoader.isDevelopmentEnvironment()){
-			File config_File = new File(path + "\\language.cfg");		
+			File config_File = new File(path + System.getProperty("file.separator") + "language.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){
 		      back.add(key + ":" + data.get(key));

@@ -107,7 +107,7 @@ public class MobHighLighterConfig {
 	 * @throws Exception
 	 */
 	private void createConfigFile(List<String> list,String valuetochange) throws Exception{
-		File config_File = new File(path + "\\Mobhighlighter.cfg");
+		File config_File = new File(path + System.getProperty("file.separator") + "Mobhighlighter.cfg");
 		config_File.createNewFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(config_File));
@@ -127,7 +127,7 @@ public class MobHighLighterConfig {
 	 */
 	private void saveConfig(String changedpart) throws Exception{
 		if(!LiteLoader.isDevelopmentEnvironment()){
-			File config_File = new File(path + "\\Mobhighlighter.cfg");		
+			File config_File = new File(path + System.getProperty("file.separator") + "Mobhighlighter.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){
 		      back.add(key + ":" + data.get(key));

@@ -74,7 +74,7 @@ public class OreHighLighterModConfig {
 	 * @throws Exception
 	 */
 	private void createConfigFile(List<String> list,String valuetochange) throws Exception{
-		File config_File = new File(path + "\\Orehighlighter.cfg");
+		File config_File = new File(path + System.getProperty("file.separator") + "Orehighlighter.cfg");
 		config_File.createNewFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(config_File));
@@ -94,7 +94,7 @@ public class OreHighLighterModConfig {
 	 */
 	private void saveConfig(String changedpart) throws Exception{
 		if(!LiteLoader.isDevelopmentEnvironment()){
-			File config_File = new File(path + "\\Orehighlighter.cfg");		
+			File config_File = new File(path + System.getProperty("file.separator") + "Orehighlighter.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){
 		      back.add(key + ":" + data.get(key));

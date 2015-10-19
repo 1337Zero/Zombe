@@ -80,7 +80,7 @@ public class Config {
 	 * @throws Exception
 	 */
 	private void createConfigFile(List<String> list,String valuetochange) throws Exception{
-		File config_File = new File(path + "\\config.cfg");
+		File config_File = new File(path + System.getProperty("file.separator") + "config.cfg");
 		config_File.createNewFile();
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(config_File));
@@ -101,7 +101,7 @@ public class Config {
 	 */
 	private void saveConfig(String changedpart) throws Exception{
 		if(!LiteLoader.isDevelopmentEnvironment()){
-			File config_File = new File(path + "\\config.cfg");		
+			File config_File = new File(path + System.getProperty("file.separator") + "config.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){
 		      back.add(key + ":" + data.get(key));
