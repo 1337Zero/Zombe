@@ -35,17 +35,16 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Timer;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -204,12 +203,11 @@ public class MobHighlighterMod implements Mod {
 	public void renderMob(Mark m){
 		    //float r,float g,float b,float alpha,double x,double y,double z,double maxy
 	    Tessellator tessellator = Tessellator.getInstance();
-	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+	    VertexBuffer worldRenderer = tessellator.getBuffer();
 	    GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
-		worldRenderer.startDrawing(2);
-	    
-	    worldRenderer.addVertex( m.getEntity().posX, m.getEntity().posY,  m.getEntity().posZ);
-	    worldRenderer.addVertex( m.getEntity().posX, m.getEntity().posY + m.getEntity().getEyeHeight(), m.getEntity().posZ);
+		worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+	    worldRenderer.pos( m.getEntity().posX, m.getEntity().posY,  m.getEntity().posZ);
+		worldRenderer.pos( m.getEntity().posX, m.getEntity().posY + m.getEntity().getEyeHeight(), m.getEntity().posZ);
 
 	    tessellator.draw();
 	}

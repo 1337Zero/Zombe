@@ -46,8 +46,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 
 public class Schematic{
 
@@ -85,13 +85,13 @@ public class Schematic{
 			   				}
 			   			}
 			   		}
-			   		if(tileentity != null){
+			   		/*if(tileentity != null){
 			   			for(int i = 0; i < tileentity.tagCount();i++){
 				   			TileEntity enti = TileEntity.createAndLoadEntity(tileentity.getCompoundTagAt(i));
 				   			enti.setPos(new BlockPos(enti.getPos().getX() + Minecraft.getMinecraft().thePlayer.posX,enti.getPos().getY() + Minecraft.getMinecraft().thePlayer.posY, enti.getPos().getZ() + Minecraft.getMinecraft().thePlayer.posZ));
 				   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setTileEntity(enti.getPos(), enti);
 				   		}
-			   		}
+			   		}*/
 			   		if(entities != null){
 			   			for(int i = 0; i < entities.tagCount();i++){	   			
 				   			Entity ent = createEntityFromNBT(entities.getCompoundTagAt(i));
@@ -131,7 +131,7 @@ public class Schematic{
 			 blocks = nbt.getByteArray("Blocks");
 			 data = nbt.getByteArray("Data");
 		 }else{
-			 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(LiteModMain.formateTextColor(LiteModMain.prefix + "&4Could not load the file!")));
+			 Minecraft.getMinecraft().thePlayer.addChatMessage(new TextComponentString(LiteModMain.formateTextColor(LiteModMain.prefix + "&4Could not load the file!")));
 		 }
 		 fis.close();
 	 }

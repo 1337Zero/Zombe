@@ -9,10 +9,6 @@ import java.util.ArrayList;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-
-import org.apache.commons.io.IOUtils;
 
 public class UpdateChecker extends Thread{
 

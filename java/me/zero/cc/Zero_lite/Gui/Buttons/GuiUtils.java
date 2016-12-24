@@ -27,7 +27,7 @@ public class GuiUtils {
 	 * @return boolean
 	 */
 	public static boolean isOverScreenWidth(Minecraft minecraft,int uiX){
-		ScaledResolution reso = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
+		ScaledResolution reso = new ScaledResolution(minecraft);
 		if(uiX > reso.getScaledWidth()){
 			return true;
 		}
@@ -40,7 +40,7 @@ public class GuiUtils {
 	 * @return boolean
 	 */
 	public static boolean isOverScreenHeight(Minecraft minecraft,int uiZ){
-		ScaledResolution reso = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
+		ScaledResolution reso = new ScaledResolution(minecraft);
 		if(uiZ > reso.getScaledHeight()){
 			return true;
 		}

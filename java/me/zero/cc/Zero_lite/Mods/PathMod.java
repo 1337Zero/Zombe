@@ -21,7 +21,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public class PathMod implements Mod{
 
@@ -180,12 +181,12 @@ public class PathMod implements Mod{
 	public void renderMark(Mark m){
 	    
 	    Tessellator tessellator = Tessellator.getInstance();
-	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+	    VertexBuffer worldRenderer = tessellator.getBuffer();
 	    GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
-		worldRenderer.startDrawing(2);
+	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
 	    
-	    worldRenderer.addVertex( m.getX(), m.getY(),  m.getZ());
-	    worldRenderer.addVertex( m.getLastx(), m.getLasty(), m.getLastz());
+	    worldRenderer.pos( m.getX(), m.getY(),  m.getZ());
+	    worldRenderer.pos( m.getLastx(), m.getLasty(), m.getLastz());
 
 	    tessellator.draw();
 	}

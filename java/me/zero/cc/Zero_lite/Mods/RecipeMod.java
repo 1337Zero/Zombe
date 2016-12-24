@@ -28,7 +28,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -91,7 +91,7 @@ public class RecipeMod implements Mod {
 	 * @param array of the found items
 	 */
 	private void updateShownItems(ArrayList<ItemStack> array){
-		ScaledResolution reso = new ScaledResolution(minecraft,minecraft.displayWidth, minecraft.displayHeight);
+		ScaledResolution reso = new ScaledResolution(minecraft);
 		int mousex = Mouse.getX() / reso.getScaleFactor();
 		int mousey = Mouse.getY() / reso.getScaleFactor();
 		int mouseyy = reso.getScaledHeight() - mousey;		
@@ -402,7 +402,7 @@ public class RecipeMod implements Mod {
 					aktu = false;
 				}
 				//Show output in Gui
-				ScaledResolution reso = new ScaledResolution(minecraft,minecraft.displayWidth, minecraft.displayHeight);
+				ScaledResolution reso = new ScaledResolution(minecraft);
 				int posx = reso.getScaledWidth();
 				int posy = reso.getScaledHeight();
 

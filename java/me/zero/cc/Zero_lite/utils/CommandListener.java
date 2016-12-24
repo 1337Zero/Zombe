@@ -19,12 +19,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
-
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentString;
 public class CommandListener {
 
 	private Minecraft minecraft;
@@ -179,7 +177,8 @@ public class CommandListener {
 		if(main.getSelection().size() > 0){
 				for(BlockMark pos : main.getSelection()){
 					if(Block.getIdFromBlock(minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock()) == Integer.parseInt(idToReplace)){
-						if(minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getDamageValue(minecraft.theWorld, new BlockPos(pos.getX(), pos.getY(),pos.getZ())) == metaToReplace){
+						int subid = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+						if(subid == metaToReplace){
 							ItemStack stack = new ItemStack(Item.getByNameOrId(idToSet), 1, metaToSet);
 							minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockFromItem(stack.getItem()).getStateFromMeta(metaToSet));	
 						}
@@ -316,7 +315,7 @@ public class CommandListener {
 		return true;
 	}
 	private boolean onExpandCommand(int value){
-		MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(5, 1.0F);
+		RayTraceResult objpos = minecraft.thePlayer.rayTrace(5, 1.0F);
 		if((objpos.getBlockPos().getY() - minecraft.thePlayer.posY) > 2){
 			if(main.getFirstmark().getY() < main.getSecondmark().getY()){
 				main.getFirstmark().setY(main.getFirstmark().getY() + value);
@@ -366,17 +365,20 @@ public class CommandListener {
 		return true;
 	}
 	private boolean onMoveCommand(int value){
-		MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(5, 1.0F);
+		RayTraceResult objpos = minecraft.thePlayer.rayTrace(5, 1.0F);
 		if((objpos.getBlockPos().getY() - minecraft.thePlayer.posY) > 2){
 			//Up Code here		
 			for(BlockMark pos : main.getSelection()){
-				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY() + value, pos.getZ()), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getDamageValue(minecraft.theWorld, new BlockPos(pos.getX(), pos.getY(),pos.getZ()))));	
+				int subid = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+				
+				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY() + value, pos.getZ()), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
 				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 			}			
 		}else if((objpos.getBlockPos().getY() - minecraft.thePlayer.posY) < -2){
 			//Down Code here
 			for(BlockMark pos : main.getSelection()){
-				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY() - value, pos.getZ()), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getDamageValue(minecraft.theWorld, new BlockPos(pos.getX(), pos.getY(),pos.getZ()))));	
+				int subid = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY() - value, pos.getZ()), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
 				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 			}
 		}else{			
@@ -384,25 +386,29 @@ public class CommandListener {
 			if(facing.equals(EnumFacing.NORTH)){
 				//z--			
 				for(BlockMark pos : main.getSelection()){
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ() - value), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getDamageValue(minecraft.theWorld, new BlockPos(pos.getX(), pos.getY(),pos.getZ()))));	
+					int subid = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ() - value), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
 					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 				}
 			}else if(facing.equals(EnumFacing.SOUTH)){
 				//z++
 				for(BlockMark pos : main.getSelection()){
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ() + value), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getDamageValue(minecraft.theWorld, new BlockPos(pos.getX(), pos.getY(),pos.getZ()))));	
+					int subid = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ() + value), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
 					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 				}				
 			}else if(facing.equals(EnumFacing.EAST)){
 				//x++
 				for(BlockMark pos : main.getSelection()){
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX() + value, pos.getY(), pos.getZ()), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getDamageValue(minecraft.theWorld, new BlockPos(pos.getX(), pos.getY(),pos.getZ()))));	
+					int subid = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX() + value, pos.getY(), pos.getZ()), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
 					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 				}				
 			}else if(facing.equals(EnumFacing.WEST)){
 				//x--
 				for(BlockMark pos : main.getSelection()){
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX() - value, pos.getY(), pos.getZ()), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getDamageValue(minecraft.theWorld, new BlockPos(pos.getX(), pos.getY(),pos.getZ()))));	
+					int subid = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX() - value, pos.getY(), pos.getZ()), minecraft.theWorld.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
 					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 				}
 			}
@@ -423,7 +429,7 @@ public class CommandListener {
 	 * @param msg Message send to the Player
 	 */
 	private void sendMessage(String msg){
-		minecraft.thePlayer.addChatMessage(new ChatComponentText(main.formateTextColor(main.prefix + msg)));
+		minecraft.thePlayer.addChatMessage(new TextComponentString(main.formateTextColor(main.prefix + msg)));
 	}
 	
 	
