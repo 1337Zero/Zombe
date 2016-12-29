@@ -70,7 +70,7 @@ public class InfoLine {
 	 * @param Minecraft
 	 */
 	public void UpdateLine(Minecraft minecraft){
-		ScaledResolution reso = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
+		ScaledResolution reso = new ScaledResolution(minecraft);
 		int posx = reso.getScaledWidth();
 		int posy = reso.getScaledHeight();
 		

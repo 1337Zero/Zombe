@@ -28,7 +28,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -91,7 +91,7 @@ public class RecipeMod implements Mod {
 	 * @param array of the found items
 	 */
 	private void updateShownItems(ArrayList<ItemStack> array){
-		ScaledResolution reso = new ScaledResolution(minecraft,minecraft.displayWidth, minecraft.displayHeight);
+		ScaledResolution reso = new ScaledResolution(minecraft);
 		int mousex = Mouse.getX() / reso.getScaleFactor();
 		int mousey = Mouse.getY() / reso.getScaleFactor();
 		int mouseyy = reso.getScaledHeight() - mousey;		
@@ -117,7 +117,7 @@ public class RecipeMod implements Mod {
 												renderposy += 15;
 												renderposx = 0;
 											}if(recipe.get(ix).getMetadata() == 32767){
-												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).stackSize, 0);
+												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).getCount(), 0);
 												if(tempstack.getItem() != null){
 													itemRenderer.renderItemIntoGUI(tempstack, renderposx, renderposy);
 												}											
@@ -145,7 +145,7 @@ public class RecipeMod implements Mod {
 												renderposx = 0;
 											}
 											if(recipe.get(ix).getMetadata() == 32767){
-												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).stackSize, 0);
+												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).getCount(), 0);
 												if(tempstack.getItem() != null){
 													itemRenderer.renderItemIntoGUI(tempstack, renderposx, renderposy);	
 												}
@@ -371,7 +371,7 @@ public class RecipeMod implements Mod {
 					int tempitemcount = 0;
 					
 					for(int i = 0; i < items.size();i++){
-						tempitemcount += items.get(i).stackSize;
+						tempitemcount += items.get(i).getCount();
 					}
 					if(tempitemcount != olditemcount){
 						aktu = true;
@@ -402,7 +402,7 @@ public class RecipeMod implements Mod {
 					aktu = false;
 				}
 				//Show output in Gui
-				ScaledResolution reso = new ScaledResolution(minecraft,minecraft.displayWidth, minecraft.displayHeight);
+				ScaledResolution reso = new ScaledResolution(minecraft);
 				int posx = reso.getScaledWidth();
 				int posy = reso.getScaledHeight();
 
@@ -472,7 +472,7 @@ public class RecipeMod implements Mod {
 			
 			if(!error){
 				ItemStack b = getBlockFromIdAndMeta(Integer.parseInt(recipeoutput.split(":")[0]), Integer.parseInt(recipeoutput.split(":")[1]));
-				b.stackSize = Integer.parseInt(recipeoutput.split(":")[2]);
+				b.setCount(Integer.parseInt(recipeoutput.split(":")[2]));
 				System.out.println(b + " is null ?");
 
 			
@@ -662,9 +662,9 @@ public class RecipeMod implements Mod {
 				boolean[] betweenmatch = new boolean[sortedItems.size()];
 				
 				for(int x = 0; x < sortedItems.size();x++){
-					int receptstacksize = sortedRecept.get(i).stackSize;
+					int receptstacksize = sortedRecept.get(i).getCount();
 					if(receptstacksize == 81) receptstacksize /=9;
-					if(sortedItems.get(x).stackSize >= receptstacksize){
+					if(sortedItems.get(x).getCount() >= receptstacksize){
 						if(Item.getIdFromItem(sortedItems.get(x).getItem()) == Item.getIdFromItem(sortedRecept.get(i).getItem())){
 							if(sortedRecept.get(i).getMetadata() == 32767){								
 								betweenmatch[i] = true;								
@@ -715,7 +715,7 @@ public class RecipeMod implements Mod {
 					}			
 					if(items.containsKey(item.getDisplayName() + metadata)){
 						ItemStack x = items.get(item.getDisplayName() + metadata).copy();
-						x.stackSize += item.stackSize;
+						x.setCount(item.getCount()+1);
 						items.put(item.getDisplayName() + metadata, x);
 					}else{
 						items.put(item.getDisplayName() + metadata, item);

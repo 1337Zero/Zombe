@@ -21,7 +21,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public class PathMod implements Mod{
 
@@ -85,9 +86,9 @@ public class PathMod implements Mod{
 		}
 		
 		if(enabled){
-			if(lastx == 0){ lastx = minecraft.thePlayer.posX;}
-			if(lasty == 0){ lasty = minecraft.thePlayer.posY;}
-			if(lastz == 0){ lastz = minecraft.thePlayer.posZ;}
+			if(lastx == 0){ lastx = minecraft.player.posX;}
+			if(lasty == 0){ lasty = minecraft.player.posY;}
+			if(lastz == 0){ lastz = minecraft.player.posZ;}
 			
 
 			if(showinfo){
@@ -120,9 +121,9 @@ public class PathMod implements Mod{
 					}
 				}				
 				
-				lastx = minecraft.thePlayer.posX;
-				lasty = minecraft.thePlayer.posY;
-				lastz = minecraft.thePlayer.posZ;
+				lastx = minecraft.player.posX;
+				lasty = minecraft.player.posY;
+				lastz = minecraft.player.posZ;
 			}
 		}				
 	}
@@ -133,16 +134,16 @@ public class PathMod implements Mod{
 	
 	private void addMark(){
 		if(marks.size() < maxmarks){
-			marks.add(new Mark(r, g, b, alpha, minecraft.thePlayer.posX, minecraft.thePlayer.posY, minecraft.thePlayer.posZ,lastx,lasty,lastz));
+			marks.add(new Mark(r, g, b, alpha, minecraft.player.posX, minecraft.player.posY, minecraft.player.posZ,lastx,lasty,lastz));
 			System.out.println("adding marks...");
 		}else{
 			marks.remove(1);	
-			marks.add(new Mark(r, g, b, alpha, minecraft.thePlayer.posX, minecraft.thePlayer.posY, minecraft.thePlayer.posZ,lastx,lasty,lastz));
+			marks.add(new Mark(r, g, b, alpha, minecraft.player.posX, minecraft.player.posY, minecraft.player.posZ,lastx,lasty,lastz));
 		}
 	}
 	public void render(float partialTicks){
 		if(enabled){
-			EntityPlayerSP player = minecraft.thePlayer;
+			EntityPlayerSP player = minecraft.player;
 			double x = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
 			double y = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
 			double z = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;	
@@ -180,12 +181,12 @@ public class PathMod implements Mod{
 	public void renderMark(Mark m){
 	    
 	    Tessellator tessellator = Tessellator.getInstance();
-	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+	    VertexBuffer worldRenderer = tessellator.getBuffer();
 	    GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
-		worldRenderer.startDrawing(2);
+	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
 	    
-	    worldRenderer.addVertex( m.getX(), m.getY(),  m.getZ());
-	    worldRenderer.addVertex( m.getLastx(), m.getLasty(), m.getLastz());
+	    worldRenderer.pos( m.getX(), m.getY(),  m.getZ());
+	    worldRenderer.pos( m.getLastx(), m.getLasty(), m.getLastz());
 
 	    tessellator.draw();
 	}

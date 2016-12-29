@@ -30,15 +30,15 @@ public class SunThread extends Thread{
 				}
 				if(freezetime){
 					if((freezedtime) >= 24000){
-						minecraft.theWorld.setWorldTime((freezedtime)-24000);	
+						minecraft.world.setWorldTime((freezedtime)-24000);	
 					}else{
-						minecraft.theWorld.setWorldTime((freezedtime));	
+						minecraft.world.setWorldTime((freezedtime));	
 					}				
 				}else{
 					if((realtime + time2add) >= 24000 ){
-						minecraft.theWorld.setWorldTime((realtime + time2add)-24000);
+						minecraft.world.setWorldTime((realtime + time2add)-24000);
 					}else{
-						minecraft.theWorld.setWorldTime(realtime + time2add);
+						minecraft.world.setWorldTime(realtime + time2add);
 					}
 				}	
 				this.yield();

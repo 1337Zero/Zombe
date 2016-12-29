@@ -55,7 +55,7 @@ public class ChatMod implements Mod {
 			try{
 				String sender = lastMessage.split(":")[0];
 				String message = lastMessage.split(":")[1];
-				minecraft.thePlayer.sendChatMessage("/kick " + sender + " Auto-Kick (IP)");	
+				minecraft.player.sendChatMessage("/kick " + sender + " Auto-Kick (IP)");	
 			}catch(Exception e){
 				e.printStackTrace();
 			}		

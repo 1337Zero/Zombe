@@ -90,11 +90,11 @@ public class FlyMod implements Mod{
 			Updatefly();
 		}
 		if(nerfcreaetivefly){
-			if(minecraft.thePlayer.capabilities.isCreativeMode){
-				if(minecraft.thePlayer.motionX != 0 | minecraft.thePlayer.motionZ != 0 /*| minecraft.thePlayer.motionY != 0 */){
+			if(minecraft.player.capabilities.isCreativeMode){
+				if(minecraft.player.motionX != 0 | minecraft.player.motionZ != 0 /*| minecraft.thePlayer.motionY != 0 */){
 					if(!minecraft.gameSettings.keyBindForward.isKeyDown() && !minecraft.gameSettings.keyBindBack.isKeyDown() && !minecraft.gameSettings.keyBindLeft.isKeyDown() && !minecraft.gameSettings.keyBindRight.isKeyDown() && !minecraft.gameSettings.keyBindJump.isKeyDown() && !minecraft.gameSettings.keyBindSneak.isKeyDown()){
-						minecraft.thePlayer.motionZ = 0;
-						minecraft.thePlayer.motionX = 0;
+						minecraft.player.motionZ = 0;
+						minecraft.player.motionX = 0;
 					}
 				}
 			}
@@ -102,7 +102,7 @@ public class FlyMod implements Mod{
 	}
 	private void Updatefly(){
 		if(minecraft.isSingleplayer()){
-			minecraft.getIntegratedServer().getEntityWorld().getPlayerEntityByName(minecraft.thePlayer.getName()).fallDistance = 0;
+			minecraft.getIntegratedServer().getEntityWorld().getPlayerEntityByName(minecraft.player.getName()).fallDistance = 0;
 		}
 		if(!togglefly){
 			float value = (float) flyValue;
@@ -110,11 +110,11 @@ public class FlyMod implements Mod{
 				value = (float) (flyValue /10);
 			}
 			if(upkey.isKeyDown() && (minecraft.currentScreen == null)){
-				minecraft.thePlayer.motionY = value;
+				minecraft.player.motionY = value;
 			}else if(downkey.isKeyDown() && (minecraft.currentScreen == null)){
-				minecraft.thePlayer.motionY = -value;
+				minecraft.player.motionY = -value;
 			}else{
-				minecraft.thePlayer.motionY = 0;
+				minecraft.player.motionY = 0;
 			}
 		}else{
 			float value = (float) flyValue;
@@ -122,11 +122,11 @@ public class FlyMod implements Mod{
 				value = (float) (flyValue /10);
 			}
 			if(upkey.isKeyDown() && onkey.isKeyDown()  && (minecraft.currentScreen == null)){
-				minecraft.thePlayer.motionY = value;
+				minecraft.player.motionY = value;
 			}else if(downkey.isKeyDown() && onkey.isKeyDown()  && (minecraft.currentScreen == null)){
-				minecraft.thePlayer.motionY = -value;
+				minecraft.player.motionY = -value;
 			}else{
-				minecraft.thePlayer.motionY = 0;
+				minecraft.player.motionY = 0;
 			}
 		}
 		

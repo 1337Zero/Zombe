@@ -19,7 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 
 public class SpeedMod implements Mod {
 
@@ -76,7 +76,7 @@ public class SpeedMod implements Mod {
 	}
 	@Override
 	public void use() {		
-		rotationyaw = minecraft.thePlayer.rotationYaw;
+		rotationyaw = minecraft.player.rotationYaw;
 		if(onkey.isKeyDown() && !(minecraft.gameSettings.keyBindRight.isKeyDown() || minecraft.gameSettings.keyBindLeft.isKeyDown() || minecraft.gameSettings.keyBindForward.isKeyDown() || minecraft.gameSettings.keyBindBack.isKeyDown() || (minecraft.currentScreen != null))){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(speedenabled){
@@ -184,8 +184,8 @@ public class SpeedMod implements Mod {
 				percent = (int)(rotationyaw - (((int)rotationyaw/360))*360)+90;
 				pressed = true;
 			}else{
-				minecraft.thePlayer.motionX = 0;
-				minecraft.thePlayer.motionZ = 0;
+				minecraft.player.motionX = 0;
+				minecraft.player.motionZ = 0;
 			}
 			if(pressed){
 				doUpDateSpeed(percent, minecraft,forward);			
@@ -196,18 +196,18 @@ public class SpeedMod implements Mod {
 		double move =  speedValue;
 		double movef;
 		if(intelligentmode){
-			movef = -move * MathHelper.cos(minecraft.thePlayer.rotationPitch * (float)Math.PI / 180.0f);
+			movef = -move * MathHelper.cos(minecraft.player.rotationPitch * (float)Math.PI / 180.0f);
 		}else{
-			movef = -move * MathHelper.cos(minecraft.thePlayer.cameraPitch * (float)Math.PI / 180.0f);
+			movef = -move * MathHelper.cos(minecraft.player.cameraPitch * (float)Math.PI / 180.0f);
 		}		
         mx += movef * MathHelper.sin(percent * (float)Math.PI / 180.0f);
         mz += -movef * MathHelper.cos(percent * (float)Math.PI / 180.0f);
         if(forward){
-        	minecraft.thePlayer.motionX = mx;
-            minecraft.thePlayer.motionZ = mz;
+        	minecraft.player.motionX = mx;
+            minecraft.player.motionZ = mz;
         }else{
-        	minecraft.thePlayer.motionX = -mx;
-            minecraft.thePlayer.motionZ = -mz;
+        	minecraft.player.motionX = -mx;
+            minecraft.player.motionZ = -mz;
         }
         
 	}

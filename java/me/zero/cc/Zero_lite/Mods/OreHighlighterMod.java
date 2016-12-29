@@ -20,19 +20,19 @@ import me.zero.cc.Zero_lite.utils.Mark;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockLadder;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.EnumFaceing;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -88,7 +88,6 @@ public class OreHighlighterMod implements Mod {
 
 	@Override
 	public void use() {
-		
 		if(onkey.isKeyDown() && (minecraft.currentScreen == null)){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(enabled){
@@ -126,7 +125,7 @@ public class OreHighlighterMod implements Mod {
 	 */
 	public void render(float partialTicks){
 		if(blocks.size() > 0 && enabled){			
-			EntityPlayerSP player = minecraft.thePlayer;
+			EntityPlayerSP player = minecraft.player;
 			double x = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
 			double y = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
 			double z = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
@@ -166,31 +165,32 @@ public class OreHighlighterMod implements Mod {
 	public void renderBlock(Mark block){
 	    
 	    Tessellator tessellator = Tessellator.getInstance();
-	    WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-	    
+	    VertexBuffer worldRenderer = tessellator.getBuffer();
 
 	    
 	    GL.glColor4f(block.getR(), block.getG(),block.getB(),block.getAlpha());
-	    AxisAlignedBB axis = minecraft.theWorld.getBlockState(new BlockPos(block.getX(),block.getY(), block.getZ())).getBlock().getSelectedBoundingBox(minecraft.theWorld, new BlockPos(block.getX(), block.getY(), block.getZ()));
+	    IBlockState state = minecraft.world.getBlockState(new BlockPos(block.getX(),block.getY(), block.getZ())).getBlock().getDefaultState();
+	    
+	    AxisAlignedBB axis = minecraft.world.getBlockState(new BlockPos(block.getX(),block.getY(), block.getZ())).getBlock().getCollisionBoundingBox(state, minecraft.world, new BlockPos(block.getX(),block.getY(), block.getZ()));
 
-	    worldRenderer.startDrawing(2);
-		worldRenderer.addVertex(axis.minX, axis.minY, axis.minZ);
-		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.maxZ);		
+	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		worldRenderer.pos(axis.minX, axis.minY, axis.minZ);
+		worldRenderer.pos(axis.maxX, axis.maxY, axis.maxZ);		
 	    tessellator.draw();
 
-	    worldRenderer.startDrawing(2);
-		worldRenderer.addVertex(axis.minX, axis.maxY, axis.maxZ);
-		worldRenderer.addVertex(axis.maxX, axis.minY, axis.minZ);
+	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		worldRenderer.pos(axis.minX, axis.maxY, axis.maxZ);
+		worldRenderer.pos(axis.maxX, axis.minY, axis.minZ);
 	    tessellator.draw();
 
-	    worldRenderer.startDrawing(2);
-		worldRenderer.addVertex(axis.minX, axis.minY, axis.maxZ);
-		worldRenderer.addVertex(axis.maxX, axis.maxY, axis.minZ);
+	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		worldRenderer.pos(axis.minX, axis.minY, axis.maxZ);
+		worldRenderer.pos(axis.maxX, axis.maxY, axis.minZ);
 	    tessellator.draw();
 	    
-		worldRenderer.startDrawing(2);
-		worldRenderer.addVertex(axis.minX, axis.maxY, axis.minZ);
-		worldRenderer.addVertex(axis.maxX, axis.minY, axis.maxZ);		
+	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		worldRenderer.pos(axis.minX, axis.maxY, axis.minZ);
+		worldRenderer.pos(axis.maxX, axis.minY, axis.maxZ);		
 	    tessellator.draw();
 	    	    
 	}
@@ -420,37 +420,38 @@ class OreSearchThread extends Thread{
 		
 		ArrayList<Mark> tempblocks = new ArrayList<Mark>();
 			
-		double posx = Minecraft.getMinecraft().thePlayer.posX - omod.getRadius()*10;
-		double posy = Minecraft.getMinecraft().thePlayer.posY - omod.getRadius()*10;
-		double posz = Minecraft.getMinecraft().thePlayer.posZ - omod.getRadius()*10;
+		double posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
+		double posy = Minecraft.getMinecraft().player.posY - omod.getRadius()*10;
+		double posz = Minecraft.getMinecraft().player.posZ - omod.getRadius()*10;
 		
 		if(selectivesearch){
-			String facing = EnumFacing.fromAngle(Minecraft.getMinecraft().thePlayer.rotationYawHead).getName().toUpperCase();
+			String facing = EnumFacing.fromAngle(Minecraft.getMinecraft().player.rotationYawHead).getName().toUpperCase();
 			
 			if(facing.equalsIgnoreCase("north")){
 				//updaten -
-				posz = (Minecraft.getMinecraft().thePlayer.posZ +1) - (omod.getRadius()*10)*2;
-				posx = Minecraft.getMinecraft().thePlayer.posX - omod.getRadius()*10;
+				posz = (Minecraft.getMinecraft().player.posZ +1) - (omod.getRadius()*10)*2;
+				posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
 			}else if(facing.equalsIgnoreCase("south")){
-				posz = Minecraft.getMinecraft().thePlayer.posZ;
+				posz = Minecraft.getMinecraft().player.posZ;
 			}else if(facing.equalsIgnoreCase("west")){
 				//updaten -
-				posx = (Minecraft.getMinecraft().thePlayer.posX +1) - (omod.getRadius()*10)*2;
-				posz = Minecraft.getMinecraft().thePlayer.posZ - omod.getRadius()*10;
+				posx = (Minecraft.getMinecraft().player.posX +1) - (omod.getRadius()*10)*2;
+				posz = Minecraft.getMinecraft().player.posZ - omod.getRadius()*10;
 			}else if(facing.equalsIgnoreCase("east")){
-				posx = Minecraft.getMinecraft().thePlayer.posX;
+				posx = Minecraft.getMinecraft().player.posX;
 			}
 			
 		}
 		for(double x = posx; x < (posx + (omod.getRadius() *10)*2);x++){			
 			for(double y = posy; y < (posy + (omod.getRadius() *10)*2);y++){				
 				for(double z = posz; z < (posz + (omod.getRadius() *10)*2);z++){
-					Block block = Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y, z)).getBlock();	
+					Block block = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y, z)).getBlock();	
 					if(Block.getIdFromBlock(block) != 0){
-						if(omod.isInConfig("" + Block.getIdFromBlock(block) + ":" + Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y,z)).getBlock().getDamageValue(Minecraft.getMinecraft().theWorld, new BlockPos(x, y,z)))){
+						int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)));
+						if(omod.isInConfig("" + Block.getIdFromBlock(block) + ":" + subid)){
 							String color = config.getData("Color."+ Block.getIdFromBlock(block));
 							if(color == null){ 
-								color = config.getData("Color."+ Block.getIdFromBlock(block) + "-" + Minecraft.getMinecraft().theWorld.getBlockState(new BlockPos(x, y,z)).getBlock().getDamageValue(Minecraft.getMinecraft().theWorld, new BlockPos(x, y,z)));
+								color = config.getData("Color."+ Block.getIdFromBlock(block) + "-" + subid);
 								if(color != null){ 
 									tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
 								}else{

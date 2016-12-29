@@ -40,19 +40,14 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BlockModelRenderer;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S02PacketChat;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.HttpUtil;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 
 import com.mumfrey.liteloader.ChatFilter;
@@ -171,12 +166,12 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 
 	public void onTick(Minecraft minecraft, float partialTicks, boolean inGame,	boolean clock) {	
 		initMods(minecraft);
-		if(minecraft.thePlayer != null){
+		if(minecraft.player != null){
 			ilm.use(minecraft);
 			if(Zombe_config.isKeyDown()){
 				minecraft.displayGuiScreen(new ConfigMainFrame(this));
 			}			
-			if(!checkedupdate && minecraft.theWorld != null && minecraft.currentScreen == null){
+			if(!checkedupdate && minecraft.world != null && minecraft.currentScreen == null){
 				if(update){
 					updatecheck = new UpdateChecker(this);	
 					updatecheck.start();				
@@ -187,7 +182,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 				if(messages.size() > 0 || urlVersion != 0 & downloadURL != ""){					
 					if(urlVersion > Integer.valueOf(this.getVersion())){
 						sendMessage(prefix + lconfig.getData("Main.updateMSG").replace("<urlversion>", urlVersion + ""));
-						minecraft.thePlayer.addChatMessage(new ChatComponentText(downloadURL));		
+						minecraft.player.sendChatMessage(downloadURL);
 						
 						for(String msg : messages){		
 							sendMessage(prefix + msg);
@@ -206,10 +201,10 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			if(isEnableselection()){
 				if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
 					if((System.currentTimeMillis() - lastFirstMarkPick) >=500){
-						if(minecraft.thePlayer.getCurrentEquippedItem() != null){
-							if(minecraft.thePlayer.getCurrentEquippedItem().getItem() != null){
-								if(minecraft.thePlayer.getCurrentEquippedItem().getItem().equals(Item.getByNameOrId("wooden_shovel"))){
-									MovingObjectPosition pos = minecraft.thePlayer.rayTrace(5,1.0F);
+						if(minecraft.player.getActiveItemStack() != null){
+							if(minecraft.player.getActiveItemStack().getItem() != null){
+								if(minecraft.player.getActiveItemStack().getItem().equals(Item.getByNameOrId("wooden_shovel"))){
+									RayTraceResult pos = minecraft.player.rayTrace(5,1.0F);
 									firstmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.firstMarkR")), Float.valueOf(config.getData("Main.firstMarkG")), Float.valueOf(config.getData("Main.firstMarkB")), Float.valueOf(config.getData("Main.firstMarkAlpha")));
 									//firstmark = new BlockMark(0, 0, 0, 0, pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ());
 									lastFirstMarkPick = System.currentTimeMillis();
@@ -226,10 +221,10 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 				}			
 				if((System.currentTimeMillis() - lastSecondMarkPick) >=500){
 					if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
-						if(minecraft.thePlayer.getCurrentEquippedItem() != null){
-							if(minecraft.thePlayer.getCurrentEquippedItem().getItem() != null){
-								if(minecraft.thePlayer.getCurrentEquippedItem().getItem().equals(Item.getByNameOrId("wooden_axe"))){
-									MovingObjectPosition pos = minecraft.thePlayer.rayTrace(5,1.0F);
+						if(minecraft.player.getActiveItemStack() != null){
+							if(minecraft.player.getActiveItemStack().getItem() != null){
+								if(minecraft.player.getActiveItemStack().getItem().equals(Item.getByNameOrId("wooden_axe"))){
+									RayTraceResult pos = minecraft.player.rayTrace(5,1.0F);
 									secondmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.secondMarkR")), Float.valueOf(config.getData("Main.secondMarkG")), Float.valueOf(config.getData("Main.secondMarkB")), Float.valueOf(config.getData("Main.secondMarkAlpha")));
 									lastSecondMarkPick = System.currentTimeMillis();
 									sendMessage(lconfig.getData("Selection.secondmark").replace("<x>",  pos.getBlockPos().getX() + "").replace("<y>", pos.getBlockPos().getY() + "").replace("<z>", pos.getBlockPos().getZ() + ""));
@@ -247,39 +242,39 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		}
 	}	
 	public static String formateTextColor(String msg){		
-		msg = msg.replace("&0", "" + EnumChatFormatting.BLACK);
-		msg = msg.replace("&1", "" + EnumChatFormatting.DARK_BLUE);
-		msg = msg.replace("&2", "" + EnumChatFormatting.DARK_GREEN);
-		msg = msg.replace("&3", "" + EnumChatFormatting.DARK_AQUA);
-		msg = msg.replace("&4", "" + EnumChatFormatting.DARK_RED);
-		msg = msg.replace("&5", "" + EnumChatFormatting.DARK_PURPLE);
-		msg = msg.replace("&6", "" + EnumChatFormatting.GOLD);
-		msg = msg.replace("&7", "" + EnumChatFormatting.GRAY);
-		msg = msg.replace("&8", "" + EnumChatFormatting.DARK_GRAY);
-		msg = msg.replace("&9", "" + EnumChatFormatting.BLUE);
-		msg = msg.replace("&a", "" + EnumChatFormatting.GREEN);
-		msg = msg.replace("&b", "" + EnumChatFormatting.AQUA);
-		msg = msg.replace("&c", "" + EnumChatFormatting.RED);
-		msg = msg.replace("&d", "" + EnumChatFormatting.LIGHT_PURPLE);
-		msg = msg.replace("&e", "" + EnumChatFormatting.YELLOW);
-		msg = msg.replace("&f", "" + EnumChatFormatting.WHITE);
-		msg = msg.replace("&k", "" + EnumChatFormatting.OBFUSCATED);
-		msg = msg.replace("&l", "" + EnumChatFormatting.BOLD);
-		msg = msg.replace("&m", "" + EnumChatFormatting.STRIKETHROUGH);
-		msg = msg.replace("&n", "" + EnumChatFormatting.UNDERLINE);
-		msg = msg.replace("&o", "" + EnumChatFormatting.ITALIC);
+		msg = msg.replace("&0", "" + TextFormatting.BLACK);
+		msg = msg.replace("&1", "" + TextFormatting.DARK_BLUE);
+		msg = msg.replace("&2", "" + TextFormatting.DARK_GREEN);
+		msg = msg.replace("&3", "" + TextFormatting.DARK_AQUA);
+		msg = msg.replace("&4", "" + TextFormatting.DARK_RED);
+		msg = msg.replace("&5", "" + TextFormatting.DARK_PURPLE);
+		msg = msg.replace("&6", "" + TextFormatting.GOLD);
+		msg = msg.replace("&7", "" + TextFormatting.GRAY);
+		msg = msg.replace("&8", "" + TextFormatting.DARK_GRAY);
+		msg = msg.replace("&9", "" + TextFormatting.BLUE);
+		msg = msg.replace("&a", "" + TextFormatting.GREEN);
+		msg = msg.replace("&b", "" + TextFormatting.AQUA);
+		msg = msg.replace("&c", "" + TextFormatting.RED);
+		msg = msg.replace("&d", "" + TextFormatting.LIGHT_PURPLE);
+		msg = msg.replace("&e", "" + TextFormatting.YELLOW);
+		msg = msg.replace("&f", "" + TextFormatting.WHITE);
+		msg = msg.replace("&k", "" + TextFormatting.OBFUSCATED);
+		msg = msg.replace("&l", "" + TextFormatting.BOLD);
+		msg = msg.replace("&m", "" + TextFormatting.STRIKETHROUGH);
+		msg = msg.replace("&n", "" + TextFormatting.UNDERLINE);
+		msg = msg.replace("&o", "" + TextFormatting.ITALIC);
 		return msg;
 	}
 	private void sendMessage(String msg){
 		String[] messages = msg.split(";");
 		for(String text : messages){
-			minecraft.thePlayer.addChatMessage(new ChatComponentText(formateTextColor(prefix + text)));
+			//minecraft.player.addChatMessage(new TextComponentString(formateTextColor(prefix + text)));
+			minecraft.player.sendChatMessage(formateTextColor(prefix + text));
 		}		
 	}
-	
 	@Override
-	public boolean onChat(IChatComponent chat, String message,ReturnValue<IChatComponent> newMessage) {
-		return !cmdlist.onCommand(chat.getUnformattedText().replace("<" + minecraft.thePlayer.getName() + "> ", ""),chat.getUnformattedText().replace("<" + minecraft.thePlayer.getName() + "> ", "").split(" "));
+	public boolean onChat(ITextComponent chat, String message, ReturnValue<ITextComponent> newMessage) {
+		return !cmdlist.onCommand(chat.getUnformattedText().replace("<" + minecraft.player.getName() + "> ", ""),chat.getUnformattedText().replace("<" + minecraft.player.getName() + "> ", "").split(" "));
 	}
 
 	@Override
@@ -436,6 +431,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			secondmark = null;
 		}
 	}
+	
 }
 class ConfigMainFrame extends GuiScreen{
 	private LiteModMain lmm;

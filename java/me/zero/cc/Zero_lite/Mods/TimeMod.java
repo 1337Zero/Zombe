@@ -67,7 +67,7 @@ public class TimeMod implements Mod {
 	public void use() {
 		if(enabled){
 			if(st == null){
-				st = new SunThread(minecraft, timetoadd,minecraft.theWorld.getWorldTime());
+				st = new SunThread(minecraft, timetoadd,minecraft.world.getWorldTime());
 				st.start();
 			}
 		}
@@ -143,14 +143,14 @@ public class TimeMod implements Mod {
 		if(valueToManupulate.equalsIgnoreCase("freezetime")){
 			freezetime = b;
 			if(st != null){
-				st.setFreezedtime(minecraft.theWorld.getWorldTime());
+				st.setFreezedtime(minecraft.world.getWorldTime());
 				st.setFreezetime(b);
 			}						
 			speicher.getConfig().replaceData("time-freezed", freezetime + "");
 		}else if(valueToManupulate.equalsIgnoreCase("enable")){
 			enabled = b;
 			if(b){				
-				st = new SunThread(minecraft, timetoadd, minecraft.theWorld.getWorldTime());
+				st = new SunThread(minecraft, timetoadd, minecraft.world.getWorldTime());
 				st.start();
 			}else{
 				st.interrupt();

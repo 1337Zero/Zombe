@@ -19,10 +19,8 @@ import me.zero.cc.Zero_lite.utils.GuiPositions;
 import me.zero.cc.Zero_lite.utils.KeySetting;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.block.state.pattern.BlockStateHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -35,15 +33,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.play.client.C07PacketPlayerDigging;
-import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
-import net.minecraft.network.play.server.S23PacketBlockChange;
-import net.minecraft.network.play.server.S24PacketBlockAction;
-import net.minecraft.network.play.server.S25PacketBlockBreakAnim;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.WorldManager;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
 public class RangeMod implements Mod {
 
@@ -128,14 +121,14 @@ public class RangeMod implements Mod {
 	 * Methode to fix some id bugs from Minecraft...maybe there is a better way to get the id of the blocks from items
 	 * @return Block
 	 */
-	private Block getBlockinPlayerHand(MovingObjectPosition pos){
+	private Block getBlockinPlayerHand(){
 		
-		Block b = Block.getBlockFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem()); 
+		Block b = Block.getBlockFromItem(minecraft.player.inventory.getStackInSlot(minecraft.player.inventory.currentItem).getItem()); 
 		
 		if(b == null){
 			int id = 0;
 			
-			switch(Item.getIdFromItem(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getItem())){
+			switch(Item.getIdFromItem(minecraft.player.inventory.getStackInSlot(minecraft.player.inventory.currentItem).getItem())){
 			
 			case 331: id = 55; break;
 			case 356: id = 93; break;
@@ -201,7 +194,7 @@ public class RangeMod implements Mod {
 		}
 		//Marks the Block you are looking at
 		if(markblock){
-			MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
+			RayTraceResult objpos = minecraft.player.rayTrace(range,1.0F);
 			if(objpos != null){
 				if(objpos.getBlockPos() != null){
 					markBlock(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ());
@@ -211,17 +204,19 @@ public class RangeMod implements Mod {
 		//Destroys the Block where you are looking at
 		if(minecraft.gameSettings.keyBindAttack.isKeyDown()){
 			if(reachbreak){
-				if(minecraft.theWorld.getBlockState(minecraft.thePlayer.rayTrace(6,1.0F).getBlockPos()).getBlock().getMaterial().equals(Material.air)){
-					MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
+				if(minecraft.world.getBlockState(minecraft.player.rayTrace(6,1.0F).getBlockPos()).getBlock().getMaterial(null).equals(Material.AIR)){
+					RayTraceResult objpos = minecraft.player.rayTrace(range,1.0F);
 					if(objpos.getBlockPos() != null){
 						//If to fast Blockbreaking minecraft crashes...idk why
 						if((System.currentTimeMillis() - lastdestroyed) >= destroydelay){	
 							if(minecraft.isSingleplayer()){	
-								minecraft.thePlayer.swingItem();		
+								minecraft.player.swingArm(EnumHand.MAIN_HAND);	
 								if(addToInventory){
-									Block block = minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock();	
-									ItemStack newitem = new ItemStack(minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock().getItem(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())),1,block.getDamageValue(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())));
-									minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.addItemStackToInventory(newitem);	
+									Block block = minecraft.world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock();	
+									int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())));
+									
+									ItemStack newitem = new ItemStack(minecraft.world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock(),1,subid);
+									minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.addItemStackToInventory(newitem);	
 									minecraft.getIntegratedServer().getEntityWorld().destroyBlock(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), false);
 								}else{
 									minecraft.getIntegratedServer().getEntityWorld().destroyBlock(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()), dropblock);
@@ -239,14 +234,14 @@ public class RangeMod implements Mod {
 			//Sets the Block where you are looking
 		}else if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
 			if(reachplace){
-				if(minecraft.theWorld.getBlockState(minecraft.thePlayer.rayTrace(6,1.0F).getBlockPos()).getBlock().getMaterial().equals(Material.air)){
-					MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
+				if(minecraft.world.getBlockState(minecraft.player.rayTrace(6,1.0F).getBlockPos()).getBlock().getMaterial(minecraft.world.getBlockState(minecraft.player.rayTrace(6,1.0F).getBlockPos())).equals(Material.AIR)){
+					RayTraceResult objpos = minecraft.player.rayTrace(range,1.0F);
 					if(objpos.getBlockPos() != null){	
 						if(minecraft.isSingleplayer()){							
-							if(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem) != null){
+							if(minecraft.player.inventory.getStackInSlot(minecraft.player.inventory.currentItem) != null){
 								if(System.currentTimeMillis() - lastplaced >= placedelay){
-									if(getBlockinPlayerHand(objpos) != null){
-										minecraft.thePlayer.swingItem();
+									if(getBlockinPlayerHand() != null){
+										minecraft.player.swingArm(EnumHand.MAIN_HAND);
 										int x = objpos.getBlockPos().getX();
 										int y = objpos.getBlockPos().getY();
 										int z = objpos.getBlockPos().getZ();
@@ -264,37 +259,39 @@ public class RangeMod implements Mod {
 										}else if(objpos.sideHit.equals(EnumFacing.EAST)){
 												x = x+1;
 										}
-										if(Block.getIdFromBlock(getBlockinPlayerHand(objpos)) == 93 | Block.getIdFromBlock(getBlockinPlayerHand(objpos)) == 149 | Block.getIdFromBlock(getBlockinPlayerHand(objpos)) == 55){
+										if(Block.getIdFromBlock(getBlockinPlayerHand()) == 93 | Block.getIdFromBlock(getBlockinPlayerHand()) == 149 | Block.getIdFromBlock(getBlockinPlayerHand()) == 55){
 
 											int looksite = 1;
 																						
-											if(EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().equalsIgnoreCase("NORTH")){
+											if(EnumFacing.fromAngle(minecraft.player.rotationYawHead).getName().equalsIgnoreCase("NORTH")){
 												looksite = 4;
-											}else if(EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().equalsIgnoreCase("SOUTH")){
+											}else if(EnumFacing.fromAngle(minecraft.player.rotationYawHead).getName().equalsIgnoreCase("SOUTH")){
 												looksite = 2;
-											}else if(EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().equalsIgnoreCase("EAST")){
+											}else if(EnumFacing.fromAngle(minecraft.player.rotationYawHead).getName().equalsIgnoreCase("EAST")){
 												looksite = 5;
-											}else if(EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().equalsIgnoreCase("WEST")){
+											}else if(EnumFacing.fromAngle(minecraft.player.rotationYawHead).getName().equalsIgnoreCase("WEST")){
 												looksite = 3;
-											}else if(EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().equalsIgnoreCase("UP")){
+											}else if(EnumFacing.fromAngle(minecraft.player.rotationYawHead).getName().equalsIgnoreCase("UP")){
 												looksite = 1;
-											}else if(EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().equalsIgnoreCase("DOWN")){
+											}else if(EnumFacing.fromAngle(minecraft.player.rotationYawHead).getName().equalsIgnoreCase("DOWN")){
 												looksite = 6;
 											}
-											if(minecraft.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock().getMaterial().equals(Material.air)){
-												minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(x, y, z), getBlockinPlayerHand(objpos).getBlockState().getBlock().getStateFromMeta(looksite));
+											if(minecraft.world.getBlockState(new BlockPos(x, y, z)).getBlock().getMaterial(minecraft.world.getBlockState(new BlockPos(x, y, z))).equals(Material.AIR)){
+												minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(x, y, z), getBlockinPlayerHand().getBlockState().getBlock().getStateFromMeta(looksite));
 											}											
 										}else{
-											if(minecraft.theWorld.getBlockState(new BlockPos(x, y, z)).getBlock().getMaterial().equals(Material.air)){
-												minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(x, y, z), getBlockinPlayerHand(objpos).getStateFromMeta(minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).getMetadata()));
+											if(minecraft.world.getBlockState(new BlockPos(x, y, z)).getBlock().getMaterial(minecraft.world.getBlockState(new BlockPos(x, y, z))).equals(Material.AIR)){
+												minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(x, y, z), getBlockinPlayerHand().getStateFromMeta(minecraft.player.inventory.getStackInSlot(minecraft.player.inventory.currentItem).getMetadata()));
 											}
 										}
 										
 										if(removeFromInventory){
-											if (minecraft.thePlayer.inventory.getStackInSlot(minecraft.thePlayer.inventory.currentItem).stackSize == 1){
-												minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.mainInventory[minecraft.thePlayer.inventory.currentItem] = null;
+											if (minecraft.player.inventory.getStackInSlot(minecraft.player.inventory.currentItem).getCount() == 1){
+												minecraft.player.inventory.setInventorySlotContents(minecraft.player.inventory.currentItem, null);
+												//minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.mainInventory[minecraft.player.inventory.currentItem] = null;
 											}else{
-												minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.mainInventory[minecraft.thePlayer.inventory.currentItem] = new ItemStack(minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.getCurrentItem().getItem(), minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.getCurrentItem().stackSize-1);
+												minecraft.player.inventory.setInventorySlotContents(minecraft.player.inventory.currentItem, new ItemStack(minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().getItem(), minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().getCount()-1));
+												//minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.mainInventory[minecraft.player.inventory.currentItem] = new ItemStack(minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().getItem(), minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().stackSize-1);
 											}									
 										}
 									}
@@ -312,23 +309,25 @@ public class RangeMod implements Mod {
 			//Picks the Block you are looking at
 		}else if(minecraft.gameSettings.keyBindPickBlock.isKeyDown()){
 			if(reachPick){
-				MovingObjectPosition objpos = minecraft.thePlayer.rayTrace(range,1.0F);
+				RayTraceResult objpos = minecraft.player.rayTrace(range,1.0F);
 				if(objpos != null){
 					if(objpos.getBlockPos() != null){
 						if(minecraft.isSingleplayer()){
 							if(System.currentTimeMillis() - lastpicked >= pickdelay){
-								Block block = minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock();	
-								if(!block.getMaterial().equals(Material.air)){
+								Block block = minecraft.world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock();	
+								if(!block.getMaterial( minecraft.world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()))).equals(Material.AIR)){
 									ItemStack newitem;
-									if(block.getMaterial().equals(Material.lava)){
+									if(block.getMaterial( minecraft.world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()))).equals(Material.LAVA)){
 										newitem = new ItemStack(Item.getByNameOrId("minecraft:lava_bucket"));
-									}else if(block.getMaterial().equals(Material.water)){
+									}else if(block.getMaterial( minecraft.world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ()))).equals(Material.WATER)){
 										newitem = new ItemStack(Item.getByNameOrId("minecraft:water_bucket"));
 									}else{
-										newitem = new ItemStack(minecraft.theWorld.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock().getItem(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())),1,block.getDamageValue(minecraft.theWorld, new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())));
+										int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())));
+										newitem = new ItemStack(minecraft.world.getBlockState(new BlockPos(objpos.getBlockPos().getX(), objpos.getBlockPos().getY(), objpos.getBlockPos().getZ())).getBlock(),1,subid);
 									}
-									if(newitem != null){										
-										minecraft.getIntegratedServer().worldServers[0].getPlayerEntityByUUID(minecraft.thePlayer.getUniqueID()).inventory.mainInventory[minecraft.thePlayer.inventory.currentItem] = newitem;
+									if(newitem != null){		
+										minecraft.player.inventory.setInventorySlotContents(minecraft.player.inventory.currentItem, newitem);
+										//minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.mainInventory[minecraft.player.inventory.currentItem] = newitem;
 									}
 								}
 								lastpicked = System.currentTimeMillis();

@@ -89,7 +89,7 @@ public class InfoMod implements Mod {
 				//rotationyam = minecraft.thePlayer.rotationYawHead;			
 				//UpdateDirection(getPercent());
 				//UpdateRotation(minecraft);
-				Facing = EnumFacing.fromAngle(minecraft.thePlayer.rotationYawHead).getName().toUpperCase();
+				Facing = EnumFacing.fromAngle(minecraft.player.rotationYawHead).getName().toUpperCase();
 				lastdiraktu = System.currentTimeMillis();
 			}			
 		}	
@@ -109,7 +109,7 @@ public class InfoMod implements Mod {
 	 * @return String
 	 */
 	private String getWorldAge(){
-		long worldage = minecraft.theWorld.getTotalWorldTime();
+		long worldage = minecraft.world.getTotalWorldTime();
 		int sek = (int) (worldage/20);
 		
 		int basesec = 1;
@@ -163,7 +163,7 @@ public class InfoMod implements Mod {
 			speicher.getInfoLineManager().getInfoLine(posDir).setInfo(infoidDir, "");
 		}
 		if(showcoor){
-			speicher.getInfoLineManager().getInfoLine(posCoor).setInfo(infoidCoor, "(" + (int)minecraft.thePlayer.posX + "," + (int)minecraft.thePlayer.posY + "," + (int)minecraft.thePlayer.posZ + ")");
+			speicher.getInfoLineManager().getInfoLine(posCoor).setInfo(infoidCoor, "(" + (int)minecraft.player.posX + "," + (int)minecraft.player.posY + "," + (int)minecraft.player.posZ + ")");
 		}else{
 			speicher.getInfoLineManager().getInfoLine(posCoor).setInfo(infoidCoor, "");
 		}
