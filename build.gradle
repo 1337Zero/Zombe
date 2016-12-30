@@ -17,39 +17,26 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle.liteloader'
-apply plugin: 'org.spongepowered.mixin'
 
-version = "0.1"
-group = "com.mumfrey.examplemod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "examplemod"
+version = "0.0.5.0"
+group = "de.cultcraft.de.zero" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "Zombe"
 
 minecraft {
     version = "1.11"
     mappings = "snapshot_20161228"
     runDir = "run"
 }
-
-sourceSets {
-    main {
-        // Refmap declaration must match the refmap name specified in the json config
-        refMap = "mixins.example.refmap.json"
-    }
-}
-
-mixin {
-    defaultObfuscationEnv notch
-}
-
 litemod {
     json {
         name = "test"
         mcversion = "1.11"
-        mixinConfigs += "mixins.example.json"
+        version = "0.0.5.0"
+        author = "1337Zero"
     }
 }
 

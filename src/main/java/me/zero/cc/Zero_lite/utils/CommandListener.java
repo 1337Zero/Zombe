@@ -1,9 +1,6 @@
 package me.zero.cc.Zero_lite.utils;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -429,7 +426,7 @@ public class CommandListener {
 	 * @param msg Message send to the Player
 	 */
 	private void sendMessage(String msg){
-		minecraft.player.sendChatMessage(main.formateTextColor(main.prefix + msg));
+		minecraft.player.sendMessage(new TextComponentString(main.formateTextColor(main.prefix + msg)));
 	}
 	
 	

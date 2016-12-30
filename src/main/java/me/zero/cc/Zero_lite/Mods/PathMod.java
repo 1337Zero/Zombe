@@ -182,11 +182,11 @@ public class PathMod implements Mod{
 	    
 	    Tessellator tessellator = Tessellator.getInstance();
 	    VertexBuffer worldRenderer = tessellator.getBuffer();
-	    GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
-	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+	    //GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
+	    worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
 	    
-	    worldRenderer.pos( m.getX(), m.getY(),  m.getZ());
-	    worldRenderer.pos( m.getLastx(), m.getLasty(), m.getLastz());
+	    worldRenderer.pos( m.getX(), m.getY(),  m.getZ()).color(m.getR(), m.getG(), m.getB(), m.getAlpha()).endVertex();
+	    worldRenderer.pos( m.getLastx(), m.getLasty(), m.getLastz()).color(m.getR(), m.getG(), m.getB(), m.getAlpha()).endVertex();
 
 	    tessellator.draw();
 	}

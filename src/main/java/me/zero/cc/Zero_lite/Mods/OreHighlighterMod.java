@@ -3,7 +3,6 @@ package me.zero.cc.Zero_lite.Mods;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.mumfrey.liteloader.gl.GL;
@@ -18,8 +17,6 @@ import me.zero.cc.Zero_lite.utils.GuiPositions;
 import me.zero.cc.Zero_lite.utils.KeySetting;
 import me.zero.cc.Zero_lite.utils.Mark;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockColored;
-import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -29,13 +26,9 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 public class OreHighlighterMod implements Mod {
 
@@ -55,10 +48,7 @@ public class OreHighlighterMod implements Mod {
 	protected List<Mark> blocks = new ArrayList<Mark>();
 	
 	private boolean showinfo = false;
-	
-	private int lastPlayerChunkX = 0;
-	private int lastPlayerChunkZ = 0;
-	
+	private boolean easyMark = true;	
 	private OreSearchThread orsearh;
 	
 	private KeySetting radius = new KeySetting(2,"OreHighlighter.radius");
@@ -163,38 +153,48 @@ public class OreHighlighterMod implements Mod {
 	 * @param MarkedBlock
 	 */
 	public void renderBlock(Mark block){
-	    
-	    Tessellator tessellator = Tessellator.getInstance();
-	    VertexBuffer worldRenderer = tessellator.getBuffer();
+		 Tessellator tessellator = Tessellator.getInstance();
+		 VertexBuffer worldRenderer = tessellator.getBuffer();
 
-	    
-	    GL.glColor4f(block.getR(), block.getG(),block.getB(),block.getAlpha());
-	    IBlockState state = minecraft.world.getBlockState(new BlockPos(block.getX(),block.getY(), block.getZ())).getBlock().getDefaultState();
-	    
-	    AxisAlignedBB axis = minecraft.world.getBlockState(new BlockPos(block.getX(),block.getY(), block.getZ())).getBlock().getCollisionBoundingBox(state, minecraft.world, new BlockPos(block.getX(),block.getY(), block.getZ()));
+		BlockPos blockpos = new BlockPos(block.getX(),block.getY(), block.getZ());
+		IBlockState iblockstate = minecraft.world.getBlockState(blockpos);
+		AxisAlignedBB axis = iblockstate.getSelectedBoundingBox(minecraft.world, blockpos);
 
-	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-		worldRenderer.pos(axis.minX, axis.minY, axis.minZ);
-		worldRenderer.pos(axis.maxX, axis.maxY, axis.maxZ);		
-	    tessellator.draw();
+		if(easyMark){
+			worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+			
+			worldRenderer.pos(axis.minX, axis.minY, axis.minZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+			worldRenderer.pos(axis.maxX, axis.maxY, axis.maxZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();	
+		    tessellator.draw();
 
-	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-		worldRenderer.pos(axis.minX, axis.maxY, axis.maxZ);
-		worldRenderer.pos(axis.maxX, axis.minY, axis.minZ);
-	    tessellator.draw();
+		    worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+			worldRenderer.pos(axis.minX, axis.minY, axis.maxZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+			worldRenderer.pos(axis.maxX, axis.maxY, axis.minZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+		    tessellator.draw();
+		    
+		}else{
+			worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+			
+			worldRenderer.pos(axis.minX, axis.minY, axis.minZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+			worldRenderer.pos(axis.maxX, axis.maxY, axis.maxZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();	
+		    tessellator.draw();
 
-	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-		worldRenderer.pos(axis.minX, axis.minY, axis.maxZ);
-		worldRenderer.pos(axis.maxX, axis.maxY, axis.minZ);
-	    tessellator.draw();
-	    
-	    worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-		worldRenderer.pos(axis.minX, axis.maxY, axis.minZ);
-		worldRenderer.pos(axis.maxX, axis.minY, axis.maxZ);		
-	    tessellator.draw();
-	    	    
+		    worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+			worldRenderer.pos(axis.minX, axis.maxY, axis.maxZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+			worldRenderer.pos(axis.maxX, axis.minY, axis.minZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+		    tessellator.draw();
+
+		    worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+			worldRenderer.pos(axis.minX, axis.minY, axis.maxZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+			worldRenderer.pos(axis.maxX, axis.maxY, axis.minZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+		    tessellator.draw();
+		    
+		    worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+			worldRenderer.pos(axis.minX, axis.maxY, axis.minZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+			worldRenderer.pos(axis.maxX, axis.minY, axis.maxZ).color(block.getR(), block.getG(), block.getB(), block.getAlpha()).endVertex();
+		    tessellator.draw();
+		}	
 	}
-	
 	private void updateRenderPos(){	
 		
 		if(orsearh == null){
@@ -265,6 +265,9 @@ public class OreHighlighterMod implements Mod {
 			if(orsearh != null){
 				orsearh.selectivesearch = b;
 			}
+		}else if(valueToManupulate.equalsIgnoreCase("easymark")){
+			speicher.getConfig().replaceData("OreHighlighter.selectivesearch", "" + b);	
+			easyMark = b;
 		}else{
 			System.out.println("Unknown value1 " + valueToManupulate);
 		}			
@@ -323,6 +326,14 @@ public class OreHighlighterMod implements Mod {
 			return false;
 		}
 	}
+
+	public boolean isEasyMark() {
+		return easyMark;
+	}
+
+	public void setEasyMark(boolean easyMark) {
+		this.easyMark = easyMark;
+	}
 }
 class OreHighLighterGui extends GuiScreen{
 	
@@ -360,7 +371,11 @@ class OreHighLighterGui extends GuiScreen{
 		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.OreHighLighter, speicher, GuiPositions.getPos(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
 		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+70, 150, 20, "Show-Info", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isShowInfo(), "showinfo", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.showinfo").split(";"));
 		GuiBooleanButton useselective = new GuiBooleanButton(9, width/2-170, height/4+20, 150, 20, "dynamic selection", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isSelectiveSearch(), "dselection", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.dynamicselection").split(";"));
-			
+		
+		System.out.println(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEasyMark());
+		System.out.println(LiteModMain.lconfig.getData("OreHighLighter.easymark").split(";"));
+		GuiBooleanButton easymark = new GuiBooleanButton(10, width/2-170, height/4+70, 150, 20, "Fast Marks", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEasyMark(), "easymark", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.easymark").split(";"));
+		
 		GuiButton back = new GuiButton(buttonList.size() + 1, width/2-100,height-50 , "back to game");
 
 		buttonList.add(slider);
@@ -369,6 +384,7 @@ class OreHighLighterGui extends GuiScreen{
 		buttonList.add(choosepos);
 		buttonList.add(togglehighlighter);
 		buttonList.add(useselective);
+		buttonList.add(easymark);
 		buttonList.add(back);
 	}
 	protected void keyTyped(char c,int key){

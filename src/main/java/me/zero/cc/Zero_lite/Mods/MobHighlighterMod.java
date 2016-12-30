@@ -201,13 +201,12 @@ public class MobHighlighterMod implements Mod {
 	 * @param  alpha
 	 */
 	public void renderMob(Mark m){
-		    //float r,float g,float b,float alpha,double x,double y,double z,double maxy
+		//float r,float g,float b,float alpha,double x,double y,double z,double maxy
 	    Tessellator tessellator = Tessellator.getInstance();
 	    VertexBuffer worldRenderer = tessellator.getBuffer();
-	    GL.glColor4f(m.getR(), m.getG(),m.getB(),m.getAlpha());
-		worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-	    worldRenderer.pos( m.getEntity().posX, m.getEntity().posY,  m.getEntity().posZ);
-		worldRenderer.pos( m.getEntity().posX, m.getEntity().posY + m.getEntity().getEyeHeight(), m.getEntity().posZ);
+	    worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+	    worldRenderer.pos( m.getEntity().posX, m.getEntity().posY,  m.getEntity().posZ).color(m.getR(), m.getG(), m.getB(), m.getAlpha()).endVertex();
+		worldRenderer.pos( m.getEntity().posX, m.getEntity().posY + m.getEntity().getEyeHeight(), m.getEntity().posZ).color(m.getR(), m.getG(), m.getB(), m.getAlpha()).endVertex();
 
 	    tessellator.draw();
 	}

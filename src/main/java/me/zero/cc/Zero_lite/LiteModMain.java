@@ -182,8 +182,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 				if(messages.size() > 0 || urlVersion != 0 & downloadURL != ""){					
 					if(urlVersion > Integer.valueOf(this.getVersion())){
 						sendMessage(prefix + lconfig.getData("Main.updateMSG").replace("<urlversion>", urlVersion + ""));
-						minecraft.player.sendChatMessage(downloadURL);
-						
+						minecraft.player.sendMessage(new TextComponentString(downloadURL));
 						for(String msg : messages){		
 							sendMessage(prefix + msg);
 						}
@@ -268,8 +267,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private void sendMessage(String msg){
 		String[] messages = msg.split(";");
 		for(String text : messages){
-			//minecraft.player.addChatMessage(new TextComponentString(formateTextColor(prefix + text)));
-			minecraft.player.sendChatMessage(formateTextColor(prefix + text));
+			minecraft.player.sendMessage(new TextComponentString(formateTextColor(prefix + text)));
 		}		
 	}
 	@Override
