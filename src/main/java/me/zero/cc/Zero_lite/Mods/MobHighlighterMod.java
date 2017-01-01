@@ -125,7 +125,8 @@ public class MobHighlighterMod implements Mod {
 		entities.clear();
 		
 		for(int i = 0; i < mobs.size();i++){
-			String mob = Mobs.getClassNameFromString(mobs.get(i).getClass().getSimpleName());
+			//String mob = Mobs.getClassNameFromString(mobs.get(i).getClass().getSimpleName());
+			String mob = mobs.get(i).getName();
 			if(mob != null && isInConfig(mob)){		
 				String color = config.getData("Color."+ mob);
 				if(color != null){
@@ -138,6 +139,7 @@ public class MobHighlighterMod implements Mod {
 			}else{
 				if(LiteLoader.isDevelopmentEnvironment()){
 					System.out.println(mobs.get(i).toString());
+					System.out.println(mobs.get(i).getName());
 					System.out.println(mobs.get(i).getClass().getSimpleName());
 				}
 			}
