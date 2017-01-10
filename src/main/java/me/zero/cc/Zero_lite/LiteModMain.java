@@ -43,6 +43,7 @@ import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -199,10 +200,15 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			}
 			if(isEnableselection()){
 				if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
+					System.out.println("use item");
 					if((System.currentTimeMillis() - lastFirstMarkPick) >=500){
+						System.out.println("no spam");
 						if(minecraft.player.getActiveItemStack() != null){
-							if(minecraft.player.getActiveItemStack().getItem() != null){
-								if(minecraft.player.getActiveItemStack().getItem().equals(Item.getByNameOrId("wooden_shovel"))){
+							System.out.println("not null");
+							if(minecraft.player.getHeldItem(EnumHand.MAIN_HAND) != null){
+								System.out.println("not null 2");
+								if(minecraft.player.getHeldItem(EnumHand.MAIN_HAND).getItem().equals(Item.getByNameOrId("wooden_shovel"))){
+									System.out.println("wooden shovel");
 									RayTraceResult pos = minecraft.player.rayTrace(5,1.0F);
 									firstmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.firstMarkR")), Float.valueOf(config.getData("Main.firstMarkG")), Float.valueOf(config.getData("Main.firstMarkB")), Float.valueOf(config.getData("Main.firstMarkAlpha")));
 									//firstmark = new BlockMark(0, 0, 0, 0, pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ());
@@ -221,8 +227,8 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 				if((System.currentTimeMillis() - lastSecondMarkPick) >=500){
 					if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
 						if(minecraft.player.getActiveItemStack() != null){
-							if(minecraft.player.getActiveItemStack().getItem() != null){
-								if(minecraft.player.getActiveItemStack().getItem().equals(Item.getByNameOrId("wooden_axe"))){
+							if(minecraft.player.getHeldItem(EnumHand.MAIN_HAND) != null){
+								if(minecraft.player.getHeldItem(EnumHand.MAIN_HAND).getItem().equals(Item.getByNameOrId("wooden_axe"))){
 									RayTraceResult pos = minecraft.player.rayTrace(5,1.0F);
 									secondmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.secondMarkR")), Float.valueOf(config.getData("Main.secondMarkG")), Float.valueOf(config.getData("Main.secondMarkB")), Float.valueOf(config.getData("Main.secondMarkAlpha")));
 									lastSecondMarkPick = System.currentTimeMillis();
@@ -264,10 +270,10 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		msg = msg.replace("&o", "" + TextFormatting.ITALIC);
 		return msg;
 	}
-	private void sendMessage(String msg){
+	public static void sendMessage(String msg){
 		String[] messages = msg.split(";");
 		for(String text : messages){
-			minecraft.player.sendMessage(new TextComponentString(formateTextColor(prefix + text)));
+			Minecraft.getMinecraft().player.sendMessage(new TextComponentString(formateTextColor(prefix + text)));
 		}		
 	}
 	@Override

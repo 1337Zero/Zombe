@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 
 public class OreHighlighterMod implements Mod {
 
@@ -268,9 +269,7 @@ public class OreHighlighterMod implements Mod {
 		}else if(valueToManupulate.equalsIgnoreCase("easymark")){
 			speicher.getConfig().replaceData("OreHighlighter.selectivesearch", "" + b);	
 			easyMark = b;
-		}else{
-			System.out.println("Unknown value1 " + valueToManupulate);
-		}			
+		}
 	}
 
 	@Override
@@ -368,13 +367,17 @@ class OreHighLighterGui extends GuiScreen{
 		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Radius", (int) ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius() , 150, 20, ModData.OreHighLighter, "Radius", speicher,LiteModMain.lconfig.getData("OreHighLighter.radius").split(";"));
 		
 		chooseOn = new GuiChooseKeyButton(2, width/2, height/4+20, 150, 20, "Enable-Key", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getOn(),LiteModMain.lconfig.getData("OreHighLighter.chooseonkey").split(";"));
-		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+70, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.OreHighLighter, speicher, GuiPositions.getPos(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
-		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+70, 150, 20, "Show-Info", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isShowInfo(), "showinfo", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.showinfo").split(";"));
+		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+50, 150, 20, "Show-Info", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isShowInfo(), "showinfo", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.showinfo").split(";"));
 		GuiBooleanButton useselective = new GuiBooleanButton(9, width/2-170, height/4+20, 150, 20, "dynamic selection", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isSelectiveSearch(), "dselection", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.dynamicselection").split(";"));
+		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+50, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.OreHighLighter, speicher, GuiPositions.getPos(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
+		
+		GuiBooleanButton easymark = new GuiBooleanButton(10, width/2-170, height/4+80, 150, 20, "Fast Marks", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEasyMark(), "easymark", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.easymark").split(";"));
+		
+		
+		
 		
 		System.out.println(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEasyMark());
 		System.out.println(LiteModMain.lconfig.getData("OreHighLighter.easymark").split(";"));
-		GuiBooleanButton easymark = new GuiBooleanButton(10, width/2-170, height/4+70, 150, 20, "Fast Marks", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEasyMark(), "easymark", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.easymark").split(";"));
 		
 		GuiButton back = new GuiButton(buttonList.size() + 1, width/2-100,height-50 , "back to game");
 
@@ -425,7 +428,7 @@ class OreSearchThread extends Thread{
 		while(enabled){
 			updateRenderPos();
 			try {
-				this.sleep(Long.valueOf(LiteModMain.config.getData("OreHighlighter.threadsleep")));
+				sleep(Long.valueOf(LiteModMain.config.getData("OreHighlighter.threadsleep")));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -433,55 +436,61 @@ class OreSearchThread extends Thread{
 		
 	}
 	private void updateRenderPos(){	
-		
-		ArrayList<Mark> tempblocks = new ArrayList<Mark>();
+		try{
+			ArrayList<Mark> tempblocks = new ArrayList<Mark>();
 			
-		double posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
-		double posy = Minecraft.getMinecraft().player.posY - omod.getRadius()*10;
-		double posz = Minecraft.getMinecraft().player.posZ - omod.getRadius()*10;
-		
-		if(selectivesearch){
-			String facing = EnumFacing.fromAngle(Minecraft.getMinecraft().player.rotationYawHead).getName().toUpperCase();
+			double posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
+			double posy = Minecraft.getMinecraft().player.posY - omod.getRadius()*10;
+			double posz = Minecraft.getMinecraft().player.posZ - omod.getRadius()*10;
 			
-			if(facing.equalsIgnoreCase("north")){
-				//updaten -
-				posz = (Minecraft.getMinecraft().player.posZ +1) - (omod.getRadius()*10)*2;
-				posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
-			}else if(facing.equalsIgnoreCase("south")){
-				posz = Minecraft.getMinecraft().player.posZ;
-			}else if(facing.equalsIgnoreCase("west")){
-				//updaten -
-				posx = (Minecraft.getMinecraft().player.posX +1) - (omod.getRadius()*10)*2;
-				posz = Minecraft.getMinecraft().player.posZ - omod.getRadius()*10;
-			}else if(facing.equalsIgnoreCase("east")){
-				posx = Minecraft.getMinecraft().player.posX;
+			if(selectivesearch){
+				String facing = EnumFacing.fromAngle(Minecraft.getMinecraft().player.rotationYawHead).getName().toUpperCase();
+				
+				if(facing.equalsIgnoreCase("north")){
+					//updaten -
+					posz = (Minecraft.getMinecraft().player.posZ +1) - (omod.getRadius()*10)*2;
+					posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
+				}else if(facing.equalsIgnoreCase("south")){
+					posz = Minecraft.getMinecraft().player.posZ;
+				}else if(facing.equalsIgnoreCase("west")){
+					//updaten -
+					posx = (Minecraft.getMinecraft().player.posX +1) - (omod.getRadius()*10)*2;
+					posz = Minecraft.getMinecraft().player.posZ - omod.getRadius()*10;
+				}else if(facing.equalsIgnoreCase("east")){
+					posx = Minecraft.getMinecraft().player.posX;
+				}
+				
 			}
-			
-		}
-		for(double x = posx; x < (posx + (omod.getRadius() *10)*2);x++){			
-			for(double y = posy; y < (posy + (omod.getRadius() *10)*2);y++){				
-				for(double z = posz; z < (posz + (omod.getRadius() *10)*2);z++){
-					Block block = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y, z)).getBlock();	
-					if(Block.getIdFromBlock(block) != 0){
-						int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)));
-						if(omod.isInConfig("" + Block.getIdFromBlock(block) + ":" + subid)){
-							String color = config.getData("Color."+ Block.getIdFromBlock(block));
-							if(color == null){ 
-								color = config.getData("Color."+ Block.getIdFromBlock(block) + "-" + subid);
-								if(color != null){ 
-									tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
-								}else{
-									System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
+			for(double x = posx; x < (posx + (omod.getRadius() *10)*2);x++){			
+				for(double y = posy; y < (posy + (omod.getRadius() *10)*2);y++){				
+					for(double z = posz; z < (posz + (omod.getRadius() *10)*2);z++){
+						Block block = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y, z)).getBlock();	
+						if(block != null){
+							if(Block.getIdFromBlock(block) != 0){
+								int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)));
+								if(omod.isInConfig("" + Block.getIdFromBlock(block) + ":" + subid)){
+									String color = config.getData("Color."+ Block.getIdFromBlock(block));
+									if(color == null){ 
+										color = config.getData("Color."+ Block.getIdFromBlock(block) + "-" + subid);
+										if(color != null){ 
+											tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+										}else{
+											System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
+										}
+									}else{
+										tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+									}
 								}
-							}else{
-								tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
 							}
 						}
-					}
-				}					
-			}
+					}					
+				}
+			}		
+			omod.blocks = tempblocks;
+		}catch(Error e){
+			LiteModMain.sendMessage("[Zombe-Lite] An Error occurred while searching for Blocks to Mark!");
+			LiteModMain.sendMessage(e.getCause().toString());
 		}		
-		omod.blocks = tempblocks;
 	}	
 }
 
