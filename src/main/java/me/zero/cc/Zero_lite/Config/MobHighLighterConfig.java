@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.StringReader;
 import java.util.*;
 
 import com.mumfrey.liteloader.core.LiteLoader;
@@ -15,7 +14,7 @@ public class MobHighLighterConfig {
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Moblist:Chicken,Cow,Horse,Ocelot,Pig,Sheep,Bat,Squid,Villager,Rabbit,Creeper,Skeleton,Zombie,Spider,Enderman,PigZombie,Cavespider,Silverfish,Lohe,Magmacube,Witch,Endermite,Guardian,Wolf,Item,Player,Mushroomcow,Slime,Ghast,Snowman,Giant,Irongolem,Enderdragon,Boat,Minecart,Spawnerminecart,Chestminecart,Tntminecart,Furnaceminecart,Xp,Wither",
+			"Moblist:Polar_Bear,Stray,Llama,Evoker,Vindicator,Vex,Chicken,Cow,Horse,Ocelot,Pig,Sheep,Bat,Squid,Villager,Rabbit,Creeper,Skeleton,Zombie,Spider,Enderman,PigZombie,Cavespider,Silverfish,Lohe,Magmacube,Witch,Endermite,Guardian,Wolf,Item,Player,Mushroomcow,Slime,Ghast,Snowman,Giant,Irongolem,Enderdragon,Boat,Minecart,Spawnerminecart,Chestminecart,Tntminecart,Furnaceminecart,Xp,Wither",
 								
 			"Color.Chicken:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Cow:0.0F, 1.0F, 0.0F, 1.0F",
@@ -25,7 +24,7 @@ public class MobHighLighterConfig {
 			"Color.Sheep:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Bat:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Mushroomcow:0.0F, 1.0F, 0.0F, 1.0F",
-			"Color.Squid:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Squid:0.0F, 1.0F, 0.0F, 1.0F",			
 			"Color.Villager:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Rabbit:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Creeper:1.0F, 0.0F, 0.0F, 1.0F",
@@ -58,7 +57,13 @@ public class MobHighLighterConfig {
 			"Color.Furnaceminecart:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Chestminecart:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Irongolem:0.0F, 1.0F, 0.0F, 1.0F",
-			"Color.Enderdragon:1.0F, 0.0F, 0.0F, 1.0F"
+			"Color.Enderdragon:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Stray:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Llama:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.Vex:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Vindicator:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Evoker:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.Polar_Bear:0.0F, 1.0F, 0.0F, 1.0F"
 			);
 	
 	public MobHighLighterConfig(){

@@ -274,6 +274,8 @@ public class CommandListener {
 				"&6sel --> &f Clears the Selection",
 				"&6save --> &f Saves from a Schematic",
 				"&6load <name> --> &f Loads from a Schematic",
+				"&6shift <amount> --> &f Shifts the selection <x> Blocks in your view-direction",
+				"&6expand <amount> --> &f Expands the selection <x> Blocks in your view-direction",
 				"&6replace <id> {meta} <id2> {meta2} --> &f Replaces a give Block with the given id");
 		
 		for(String s : cmdhelp){

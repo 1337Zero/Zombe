@@ -43,6 +43,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Timer;
 import net.minecraft.world.World;
@@ -126,21 +128,20 @@ public class MobHighlighterMod implements Mod {
 		
 		for(int i = 0; i < mobs.size();i++){
 			//String mob = Mobs.getClassNameFromString(mobs.get(i).getClass().getSimpleName());
-			String mob = mobs.get(i).getName();
-			if(mob != null && isInConfig(mob)){		
+			String mob = mobs.get(i).getName().replace(" ", "_");
+			if(mobs.get(i) instanceof EntityPlayerSP | mobs.get(i) instanceof EntityPlayerMP | mobs.get(i) instanceof EntityPlayer){
+				mob = "Player";
+			}
+			if(mob != null && isInConfig(mob)){
 				String color = config.getData("Color."+ mob);
-				if(color != null){
-					if(!mobs.get(i).equals(minecraft.player)){
-						entities.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), mobs.get(i).posX, mobs.get(i).posY, mobs.get(i).posZ,mobs.get(i).getEyeHeight(), mobs.get(i)));	
-					}
+				if(color != null){					
+					entities.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), mobs.get(i).posX, mobs.get(i).posY, mobs.get(i).posZ,mobs.get(i).getEyeHeight(), mobs.get(i)));	
 				}else{
 					System.out.println("[Zombe-Lite] An Error was detected: " + mobs.get(i).getClass().getSimpleName() + " was found in your config but no color was found");
 				}
 			}else{
 				if(LiteLoader.isDevelopmentEnvironment()){
-					System.out.println(mobs.get(i).toString());
-					System.out.println(mobs.get(i).getName());
-					System.out.println(mobs.get(i).getClass().getSimpleName());
+					//System.out.println(mobs.get(i).getName());
 				}
 			}
 		}

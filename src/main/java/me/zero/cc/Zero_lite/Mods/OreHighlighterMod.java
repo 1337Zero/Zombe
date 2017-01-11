@@ -210,15 +210,18 @@ public class OreHighlighterMod implements Mod {
 			if(founds[i].contains("-")){
 				if(founds[i].split("-")[0].equals(key.split(":")[0])){
 					if(founds[i].split("-")[1].equals(key.split(":")[1])){
+						//System.out.println("Block " + key + " is in config!");
 						return true;
 					}	
 				}
 			}else{
 				if(founds[i].equals(key.split(":")[0])){
+					//System.out.println("Block " + key + " is in config!");
 					return true;
 				}
 			}			
 		}
+		//System.out.println("Block " + key + " is not in config!");
 		return false;
 	}
 	
@@ -415,6 +418,7 @@ class OreSearchThread extends Thread{
 	private OreHighLighterModConfig config;
 	public boolean selectivesearch;
 	public boolean enabled = true;
+	private ArrayList<String> errorlist = new ArrayList<String>();
 	
 	public OreSearchThread(OreHighlighterMod omod,OreHighLighterModConfig config){
 		this.omod = omod;
@@ -435,8 +439,10 @@ class OreSearchThread extends Thread{
 		}
 		
 	}
+	
+	
+	
 	private void updateRenderPos(){	
-		try{
 			ArrayList<Mark> tempblocks = new ArrayList<Mark>();
 			
 			double posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
@@ -478,7 +484,20 @@ class OreSearchThread extends Thread{
 											System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
 										}
 									}else{
-										tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+										if(color.split(",").length == 3){
+											System.out.println(Float.parseFloat(color.split(",")[0]));
+											System.out.println(color.split(",")[1]);
+											System.out.println(color.split(",")[2]);
+											System.out.println(color.split(",")[3]);
+											tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+										}else{
+											if(!errorlist.contains(color)){
+												LiteModMain.sendMessage("[Zombe-Lite] An Error occurred while searching for Blocks to Mark!");
+												LiteModMain.sendMessage("[Zombe-Lite] Your config Color-Setting '" + "Color."+ Block.getIdFromBlock(block) + "' -> (" + color + ") has errors!");
+												LiteModMain.sendMessage("[Zombe-Lite] Try Color.<id-subid>:<red>,<blue>,<green>,<alpha>");
+												errorlist.add(color);
+											}											
+										}
 									}
 								}
 							}
@@ -486,11 +505,7 @@ class OreSearchThread extends Thread{
 					}					
 				}
 			}		
-			omod.blocks = tempblocks;
-		}catch(Error e){
-			LiteModMain.sendMessage("[Zombe-Lite] An Error occurred while searching for Blocks to Mark!");
-			LiteModMain.sendMessage(e.getCause().toString());
-		}		
+			omod.blocks = tempblocks;		
 	}	
 }
 

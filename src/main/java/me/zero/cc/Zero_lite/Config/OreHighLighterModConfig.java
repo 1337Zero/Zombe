@@ -28,6 +28,51 @@ public class OreHighLighterModConfig {
 			"Color.153:0.78F, 0.78F, 0.78F, 1.0F",
 			"Color.35-5:1.0F, 0.78F, 0.78F, 0.5F"
 			);
+	/*private List<String> defaultconfig = Arrays.asList(
+			"Blocklist:54,130,146,61,62,23,158,154,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,117,69,77,70,72,132,147,148,90,119,209,166,137,210,211,255",
+								
+			"Color.54:0.82F, 0.41F, 0.11F, 1.0F",
+			"Color.130:0.78F, 0.0F, 0.78F, 1.0F",
+			"Color.146:0.82F, 0.61F, 0.11F, 1.0F",
+			"Color.61:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.62:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.23:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.158:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.154:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.219:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.220:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.221:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.222:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.223:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.224:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.225:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.226:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.227:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.228:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.229:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.230:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.231:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.232:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.233:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.234:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.117:0.51F, 0.51F, 0.51F, 1.0F",
+			"Color.69:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.77:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.70:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.72:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.132:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.147:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.148:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.90:0.54F, 0.0F, 0.54F, 1.0F",
+			"Color.119:0.54F, 0.2F, 0.54, 1.0F",
+			"Color.209:0.54F, 0.2F, 0.54, 1.0F",
+			"Color.166:0.0F, 0.0F, 0.0F, 1.0F",
+			"Color.137:1.0F, 0.5F, 0.0F, 1.0F",
+			"Color.210:1.0F, 0.5F, 0.0F, 1.0F",
+			"Color.211:1.0F, 0.5F, 0.0F, 1.0F",
+			"Color.255:0.0F, 0.0F, 0.0F, 1.0F"
+			);*/
+	
 	public OreHighLighterModConfig(){
 		path = System.getProperty("user.dir");
 		path = path + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe";
