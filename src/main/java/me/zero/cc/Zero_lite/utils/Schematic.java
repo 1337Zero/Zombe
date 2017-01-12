@@ -195,7 +195,7 @@ public class Schematic{
 	     
 	 }
 	 public void writeToFile(String filename) throws IOException{
-		 System.out.println("writing to file...");
+		 System.out.println("[Schematic] writing to file...");
 		 if(Cschematic != null){
 			 String path = System.getProperty("user.dir") + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe" + System.getProperty("file.separator") + "schematics" + System.getProperty("file.separator");
 			 File Dirpath = new File(filename);
@@ -209,9 +209,9 @@ public class Schematic{
 			 
 			 out.close();
 		 }else{
-			 System.out.println("NOPE");
+			 System.out.println("[Schematic] CSchematic is null");
 		 }
-		 System.out.println("...done");
+		 System.out.println("[Schematic] done writing to  File");
 	 }
 
 	@Override

@@ -198,7 +198,6 @@ public class InfoMod implements Mod {
 			}
 		}else{
 			setFacing("ERROR");
-			System.out.println(value);
 		}
 	}
 	/**

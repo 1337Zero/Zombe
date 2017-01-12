@@ -25,7 +25,6 @@ public class CustomRecipesConfig {
 	public CustomRecipesConfig(){
 		path = System.getProperty("user.dir");
 		path = path + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe";
-		System.out.println("loading " + path);
 		try {
 			loadConfig();				
 		} catch (Exception e) {
@@ -52,10 +51,8 @@ public class CustomRecipesConfig {
 		while(loaded != null){
 			//if(!loaded.contains("#")){
 			if(!loaded.startsWith("#")){
-				System.out.println(loaded);
 				if(loaded.length() > 1){
 					data.put(loaded.split("~")[0], loaded.split("~")[1]);
-					System.out.println("loaded " + loaded.split("~")[0] + " " + loaded.split("~")[1]);
 				}
 			}
 			loaded = br.readLine();

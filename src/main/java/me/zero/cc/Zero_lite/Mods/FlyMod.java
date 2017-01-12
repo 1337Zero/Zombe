@@ -385,9 +385,7 @@ class FlyModGui extends GuiScreen{
 		buttonList.add(back);	
 	}
 	protected void keyTyped(char c,int key){
-		System.out.println(c + " : " + key);
 		if(GivingKey){
-			System.out.println(key);
 			if(key != 65 && key != 1){
 				valueToManupulate = valueToManupulate.replace(" ", "");
 				((FlyMod)speicher.getMod(ModData.FlyMod.name())).manupulateValue(valueToManupulate, key);

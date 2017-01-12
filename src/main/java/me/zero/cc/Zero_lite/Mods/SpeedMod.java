@@ -247,7 +247,7 @@ public class SpeedMod implements Mod {
 		}else if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
 			onkey.setKey((int)percent);
 		}else{		
-			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
+			System.out.println("[SpeedMod] Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
 		}		
 	}
 
@@ -267,7 +267,7 @@ public class SpeedMod implements Mod {
 			intelligentmode = b;
 			speicher.getConfig().replaceData("Speed-Mod.intelligentmode", intelligentmode + "");
 		}else{	
-			System.out.println("Fehler: " + valueToManupulate + " is not a known Value in " + this.getName());
+			System.out.println("[SpeedMod] Fehler: " + valueToManupulate + " is not a known Value in " + this.getName());
 		}
 	}
 	@Override
@@ -279,7 +279,7 @@ public class SpeedMod implements Mod {
 			infoID = speicher.getInfoLineManager().getInfoLine(pos).addInfo("");	
 			speicher.getConfig().replaceData("Speed-Mod.speed-Pos", pos.toString());
 		}else{
-			System.out.println("Don't know that " + value + " " + valueToManupulate);
+			System.out.println("[SpeedMod] Don't know that " + value + " " + valueToManupulate);
 		}		
 	}
 	/**

@@ -123,6 +123,7 @@ public class Config {
 					data.put(key, defaultconfig.get(i).split(":")[1]);
 					System.out.println("adding " + defaultconfig.get(i));
 					back = defaultconfig.get(i).split(":")[1];
+					data.put(key, defaultconfig.get(i).split(":")[1]);
 					try {
 						saveConfig("");
 					} catch (Exception e) {

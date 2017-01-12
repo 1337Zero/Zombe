@@ -90,7 +90,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		return "Zombe-Lite";
 	}
 	public String getVersion() {
-		return "1050";
+		return "1055";
 	}
 
 	public void init(File configPath) {	
@@ -200,15 +200,10 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			}
 			if(isEnableselection()){
 				if(minecraft.gameSettings.keyBindUseItem.isKeyDown()){
-					System.out.println("use item");
 					if((System.currentTimeMillis() - lastFirstMarkPick) >=500){
-						System.out.println("no spam");
 						if(minecraft.player.getActiveItemStack() != null){
-							System.out.println("not null");
 							if(minecraft.player.getHeldItem(EnumHand.MAIN_HAND) != null){
-								System.out.println("not null 2");
 								if(minecraft.player.getHeldItem(EnumHand.MAIN_HAND).getItem().equals(Item.getByNameOrId("wooden_shovel"))){
-									System.out.println("wooden shovel");
 									RayTraceResult pos = minecraft.player.rayTrace(5,1.0F);
 									firstmark = new BlockMark(pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ(), minecraft, Float.valueOf(config.getData("Main.firstMarkR")), Float.valueOf(config.getData("Main.firstMarkG")), Float.valueOf(config.getData("Main.firstMarkB")), Float.valueOf(config.getData("Main.firstMarkAlpha")));
 									//firstmark = new BlockMark(0, 0, 0, 0, pos.getBlockPos().getX(), pos.getBlockPos().getY(), pos.getBlockPos().getZ());

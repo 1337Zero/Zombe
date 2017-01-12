@@ -210,11 +210,8 @@ public class CommandListener {
 		return true;
 	}
 	private boolean onSaveCommand(String name){		
-		System.out.println("onsave");
 		if(schematics != null){
-			System.out.println("onsave");
 			try{
-				System.out.println("onsave");
 				//sendMessage("Trying to save " + name + ".schematics...");
 				schematics.writeToFile(name);
 				sendMessage("saved as " + name + ".schematic!");

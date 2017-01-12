@@ -448,11 +448,11 @@ public class RecipeMod implements Mod {
 			String[] recipepatternReplacement = pattern.split(";")[2].split(",");
 						
 			if(recipeoutput.split(":").length != 3){
-				System.out.println("Wrong Format for ID:SUBID:AMOUNT");
+				System.out.println("[RecipeMod] Wrong Format for ID:SUBID:AMOUNT");
 				error = true;
 			}
 			if(recipepattern.length != 3){
-				System.out.println("Wrong Format for Crafting Matrix");
+				System.out.println("[RecipeMod] Wrong Format for Crafting Matrix");
 				error = true;
 			}
 			
@@ -466,14 +466,14 @@ public class RecipeMod implements Mod {
 				}
 			}
 			if(recipepatternReplacement.length != diffrentChars){
-				System.out.println("Not enough diffrent Chars in the Replacement part!" + diffrentChars + "!=" + pattern.split(";")[2].split(",").length);
+				System.out.println("[RecipeMod] Not enough diffrent Chars in the Replacement part!" + diffrentChars + "!=" + pattern.split(";")[2].split(",").length);
 				error = true;
 			}
 			
 			if(!error){
 				ItemStack b = getBlockFromIdAndMeta(Integer.parseInt(recipeoutput.split(":")[0]), Integer.parseInt(recipeoutput.split(":")[1]));
 				b.setCount(Integer.parseInt(recipeoutput.split(":")[2]));
-				System.out.println(b + " is null ?");
+				System.out.println("[RecipeMod] " + b + " is null ?");
 
 			
 				switch(diffrentChars){
@@ -551,7 +551,7 @@ public class RecipeMod implements Mod {
 						break;
 				}				
 			}else{
-				System.out.println("error loading recipe");
+				System.out.println("[RecipeMod] error loading recipe");
 			}
 		}		
 	}
@@ -750,7 +750,7 @@ public class RecipeMod implements Mod {
 
 	@Override
 	public void manupulateValue(String ValueToManupulate, double percent) {
-		System.out.println(percent);
+		System.out.println("[RecipeMod] Unknown value " + ValueToManupulate + " (" + percent + ")");
 	}
 
 	@Override
@@ -766,12 +766,12 @@ public class RecipeMod implements Mod {
 			showCraftingPattern = b;
 			speicher.getConfig().replaceData("RecipeMod.showCraftingPattern", b + "");
 		}else{
-			System.out.println(valueToManupulate + " is unknown!");
+			System.out.println("[RecipeMod] " + valueToManupulate + " is unknown!");
 		}
 	}
 	@Override
 	public void manupulateValue(String valueToManupulate, String value) {
-		System.out.println(value);
+		System.out.println("[RecipeMod] " + value);
 	}
 
 	@Override

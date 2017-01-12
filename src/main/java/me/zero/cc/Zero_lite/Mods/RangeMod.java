@@ -451,7 +451,6 @@ public class RangeMod implements Mod {
 
 	@Override
 	public void manupulateValue(String ValueToManupulate, double value) {
-		//System.out.println(ValueToManupulate);
 		if(ValueToManupulate.equalsIgnoreCase("range")){
 			if(value > 0){
 				range = (int)value;
@@ -589,11 +588,8 @@ class RangeModGui extends GuiScreen{
 	protected void keyTyped(char c,int key){
 		if(GivingKey){
 			if(key != 65 && key != 1){
-				//speicher.getMinecraft().thePlayer.playSound("mob.ghast.scream", 1.0F, 1.0F);	
 				valueToManupulate = valueToManupulate.replace(" ", "");
 				((RangeMod)speicher.getMod(ModData.RangeMod.name())).manupulateValue(valueToManupulate, key);
-				
-				//System.out.println(valueToManupulate);
 				
 				if(valueToManupulate.equalsIgnoreCase("Enableplace-Key")){
 					chooseEnableBlockPlace.setButtonkey(key);

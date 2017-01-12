@@ -134,7 +134,7 @@ public class TimeMod implements Mod {
 				st.setTimemultipliere((int) ((50 / 100.0)*value));
 			}			
 		}else{
-			System.out.println("Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
+			System.out.println("[TimeMod] Fehler: " + ValueToManupulate + " is not a known Value in " + this.getName());
 		}		
 	}
 
@@ -161,7 +161,7 @@ public class TimeMod implements Mod {
 			speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoid);
 			speicher.getConfig().replaceData("Time-Mod.showTimeinfo", showTimeInfo + "");
 		}else{
-			System.out.println("Don't know that " + valueToManupulate);
+			System.out.println("[TimeMod] Don't know that " + valueToManupulate);
 		}
 	}
 
@@ -173,7 +173,7 @@ public class TimeMod implements Mod {
 			infoid = speicher.getInfoLineManager().getInfoLine(pos).addInfo("");
 			speicher.getConfig().replaceData("Time-Mod.showtimepos", pos.toString());
 		}else{
-			System.out.println("Don't know that " + valueToManupulate);
+			System.out.println("[TimeMod] Don't know that " + valueToManupulate);
 		}		
 	}
 	/**

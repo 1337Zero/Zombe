@@ -210,18 +210,15 @@ public class OreHighlighterMod implements Mod {
 			if(founds[i].contains("-")){
 				if(founds[i].split("-")[0].equals(key.split(":")[0])){
 					if(founds[i].split("-")[1].equals(key.split(":")[1])){
-						//System.out.println("Block " + key + " is in config!");
 						return true;
 					}	
 				}
 			}else{
 				if(founds[i].equals(key.split(":")[0])){
-					//System.out.println("Block " + key + " is in config!");
 					return true;
 				}
 			}			
 		}
-		//System.out.println("Block " + key + " is not in config!");
 		return false;
 	}
 	
@@ -376,12 +373,6 @@ class OreHighLighterGui extends GuiScreen{
 		
 		GuiBooleanButton easymark = new GuiBooleanButton(10, width/2-170, height/4+80, 150, 20, "Fast Marks", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEasyMark(), "easymark", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.easymark").split(";"));
 		
-		
-		
-		
-		System.out.println(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEasyMark());
-		System.out.println(LiteModMain.lconfig.getData("OreHighLighter.easymark").split(";"));
-		
 		GuiButton back = new GuiButton(buttonList.size() + 1, width/2-100,height-50 , "back to game");
 
 		buttonList.add(slider);
@@ -470,42 +461,44 @@ class OreSearchThread extends Thread{
 			for(double x = posx; x < (posx + (omod.getRadius() *10)*2);x++){			
 				for(double y = posy; y < (posy + (omod.getRadius() *10)*2);y++){				
 					for(double z = posz; z < (posz + (omod.getRadius() *10)*2);z++){
-						Block block = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y, z)).getBlock();	
-						if(block != null){
-							if(Block.getIdFromBlock(block) != 0){
-								int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)));
-								if(omod.isInConfig("" + Block.getIdFromBlock(block) + ":" + subid)){
-									String color = config.getData("Color."+ Block.getIdFromBlock(block));
-									if(color == null){ 
-										color = config.getData("Color."+ Block.getIdFromBlock(block) + "-" + subid);
-										if(color != null){ 
-											tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
-										}else{
-											System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
-										}
-									}else{
-										if(color.split(",").length == 3){
-											System.out.println(Float.parseFloat(color.split(",")[0]));
-											System.out.println(color.split(",")[1]);
-											System.out.println(color.split(",")[2]);
-											System.out.println(color.split(",")[3]);
-											tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
-										}else{
-											if(!errorlist.contains(color)){
-												LiteModMain.sendMessage("[Zombe-Lite] An Error occurred while searching for Blocks to Mark!");
-												LiteModMain.sendMessage("[Zombe-Lite] Your config Color-Setting '" + "Color."+ Block.getIdFromBlock(block) + "' -> (" + color + ") has errors!");
-												LiteModMain.sendMessage("[Zombe-Lite] Try Color.<id-subid>:<red>,<blue>,<green>,<alpha>");
-												errorlist.add(color);
-											}											
+						if(Minecraft.getMinecraft() != null){
+							if(Minecraft.getMinecraft().world != null){
+								if(Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y, z)) != null){
+									Block block = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y, z)).getBlock();	
+									if(block != null){
+										if(Block.getIdFromBlock(block) != 0){
+											int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y,z)));
+											if(omod.isInConfig("" + Block.getIdFromBlock(block) + ":" + subid)){
+												String color = config.getData("Color."+ Block.getIdFromBlock(block));
+												if(color == null){ 
+													color = config.getData("Color."+ Block.getIdFromBlock(block) + "-" + subid);
+													if(color != null){ 
+														tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+													}else{
+														System.out.println("[Zombe-Lite] An Error was detected: " + Block.getIdFromBlock(block) + " was found in your config but no color was found");
+													}
+												}else{
+													if(color.split(",").length == 4){
+														tempblocks.add(new Mark(Float.parseFloat(color.split(",")[0]) , Float.parseFloat(color.split(",")[1]), Float.parseFloat(color.split(",")[2]), Float.parseFloat(color.split(",")[3]), x, y, z));									
+													}else{
+														if(!errorlist.contains(color)){
+															LiteModMain.sendMessage("[Zombe-Lite] An Error occurred while searching for Blocks to Mark!");
+															LiteModMain.sendMessage("[Zombe-Lite] Your config Color-Setting '" + "Color."+ Block.getIdFromBlock(block) + "' -> (" + color + ") has errors!");
+															LiteModMain.sendMessage("[Zombe-Lite] Try Color.<id-subid>:<red>F,<blue>F,<green>F,<alpha>F");
+															errorlist.add(color);
+														}											
+													}
+												}
+											}
 										}
 									}
 								}
-							}
-						}
+							}							
+						}						
 					}					
 				}
 			}		
 			omod.blocks = tempblocks;		
-	}	
+	}
 }
 

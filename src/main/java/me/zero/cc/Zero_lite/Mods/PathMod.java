@@ -105,8 +105,6 @@ public class PathMod implements Mod{
 				lastmarked = System.currentTimeMillis();
 				if(isMarkFarAway | marks.size() == 0){
 					addMark();
-				}else{
-					System.out.println("Don't add a mark cause you are to near");
 				}
 			}
 			
@@ -135,7 +133,6 @@ public class PathMod implements Mod{
 	private void addMark(){
 		if(marks.size() < maxmarks){
 			marks.add(new Mark(r, g, b, alpha, minecraft.player.posX, minecraft.player.posY, minecraft.player.posZ,lastx,lasty,lastz));
-			System.out.println("adding marks...");
 		}else{
 			marks.remove(1);	
 			marks.add(new Mark(r, g, b, alpha, minecraft.player.posX, minecraft.player.posY, minecraft.player.posZ,lastx,lasty,lastz));
@@ -323,7 +320,6 @@ class PathModGui extends GuiScreen{
 		if(GivingKey){
 			if(key != 65 && key != 1){
 				//speicher.getMinecraft().thePlayer.playSound("mob.ghast.scream", 1.0F, 1.0F);	
-				System.out.println(key + " " + c);
 				valueToManupulate = valueToManupulate.replace(" ", "");
 				((PathMod)speicher.getMod(ModData.PathMod.name())).manupulateValue(valueToManupulate, key);
 				
