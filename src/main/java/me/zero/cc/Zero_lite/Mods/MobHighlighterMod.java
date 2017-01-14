@@ -130,7 +130,25 @@ public class MobHighlighterMod implements Mod {
 			//String mob = Mobs.getClassNameFromString(mobs.get(i).getClass().getSimpleName());
 			String mob = mobs.get(i).getName().replace(" ", "_");
 			if(mobs.get(i) instanceof EntityPlayerSP | mobs.get(i) instanceof EntityPlayerMP | mobs.get(i) instanceof EntityPlayer){
-				mob = "Player";
+				if(mobs.get(i) instanceof EntityPlayerSP){
+					EntityPlayerSP sp = (EntityPlayerSP) mobs.get(i);
+					if(sp.getName().equalsIgnoreCase(minecraft.player.getName())){
+						mob = "ownplayer";
+					}
+				}else if(mobs.get(i) instanceof EntityPlayerMP){
+					EntityPlayerMP mp = (EntityPlayerMP) mobs.get(i);
+					if(mp.getName().equalsIgnoreCase(minecraft.player.getName())){
+						mob = "ownplayer";
+					}
+				}else{
+					EntityPlayer ep = (EntityPlayer) mobs.get(i);
+					if(ep.getName().equalsIgnoreCase(minecraft.player.getName())){
+						mob = "ownplayer";
+					}
+				}
+				if(!mob.equalsIgnoreCase("ownplayer")){
+					mob = "Player";
+				}				
 			}
 			if(mob != null && isInConfig(mob)){
 				String color = config.getData("Color."+ mob);
