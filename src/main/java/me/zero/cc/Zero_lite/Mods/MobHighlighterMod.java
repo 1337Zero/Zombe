@@ -1,19 +1,13 @@
 package me.zero.cc.Zero_lite.Mods;
 
-import java.awt.Color;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.print.attribute.standard.SheetCollate;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.gl.GL;
-import com.mumfrey.liteloader.modconfig.Exposable;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Config.MobHighLighterConfig;
@@ -23,32 +17,17 @@ import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
 import me.zero.cc.Zero_lite.utils.KeySetting;
 import me.zero.cc.Zero_lite.utils.Mark;
-import me.zero.cc.Zero_lite.utils.Mobs;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Timer;
-import net.minecraft.world.World;
-import static org.lwjgl.opengl.GL11.*;
 
 public class MobHighlighterMod implements Mod {
 

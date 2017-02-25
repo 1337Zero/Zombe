@@ -1,13 +1,9 @@
 package me.zero.cc.Zero_lite;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Drawable;
 
 import me.zero.cc.Zero_lite.Config.Config;
 import me.zero.cc.Zero_lite.Config.CustomRecipesConfig;
@@ -15,7 +11,6 @@ import me.zero.cc.Zero_lite.Config.LanguageConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.ZGuiButton;
 import me.zero.cc.Zero_lite.Mods.RangeMod;
-import me.zero.cc.Zero_lite.Mods.ChatMod;
 import me.zero.cc.Zero_lite.Mods.FlyMod;
 import me.zero.cc.Zero_lite.Mods.InfoMod;
 import me.zero.cc.Zero_lite.Mods.LightMod;
@@ -27,44 +22,35 @@ import me.zero.cc.Zero_lite.Mods.PathMod;
 import me.zero.cc.Zero_lite.Mods.RecipeMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
+import me.zero.cc.Zero_lite.override.ZLRenderGlobal;
 import me.zero.cc.Zero_lite.utils.BlockMark;
 import me.zero.cc.Zero_lite.utils.CommandListener;
 import me.zero.cc.Zero_lite.utils.InfoLineManager;
-import me.zero.cc.Zero_lite.utils.Mark;
 import me.zero.cc.Zero_lite.utils.Markables;
 import me.zero.cc.Zero_lite.utils.SelectionHelper;
 import me.zero.cc.Zero_lite.utils.UpdateChecker;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.HttpUtil;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 
 import com.mumfrey.liteloader.ChatFilter;
 import com.mumfrey.liteloader.PostRenderListener;
-import com.mumfrey.liteloader.RenderListener;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.core.LiteLoaderEventBroker.ReturnValue;
-import com.mumfrey.liteloader.transformers.event.ReturnEventInfo;
 
 public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 
 	private ArrayList<Mod> mods = new ArrayList<Mod>();
 	private static KeyBinding Zombe_config = new KeyBinding("Zombe-Config", Keyboard.KEY_F7, "Zombe-Config");
 	private boolean init = false;
-	private ChatMod ch;
 	public static Config config;
 	public static LanguageConfig lconfig;
 	public static CustomRecipesConfig customconfig;
@@ -85,12 +71,13 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	private double lastFirstMarkPick = 0;
 	private double lastSecondMarkPick = 0;
 	private boolean enableselection = true;
+	public static LiteModMain instance = null;
 	
 	public String getName() {
 		return "Zombe-Lite";
 	}
 	public String getVersion() {
-		return "1056";
+		return "1057";
 	}
 
 	public void init(File configPath) {	
@@ -103,6 +90,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		if(LiteLoader.isDevelopmentEnvironment()){
 			config.replaceData("Main.debug", true + "");
 		}
+		LiteModMain.instance = this;
 	}
 
 	public void upgradeSettings(String version, File configPath,File oldConfigPath) {	
@@ -134,6 +122,8 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			cmdlist = new CommandListener(minecraft,this);
 			lastFirstMarkPick = System.currentTimeMillis();
 			lastSecondMarkPick = System.currentTimeMillis();
+
+			Minecraft.getMinecraft().renderGlobal = new ZLRenderGlobal(minecraft);
 		}
 	}	
 	/**
@@ -323,6 +313,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 	@Override
 	public void onPostRender(float partialTicks) {
 		//unused
+		
 	}
 	/**
 	 * Get the Minecraft instance

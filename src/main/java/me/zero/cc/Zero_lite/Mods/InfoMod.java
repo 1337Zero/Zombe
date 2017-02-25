@@ -1,22 +1,14 @@
 package me.zero.cc.Zero_lite.Mods;
 
-import java.awt.Toolkit;
 import java.util.ArrayList;
-
-import org.lwjgl.input.Keyboard;
-
-import com.mumfrey.liteloader.LiteMod;
-import com.mumfrey.liteloader.core.LiteLoader;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
-import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.EnumFacing;
 
 public class InfoMod implements Mod {
@@ -50,7 +42,6 @@ public class InfoMod implements Mod {
 	private boolean showcoor = false;
 	private boolean showWorldAge = false;
 	
-	private float rotationyam = 0;
 	private long lastdiraktu = 0;
 	
 	public InfoMod(Minecraft minecraft,LiteModMain speicher){		
@@ -173,33 +164,6 @@ public class InfoMod implements Mod {
 			speicher.getInfoLineManager().getInfoLine(posWorldAge).setInfo(infoidWorldAge, "");
 		}
 	}
-	private void UpdateDirection(double value){
-		
-		//	   EnumFacing facing =  EnumFacing.fromAngle(ent.getRotationYawHead());
-		// Use this cause better and stuff
-		if(value >= 135 && value < 180 || value > -180 && value <= -135){
-			if(!getFacing().contains("North")){
-				setFacing("North");
-			}
-		}else		
-		if(value > -135 && value <= -45){
-			if(!getFacing().contains("East")){
-				setFacing("East");		
-			}
-		}else
-		if(value > -45 && value < 45){
-			if(!getFacing().contains("South")){
-				setFacing("South");
-			}
-		}else
-		if(value >= 45 && value < 135){
-			if(!getFacing().contains("West")){
-				setFacing("West");
-			}
-		}else{
-			setFacing("ERROR");
-		}
-	}
 	/**
 	 * Gets the key for enable
 	 * @return Integer
@@ -213,23 +177,6 @@ public class InfoMod implements Mod {
 	 */
 	public void setOn(int on) {
 		onkey = on;
-	}
-	private void UpdateRotation(Minecraft minecraft){
-		if(rotationyam < 360){			
-			if(rotationyam > 0){
-				rotationyam = rotationyam + (360 * ((rotationyam/360)));
-			}else{
-				rotationyam = rotationyam + (360 * (int)(((rotationyam*-1)/360)+2));
-			}
-		}
-		if(rotationyam > 360){				
-			if((rotationyam -(getRotation()*360)) > 180){
-				setPercent((rotationyam -(getRotation()*360)-360));
-			}else{
-				setPercent(rotationyam -(getRotation()*360));
-			}
-			setRotation((int)rotationyam / 360);
-		}
 	}
 	/**
 	 * Returns how often the Player has turned

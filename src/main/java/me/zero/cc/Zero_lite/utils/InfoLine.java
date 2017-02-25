@@ -8,15 +8,11 @@ import net.minecraft.client.gui.ScaledResolution;
 public class InfoLine {
 
 	private ArrayList<String> infos = new ArrayList<String>();
-	private boolean first = true;
-	private int posx = 0;
-	private int posy = 0;
+
 	private boolean visible = false;
 	private GuiPositions pos;
 	
-	public InfoLine(int posx, int posy,GuiPositions pos){
-		this.posx = posx;
-		this.posy = posy;
+	public InfoLine(GuiPositions pos){
 		this.pos = pos;
 	}
 	/**

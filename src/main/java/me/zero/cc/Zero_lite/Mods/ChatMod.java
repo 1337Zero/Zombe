@@ -1,29 +1,13 @@
 package me.zero.cc.Zero_lite.Mods;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lwjgl.input.Keyboard;
-
-import com.mumfrey.liteloader.client.gui.GuiCheckbox;
-import com.mumfrey.liteloader.client.gui.GuiPanel;
-import com.mumfrey.liteloader.client.gui.ScrollPanelContent;
-
 import me.zero.cc.Zero_lite.LiteModMain;
-import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiScreenServerList;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.GuiListExtended.IGuiListEntry;
-import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.resources.ResourcePackListEntry;
 
 public class ChatMod implements Mod {
 
@@ -54,7 +38,7 @@ public class ChatMod implements Mod {
 		if(searchForIp(lastMessage)){
 			try{
 				String sender = lastMessage.split(":")[0];
-				String message = lastMessage.split(":")[1];
+			//	String message = lastMessage.split(":")[1];
 				minecraft.player.sendChatMessage("/kick " + sender + " Auto-Kick (IP)");	
 			}catch(Exception e){
 				e.printStackTrace();
@@ -184,7 +168,7 @@ class ChatModGui extends GuiScreen{
 	}
 	
 	public void drawButtons(){
-		GuiBooleanButton enableKick = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Kick on Ip", ((ChatMod)speicher.getMod(ModData.ChatMod.name())).isEnablekick(), "enablekick", ModData.ChatMod, speicher,"A player will be kicked;if he writes an IP".split(";"));
+		//GuiBooleanButton enableKick = new GuiBooleanButton(2, width/2-170, height/4+20, 150, 20, "Kick on Ip", ((ChatMod)speicher.getMod(ModData.ChatMod.name())).isEnablekick(), "enablekick", ModData.ChatMod, speicher,"A player will be kicked;if he writes an IP".split(";"));
 		GuiButton back = new GuiButton(6, width/2-100,height-50 , "back to game");
 	
 		buttonList.add(back);

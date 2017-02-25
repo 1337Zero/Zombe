@@ -1,8 +1,5 @@
 package me.zero.cc.Zero_lite.Mods;
 
-import org.lwjgl.input.Keyboard;
-
-import com.mumfrey.liteloader.core.LiteLoader;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
@@ -14,11 +11,7 @@ import me.zero.cc.Zero_lite.utils.KeySetting;
 import me.zero.cc.Zero_lite.utils.SunThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.world.EnumSkyBlock;
-
 public class TimeMod implements Mod {
 
 	private Minecraft minecraft;

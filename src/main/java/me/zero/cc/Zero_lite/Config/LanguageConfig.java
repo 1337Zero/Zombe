@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.StringReader;
 import java.util.*;
 
 import com.mumfrey.liteloader.core.LiteLoader;
@@ -22,7 +21,7 @@ public class LanguageConfig {
 	"InfoMod.showdir:Displays your looking &6direction","InfoMod.showfps:Displays a &6fps &fcounter","InfoMod.showcoor:Displays your &6x,y,z&f Coordinates","InfoMod.showworldage:Displays the &6World Age",
 	"LightMod.togglelight:Enable the &6LightMod","LightMod.enable:Choose the &6key&f to enable",
 	"MobHighLighter.toggle:Enable &6Mobhighlighter","MobHighLighter.chooseonkey:Choose the &6key&f to enable","MobHighLighter.showinfo:Display the &6Amount&f of marked &6Mobs",
-	"OreHighLighter.toggle:Enable &6OreHighLighter","OreHighLighter.radius:Set the &6Radius for &6OreHighLighter","OreHighLighter.chooseonkey:Choose the the &6key; to enable","OreHighLighter.showinfo:Displays the &6Radius","OreHighLighter.dynamicselection:Only checks &4blocks&f you can &4see","OreHighLighter.easymark:Uses &62&f instead of &64&f Marks per Block",
+	"OreHighLighter.toggle:Enable &6OreHighLighter","OreHighLighter.radius:Set the &6Radius for &6OreHighLighter","OreHighLighter.chooseonkey:Choose the the &6key; to enable","OreHighLighter.choosecavekey:Choose the the &6key; to see through Walls","OreHighLighter.showinfo:Displays the &6Radius","OreHighLighter.dynamicselection:Only checks &4blocks&f you can &4see","OreHighLighter.easymark:Uses &62&f instead of &64&f Marks per Block","OreHighLighter.deepness:Change how &6far&f to look into the ground",
 	"PathMod.toggle:Enable &6PathMod","PathMod.enablekey:Choose the &6key;to enable &6Pathmod","PathMod.showinfo:Displays the &6Amount&f of &6Marks","PathMod.seethroughwall:Enable see &6Pathmarks through &6walls",
 	"RangeMod.togglereachplace:Enable &6Placing Blocks&f over distance","RangeMod.togglereachbreak:Enable &6breaking Blocks&f over distance","RangeMod.togglereachpick:Enable &6Picking Blocks;over distance","RangeMod.marker:&6Marks&f the &6Block;you are looking at","RangeMod.dropblock:Let &6Blocks drop items","RangeMod.removefrominv:Enable &6removing Items;from &6Inventory","RangeMod.addtoinv:&6Get blocks &fyou break","RangeMod.range:Set the &6Range Value","RangeMod.chooseplacekey:Choose the key to &6enable Reachplace","RangeMod.choosepickkey:Choose the key to;&6enable Reachpick","RangeMod.choosebreakkey:Choose the key to &6enable Reachbreak","RangeMod.showinfo:Displays the &6Range Value",
 	"RecipeMod.enable:Enable &6RecipeMod","RecipeMod.loadcustomrecipes:Enable &6loading CustomRecipes;from your &6config","RecipeMod.showcraftinpattern:Displays possible &6Pattern for crafting Recipes;if you &6overlay &fpossible &6Craftingoutputs",

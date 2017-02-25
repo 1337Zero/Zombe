@@ -23,7 +23,7 @@ public class Config {
 			"Time-Mod.Key-addtime:78","Time-Mod.Key-subtime:74","Time-Mod.Key-freezetime:55","Time-Mod.timetoadd:0","Time-Mod.Time-Mod-enabled:false","Time-Mod.time-freezed:false","Time-Mod.time-multiplier:0","Time-Mod.showTimeinfo:false","Time-Mod.showtimepos:UP_CENTER",
 			"RecipeMod.Enabled:false","RecipeMod.loadCustomRecipes:false","RecipeMod.showCraftingPattern:false",
 			"MobHighlighter.enabled:false","MobHighlighter.Toggle-Mobhighlighter:55","MobHighlighter.info-Pos:UP_LEFT","MobHighlighter.showinfo:false",
-			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:27","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2","OreHighlighter.selectivesearch:false","OreHighlighter.threadsleep:1000",
+			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:27","OreHighlighter.Toggle-Cave:13","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2","OreHighlighter.selectivesearch:false","OreHighlighter.threadsleep:1000",
 			"PathMod.info-Pos:UP_LEFT","PathMod.showinfo:false","PathMod.enabled:false","PathMod.Toggle-PathMod:11","PathMod.seethroughwall:true","PathMod.mark.r:1.0F","PathMod.mark.g:0.0F","PathMod.mark.b:1.0F","PathMod.mark.alpha:1.0F",
 			"RangeMod.Range:16","RangeMod.DropBlock:false","RangeMod.MarkBlock:false","RangeMod.removefrominventory:true","RangeMod.addtoinventory:true","RangeMod.placedelay:125","RangeMod.destroydelay:125","RangeMod.reachbreak:false","RangeMod.reachplace:false","RangeMod.reachbreakonkey:12","RangeMod.reachplaceonkey:52","RangeMod.showinfo:false","RangeMod.info-Pos:UP_LEFT","RangeMod.reachpick:false","RangeMod.pickdelay:250","RangeMod.reachpickonkey:55");
 	

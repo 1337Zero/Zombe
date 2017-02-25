@@ -8,16 +8,10 @@ public class KeySetting {
 
 	private int key;
 	private String configname;
-	private boolean isKey = false;
 		
 	public KeySetting(int key,String configname){
 		this(configname);
 		this.key = key;
-		load();
-	}
-	public KeySetting(String configname,boolean iskey){
-		this(configname);
-		isKey = iskey;
 		load();
 	}
 	

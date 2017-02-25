@@ -1,6 +1,5 @@
 package me.zero.cc.Zero_lite.utils;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 
 public class Mark implements Markables{

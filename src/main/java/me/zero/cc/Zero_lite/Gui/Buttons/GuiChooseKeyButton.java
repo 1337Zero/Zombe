@@ -2,12 +2,7 @@ package me.zero.cc.Zero_lite.Gui.Buttons;
 
 import org.lwjgl.input.Keyboard;
 
-import com.mumfrey.liteloader.gl.GL;
-
-import me.zero.cc.Zero_lite.LiteModMain;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 
 public class GuiChooseKeyButton extends ZGuiButton{
 	private int buttonkey = 0;

@@ -1,13 +1,9 @@
 package me.zero.cc.Zero_lite.Gui.Buttons;
 
-import java.awt.Color;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mumfrey.liteloader.gl.GL;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Mods.RangeMod;
@@ -17,10 +13,6 @@ import me.zero.cc.Zero_lite.Mods.OreHighlighterMod;
 import me.zero.cc.Zero_lite.Mods.SpeedMod;
 import me.zero.cc.Zero_lite.Mods.TimeMod;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
 
 public class SimpleSlider extends ZGuiButton{
 
@@ -47,7 +39,7 @@ public class SimpleSlider extends ZGuiButton{
 		this.height = height;
 		this.width = width;
 		this.sliderValue = 0.0F;
-		double value = 0 ;
+		double value = 0 ;	
 		
 		if(modname.name().equalsIgnoreCase(ModData.FlyMod.name())){
 			value =  ((FlyMod)speicher.getMod(modname.name())).getFlyValue();
@@ -56,7 +48,11 @@ public class SimpleSlider extends ZGuiButton{
 		}else if(modname.name().equalsIgnoreCase(ModData.TimeMod.name())){
 			 value = ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl();
 		}else if(modname.name().equalsIgnoreCase(ModData.OreHighLighter.name())){
-			 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius()*10;
+			if(valueNameToManupulate.equalsIgnoreCase("radius")){
+				value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius()*10;
+			}else{
+				 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getDeepness();				 		 
+			 }
 		}else if(modname.name().equalsIgnoreCase(ModData.RangeMod.name())){
 			 value = ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange();
 		}		
@@ -66,9 +62,8 @@ public class SimpleSlider extends ZGuiButton{
 		this.modname = modname;
 		this.speicher = speicher;
 	}
-	protected void mouseDragged(Minecraft mc, int x, int y) {	
-		
-         if (this.enabled){
+	protected void mouseDragged(Minecraft mc, int x, int y) {			
+         if (this.enabled){        	 
         	 if (this.dragging){          	
                  if(xstart < x && (xstart + width) > x){
                 	 xPosition = x;
@@ -79,7 +74,8 @@ public class SimpleSlider extends ZGuiButton{
         	 }                	 
         	 this.displayString = txt;          	 
         	 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-             this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 66, 4, 20);
+        	 //240:54 - 352:144
+        	 this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 66, 4, 20);
              this.drawTexturedModalRect(this.xPosition + 4, this.yPosition, 196, 66, 4, 20);
          }
          super.mouseDragged(mc, x, y);
@@ -123,7 +119,11 @@ public class SimpleSlider extends ZGuiButton{
 		 }else if(modname.name().equalsIgnoreCase(ModData.TimeMod.name())){
 			 value = ((TimeMod)speicher.getMod(ModData.TimeMod.name())).getMultipl();
 		 }else if(modname.name().equalsIgnoreCase(ModData.OreHighLighter.name())){
-			 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius()*10;
+			 if(valueToManupulate.equalsIgnoreCase("radius")){
+				 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius()*10;
+			 }else{
+				 value = ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getDeepness();
+			 }			 
 		 }else if(modname.name().equalsIgnoreCase(ModData.RangeMod.name())){
 			 value = ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange();
 		 }		

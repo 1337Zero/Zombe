@@ -1,12 +1,7 @@
 package me.zero.cc.Zero_lite.Mods;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import org.lwjgl.input.Keyboard;
-
-import com.mumfrey.liteloader.core.LiteLoader;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
@@ -16,12 +11,10 @@ import me.zero.cc.Zero_lite.Gui.Buttons.SimpleSlider;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
 import me.zero.cc.Zero_lite.utils.KeySetting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundList;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraft.world.GameType;
 
 public class FlyMod implements Mod{
 	
@@ -104,6 +97,7 @@ public class FlyMod implements Mod{
 		if(minecraft.isSingleplayer()){
 			minecraft.getIntegratedServer().getEntityWorld().getPlayerEntityByName(minecraft.player.getName()).fallDistance = 0;
 		}
+		
 		if(!togglefly){
 			float value = (float) flyValue;
 			if(minecraft.gameSettings.keyBindSneak.isKeyDown() && !ignoreshift){

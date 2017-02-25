@@ -1,14 +1,9 @@
 package me.zero.cc.Zero_lite.Gui.Buttons;
 
-import org.lwjgl.opengl.GL11;
-
-import com.mumfrey.liteloader.gl.GL;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Mods.ModData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.OpenGlHelper;
 
 public class GuiBooleanButton extends ZGuiButton{
 

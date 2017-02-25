@@ -1,5 +1,9 @@
 package me.zero.cc.Zero_lite.Mods;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +33,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 
 public class OreHighlighterMod implements Mod {
 
@@ -41,6 +44,7 @@ public class OreHighlighterMod implements Mod {
 	private OreHighLighterModConfig config;
 	
 	private KeySetting onkey = new KeySetting("OreHighlighter.Toggle-OreHighlighter");
+	private KeySetting cavekey = new KeySetting("OreHighlighter.Toggle-Cave");
 	private boolean enabled = false;
 	
 	private int infoID;
@@ -51,6 +55,8 @@ public class OreHighlighterMod implements Mod {
 	private boolean showinfo = false;
 	private boolean easyMark = true;	
 	private OreSearchThread orsearh;
+	
+	private float depthness = 4.0F;
 	
 	private KeySetting radius = new KeySetting(2,"OreHighlighter.radius");
 	
@@ -76,6 +82,7 @@ public class OreHighlighterMod implements Mod {
 	public boolean isEnabled() {
 		return enabled;
 	}
+	boolean doingit = false;
 
 	@Override
 	public void use() {
@@ -92,7 +99,7 @@ public class OreHighlighterMod implements Mod {
 				speicher.getConfig().replaceData("OreHighlighter.enabled", "" + enabled);
 			}	
 			lastpressed = System.currentTimeMillis();
-		}
+		}		
 		try {
 			if(enabled){
 				if((System.currentTimeMillis() - lastaktu) >= 2500){
@@ -124,8 +131,14 @@ public class OreHighlighterMod implements Mod {
 			setUpRenderer(x, y, z);
 			for(int i = 0; i < blocks.size();i++){
 				renderBlock(blocks.get(i));
-			}
+			}			
 			normalizeRenderer();
+		}
+		
+	}
+	public void onRender(){
+		if(cavekey.isKeyDown() && doingit == false){
+			obliqueNearPlaneClip(0.0f, 0.0f, -1.0f, -depthness);
 		}
 	}
 	
@@ -241,8 +254,14 @@ public class OreHighlighterMod implements Mod {
 	public void manupulateValue(String ValueToManupulate, double value) {
 		if(ValueToManupulate.equalsIgnoreCase("Enable-Key")){
 			onkey.setKey((int)value);
+		}if(ValueToManupulate.equalsIgnoreCase("Cave-Key")){
+			System.out.println(value);
+			cavekey.setKey((int)value);
 		}else if(ValueToManupulate.equalsIgnoreCase("Radius")){
 			radius.setKey((int)value/10);
+		}else if(ValueToManupulate.equalsIgnoreCase("deepness")){
+			depthness = Float.parseFloat((value/10.0)+"");
+			System.out.println("deth is now " + depthness);
 		}else{
 			System.out.println("Unknown value " + ValueToManupulate);
 		}		
@@ -291,6 +310,16 @@ public class OreHighlighterMod implements Mod {
 		return radius.getKey();
 	}
 	/**
+	 * Returns the Radius of the search-area
+	 * @return Integer
+	 */
+	public double getDeepness() {
+		NumberFormat df = NumberFormat.getInstance();
+		 df.setMaximumFractionDigits(2);
+		 String numb = df.format((double) depthness);
+		return (Double.parseDouble(numb));
+	}
+	/**
 	 * Sets the Radius of the search-area
 	 * @param radius
 	 */
@@ -318,6 +347,13 @@ public class OreHighlighterMod implements Mod {
 	public int getOn() {
 		return onkey.getKey();
 	}
+	/**
+	 * Get the key to enable
+	 * @return Integer
+	 */
+	public int getCaveOn() {
+		return cavekey.getKey();
+	}
 	public boolean isSelectiveSearch(){
 		if(orsearh != null){
 			return orsearh.selectivesearch;
@@ -333,13 +369,40 @@ public class OreHighlighterMod implements Mod {
 	public void setEasyMark(boolean easyMark) {
 		this.easyMark = easyMark;
 	}
+	private static float sgn(float f) {
+		return f<0f ? -1f : (f>0f ? 1f : 0f); 
+	}
+	private static FloatBuffer makeBuffer(int length) { 
+		return ByteBuffer.allocateDirect(length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+	}
+	   
+	private static void obliqueNearPlaneClip(float a, float b, float c, float d) {
+		float matrix[] = new float[16];
+        float x, y, z, w, dot;
+        FloatBuffer buf = makeBuffer(16);
+        GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, buf);
+        buf.get(matrix).rewind();
+        x = (sgn(a) + matrix[8]) / matrix[0];
+        y = (sgn(b) + matrix[9]) / matrix[5];
+        z = -1.0F;
+        w = (1.0F + matrix[10]) / matrix[14];
+        dot = a*x + b*y + c*z + d*w;
+        matrix[2] = a * (2f / dot);
+        matrix[6] = b * (2f / dot);
+        matrix[10] = c * (2f / dot) + 1.0F;
+        matrix[14] = d * (2f / dot);
+        buf.put(matrix).rewind();
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadMatrix(buf);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+	}
 }
 class OreHighLighterGui extends GuiScreen{
 	
 	private LiteModMain speicher;
 	private boolean GivingKey = false;
 	private String valueToManupulate = "";
-	private GuiChooseKeyButton chooseOn;
+	private GuiChooseKeyButton chooseOn,choosecavekey;
 	
 	public OreHighLighterGui(LiteModMain speicher){
 		this.speicher = speicher;
@@ -366,7 +429,12 @@ class OreHighLighterGui extends GuiScreen{
 		GuiBooleanButton togglehighlighter = new GuiBooleanButton(2, width/2-170, height/4-10, 150, 20, "Toggle Highlighter", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isEnabled(), "togglehighlighter", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.toggle").split(";"));
 		SimpleSlider slider = new SimpleSlider(0, width/2, height/4-10, "Radius", (int) ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getRadius() , 150, 20, ModData.OreHighLighter, "Radius", speicher,LiteModMain.lconfig.getData("OreHighLighter.radius").split(";"));
 		
+		SimpleSlider deepthslider = new SimpleSlider(0, width/2, height/4+80, "Cave-deepness", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getDeepness() , 150, 20, ModData.OreHighLighter, "deepness", speicher,LiteModMain.lconfig.getData("OreHighLighter.deepness").split(";"));
+		
+		
 		chooseOn = new GuiChooseKeyButton(2, width/2, height/4+20, 150, 20, "Enable-Key", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getOn(),LiteModMain.lconfig.getData("OreHighLighter.chooseonkey").split(";"));
+		choosecavekey = new GuiChooseKeyButton(2, width/2, height/4+110, 150, 20, "Cave-Key", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getCaveOn(),LiteModMain.lconfig.getData("OreHighLighter.choosecavekey").split(";"));
+		
 		GuiBooleanButton showInfo = new GuiBooleanButton(8, width/2, height/4+50, 150, 20, "Show-Info", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isShowInfo(), "showinfo", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.showinfo").split(";"));
 		GuiBooleanButton useselective = new GuiBooleanButton(9, width/2-170, height/4+20, 150, 20, "dynamic selection", ((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).isSelectiveSearch(), "dselection", ModData.OreHighLighter, speicher,LiteModMain.lconfig.getData("OreHighLighter.dynamicselection").split(";"));
 		GuiChooseStringButton choosepos = new GuiChooseStringButton(7, width/2-170, height/4+50, 150, 20, "Info-Pos", GuiPositions.getPosList(), "infopos", ModData.OreHighLighter, speicher, GuiPositions.getPos(((OreHighlighterMod)speicher.getMod(ModData.OreHighLighter.name())).getPos()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
@@ -376,8 +444,10 @@ class OreHighLighterGui extends GuiScreen{
 		GuiButton back = new GuiButton(buttonList.size() + 1, width/2-100,height-50 , "back to game");
 
 		buttonList.add(slider);
+		buttonList.add(deepthslider);
 		buttonList.add(showInfo);
 		buttonList.add(chooseOn);
+		buttonList.add(choosecavekey);
 		buttonList.add(choosepos);
 		buttonList.add(togglehighlighter);
 		buttonList.add(useselective);
@@ -393,6 +463,9 @@ class OreHighLighterGui extends GuiScreen{
 				
 				if(valueToManupulate.equalsIgnoreCase("Enable-Key")){
 					chooseOn.setButtonkey(key);
+				}
+				if(valueToManupulate.equalsIgnoreCase("Cave-Key")){
+					choosecavekey.setButtonkey(key);
 				}
 				GivingKey = false;
 			}

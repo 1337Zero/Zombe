@@ -1,17 +1,12 @@
 package me.zero.cc.Zero_lite.Mods;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.mumfrey.liteloader.core.LiteLoader;
@@ -19,38 +14,19 @@ import com.mumfrey.liteloader.core.LiteLoader;
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Config.CustomRecipesConfig;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
-import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseKeyButton;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiCrafting;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.RecipeBookCloning;
-import net.minecraft.item.crafting.RecipeFireworks;
-import net.minecraft.item.crafting.RecipesArmor;
-import net.minecraft.item.crafting.RecipesArmorDyes;
-import net.minecraft.item.crafting.RecipesMapCloning;
 import net.minecraft.item.crafting.RecipesMapExtending;
-import net.minecraft.item.crafting.RecipesTools;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.util.ResourceLocation;
 
 public class RecipeMod implements Mod {
 
@@ -64,7 +40,6 @@ public class RecipeMod implements Mod {
 	private LiteModMain speicher;
 	private int olditemcount = 0;
 	private boolean loadCustomRecipes = false;
-	private boolean loadedCustomRecipes = false;
 	private boolean showCraftingPattern = false;
 	
 	public RecipeMod(Minecraft minecraft,LiteModMain speicher) {
@@ -77,7 +52,7 @@ public class RecipeMod implements Mod {
 		
 		if(LiteLoader.isDevelopmentEnvironment() | loadCustomRecipes){
 			loadCustomRecipes();
-			loadedCustomRecipes = true;
+			loadCustomRecipes = true;
 		}
 	}
 
@@ -466,17 +441,23 @@ public class RecipeMod implements Mod {
 				}
 			}
 			if(recipepatternReplacement.length != diffrentChars){
-				System.out.println("[RecipeMod] Not enough diffrent Chars in the Replacement part!" + diffrentChars + "!=" + pattern.split(";")[2].split(",").length);
+				System.out.println("[RecipeMod] Not enough diffrent Chars in the Replacement part!" + diffrentChars + " chars !=" + pattern.split(";")[2].split(",").length + " chars");
 				error = true;
 			}
 			
 			if(!error){
 				ItemStack b = getBlockFromIdAndMeta(Integer.parseInt(recipeoutput.split(":")[0]), Integer.parseInt(recipeoutput.split(":")[1]));
 				b.setCount(Integer.parseInt(recipeoutput.split(":")[2]));
-				System.out.println("[RecipeMod] " + b + " is null ?");
-
 			
-				switch(diffrentChars){
+				if(LiteLoader.isDevelopmentEnvironment()){
+					System.out.println("Creating a recept with " + diffrentChars + " RecipeItems");
+					System.out.println("Target is " + recipepattern[0]);
+					System.out.println("Target is " + recipepattern[1]);
+					System.out.println("Target is " + recipepattern[2]);
+					System.out.println(recipepatternReplacement);
+				}
+			
+				switch(diffrentChars){				
 					case 1:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						});

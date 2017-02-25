@@ -2,13 +2,10 @@ package me.zero.cc.Zero_lite.Gui.Buttons;
 
 import java.util.List;
 
-import com.mumfrey.liteloader.gl.GL;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Mods.ModData;
-import me.zero.cc.Zero_lite.utils.GuiPositions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 
 public class GuiChooseStringButton extends ZGuiButton{
 

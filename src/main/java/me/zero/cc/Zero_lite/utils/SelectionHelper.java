@@ -2,9 +2,7 @@ package me.zero.cc.Zero_lite.utils;
 
 import java.util.ArrayList;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 
 public class SelectionHelper {
 

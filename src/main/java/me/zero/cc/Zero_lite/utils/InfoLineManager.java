@@ -8,17 +8,16 @@ public class InfoLineManager {
 	private ArrayList<InfoLine> infolines = new ArrayList<InfoLine>();
 	
 	public InfoLineManager(Minecraft minecraft){
-		int valuex = minecraft.displayWidth/2;
 				
-		infolines.add(new InfoLine(5, 5,GuiPositions.UP_LEFT));
-		infolines.add(new InfoLine((valuex/2), 5,GuiPositions.UP_CENTER));
-		infolines.add(new InfoLine(valuex, 5,GuiPositions.UP_RIGHT));	
-		infolines.add(new InfoLine(valuex, 5,GuiPositions.MID_LEFT));	
-		infolines.add(new InfoLine(valuex, 5,GuiPositions.MID_CENTER));	
-		infolines.add(new InfoLine(valuex, 5,GuiPositions.MID_RIGHT));	
-		infolines.add(new InfoLine(valuex, 5,GuiPositions.DOWN_LEFT));	
-		infolines.add(new InfoLine(valuex, 5,GuiPositions.DOWN_CENTER));	
-		infolines.add(new InfoLine(valuex, 5,GuiPositions.DOWN_RIGHT));	
+		infolines.add(new InfoLine(GuiPositions.UP_LEFT));
+		infolines.add(new InfoLine(GuiPositions.UP_CENTER));
+		infolines.add(new InfoLine(GuiPositions.UP_RIGHT));	
+		infolines.add(new InfoLine(GuiPositions.MID_LEFT));	
+		infolines.add(new InfoLine(GuiPositions.MID_CENTER));	
+		infolines.add(new InfoLine(GuiPositions.MID_RIGHT));	
+		infolines.add(new InfoLine(GuiPositions.DOWN_LEFT));	
+		infolines.add(new InfoLine(GuiPositions.DOWN_CENTER));	
+		infolines.add(new InfoLine(GuiPositions.DOWN_RIGHT));	
 	}
 	/**
 	 * Called every tick to update lines

@@ -8,12 +8,10 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import me.zero.cc.Zero_lite.LiteModMain;
-import net.minecraft.client.Minecraft;
 
 public class UpdateChecker extends Thread{
 
 	private URL url;
-	private String version = "";
 	private ArrayList<String> messages = new ArrayList<String>();
 	private LiteModMain main;
 	
@@ -42,7 +40,6 @@ public class UpdateChecker extends Thread{
             String readed = reader.readLine();
             
             while(readed != null){  
-            	String between = readed;
             	
             	if(main.getUrlVersion() == 0){
             		main.setUrlVersion(Integer.valueOf(readed));
