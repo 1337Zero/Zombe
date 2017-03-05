@@ -16,10 +16,10 @@ Installation
 ============
 
 1.  Download the right version of LiteLoader from
-    [www.liteloader.com/download](www.liteloader.com/download)
+    [https://www.liteloader.com/download](https://www.liteloader.com/download)
 
 2.  Download the right version of this mod from
-    [www.github.com/1337Zero/Zombe/](www.github.com/1337Zero/Zombe/).
+    [https://www.github.com/1337Zero/Zombe/](https://www.github.com/1337Zero/Zombe/).
 
 3.  Start the installer of LiteLoader, and wait it to be finished, make
     sure the right minecraft version is installed.
@@ -30,7 +30,7 @@ Installation
     create one and put the .litemod in there.
 
 If u want to use Optifine with LiteLoader, there is an easy way to do
-this. Go to [www.optifine.net/downloads](www.optifine.net/downloads) and
+this. Go to [https://www.optifine.net/downloads](https://www.optifine.net/downloads) and
 download the right optifine version for your minecraft version. Put the
 Optifine.jar into your mods/&lt;mcversion&gt; folder. LiteLoader will
 load Optifine for you.
@@ -410,7 +410,7 @@ I don’t like your work and want to change it!
 =============================================
 
 Fell free to fork my work on github
-[www.github.com/1337Zero/Zombe](www.github.com/1337Zero/Zombe)!
+[http://www.github.com/1337Zero/Zombe](http://www.github.com/1337Zero/Zombe)!
 
 I don’t trust you and want to build my own version
 ==================================================
@@ -423,13 +423,13 @@ mod u have to follow this steps:
 
 2.  For decompile and compile minecraft’s code, you need a working Java
     Development Kit installation. You will get this via
-    [www.oracle.com](www.oracle.com)
+    [https://www.oracle.com](www.oracle.com)
 
 3.  Open the ’Git repositories’ view, in the upper right corner there is
     a search bar where you can type and search it.
 
 4.  Click on ’Clone Repository’ and paste this link
-    [add me :D](add me :D)
+    [https://github.com/1337Zero/Zombe.git](add me :D)
 
 5.  now you need the LiteLoader Source, clone LiteLoader’s repository.
 
