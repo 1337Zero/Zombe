@@ -16,7 +16,7 @@ Installation
 ============
 
 1.  Download the right version of LiteLoader from
-    [https://www.liteloader.com/download](https://www.liteloader.com/download)
+    [http://www.liteloader.com/download](http://www.liteloader.com/download)
 
 2.  Download the right version of this mod from
     [https://www.github.com/1337Zero/Zombe/](https://www.github.com/1337Zero/Zombe/).
@@ -423,7 +423,7 @@ mod u have to follow this steps:
 
 2.  For decompile and compile minecraft’s code, you need a working Java
     Development Kit installation. You will get this via
-    [https://www.oracle.com](www.oracle.com)
+    [https://www.oracle.com](https://www.oracle.com)
 
 3.  Open the ’Git repositories’ view, in the upper right corner there is
     a search bar where you can type and search it.
