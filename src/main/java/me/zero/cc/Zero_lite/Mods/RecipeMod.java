@@ -92,7 +92,7 @@ public class RecipeMod implements Mod {
 												renderposy += 15;
 												renderposx = 0;
 											}if(recipe.get(ix).getMetadata() == 32767){
-												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).getCount(), 0);
+												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).stackSize, 0);
 												if(tempstack.getItem() != null){
 													itemRenderer.renderItemIntoGUI(tempstack, renderposx, renderposy);
 												}											
@@ -120,7 +120,7 @@ public class RecipeMod implements Mod {
 												renderposx = 0;
 											}
 											if(recipe.get(ix).getMetadata() == 32767){
-												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).getCount(), 0);
+												ItemStack tempstack = new ItemStack(recipe.get(ix).getItem(), recipe.get(ix).stackSize, 0);
 												if(tempstack.getItem() != null){
 													itemRenderer.renderItemIntoGUI(tempstack, renderposx, renderposy);	
 												}
@@ -346,7 +346,7 @@ public class RecipeMod implements Mod {
 					int tempitemcount = 0;
 					
 					for(int i = 0; i < items.size();i++){
-						tempitemcount += items.get(i).getCount();
+						tempitemcount += items.get(i).stackSize;
 					}
 					if(tempitemcount != olditemcount){
 						aktu = true;
@@ -447,7 +447,7 @@ public class RecipeMod implements Mod {
 			
 			if(!error){
 				ItemStack b = getBlockFromIdAndMeta(Integer.parseInt(recipeoutput.split(":")[0]), Integer.parseInt(recipeoutput.split(":")[1]));
-				b.setCount(Integer.parseInt(recipeoutput.split(":")[2]));
+				b.stackSize = Integer.parseInt(recipeoutput.split(":")[2]);
 			
 				if(LiteLoader.isDevelopmentEnvironment()){
 					System.out.println("Creating a recept with " + diffrentChars + " RecipeItems");
@@ -643,9 +643,9 @@ public class RecipeMod implements Mod {
 				boolean[] betweenmatch = new boolean[sortedItems.size()];
 				
 				for(int x = 0; x < sortedItems.size();x++){
-					int receptstacksize = sortedRecept.get(i).getCount();
+					int receptstacksize = sortedRecept.get(i).stackSize;
 					if(receptstacksize == 81) receptstacksize /=9;
-					if(sortedItems.get(x).getCount() >= receptstacksize){
+					if(sortedItems.get(x).stackSize >= receptstacksize){
 						if(Item.getIdFromItem(sortedItems.get(x).getItem()) == Item.getIdFromItem(sortedRecept.get(i).getItem())){
 							if(sortedRecept.get(i).getMetadata() == 32767){								
 								betweenmatch[i] = true;								
@@ -696,7 +696,7 @@ public class RecipeMod implements Mod {
 					}			
 					if(items.containsKey(item.getDisplayName() + metadata)){
 						ItemStack x = items.get(item.getDisplayName() + metadata).copy();
-						x.setCount(item.getCount()+1);
+						x.stackSize = item.stackSize+1;
 						items.put(item.getDisplayName() + metadata, x);
 					}else{
 						items.put(item.getDisplayName() + metadata, item);

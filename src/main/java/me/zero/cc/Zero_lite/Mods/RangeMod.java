@@ -267,12 +267,12 @@ public class RangeMod implements Mod {
 										}
 										
 										if(removeFromInventory){
-											if (minecraft.player.inventory.getStackInSlot(minecraft.player.inventory.currentItem).getCount() == 1){
+											if (minecraft.player.inventory.getStackInSlot(minecraft.player.inventory.currentItem).stackSize == 1){
 												//minecraft.player.inventory.setInventorySlotContents(minecraft.player.inventory.currentItem, null);
 												minecraft.player.inventory.removeStackFromSlot(minecraft.player.inventory.currentItem);
 												//minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.mainInventory[minecraft.player.inventory.currentItem] = null;
 											}else{
-												minecraft.player.inventory.setInventorySlotContents(minecraft.player.inventory.currentItem, new ItemStack(minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().getItem(), minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().getCount()-1));
+												minecraft.player.inventory.setInventorySlotContents(minecraft.player.inventory.currentItem, new ItemStack(minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().getItem(), minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().stackSize -1));
 												//minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.mainInventory[minecraft.player.inventory.currentItem] = new ItemStack(minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().getItem(), minecraft.getIntegratedServer().worlds[0].getPlayerEntityByUUID(minecraft.player.getUniqueID()).inventory.getCurrentItem().stackSize-1);
 											}									
 										}
