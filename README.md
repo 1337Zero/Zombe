@@ -429,7 +429,7 @@ mod u have to follow this steps:
     a search bar where you can type and search it.
 
 4.  Click on ’Clone Repository’ and paste this link
-    [https://github.com/1337Zero/Zombe.git](add me :D)
+    [https://github.com/1337Zero/Zombe.git]
 
 5.  now you need the LiteLoader Source, clone LiteLoader’s repository.
 
@@ -444,7 +444,7 @@ mod u have to follow this steps:
     if you want to build it start the build task.
 
 10. The freshly created .litemod will be in the mods saved place under
-    libs/build ?
+    build/libs
 
 Donate me a Pizza,a glass of cola or a cookie
 =============================================
