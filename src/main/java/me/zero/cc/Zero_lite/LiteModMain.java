@@ -276,6 +276,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		((MobHighlighterMod)this.getMod(ModData.MobHighLighter.name())).render(partialTicks);
 		((OreHighlighterMod)this.getMod(ModData.OreHighLighter.name())).render(partialTicks);
 		((PathMod)this.getMod(ModData.PathMod.name())).render(partialTicks);
+		((InfoMod)this.getMod(ModData.InfoMod.name())).render(partialTicks);
 		if(firstmark != null){
 			firstmark.draw(partialTicks);
 		}

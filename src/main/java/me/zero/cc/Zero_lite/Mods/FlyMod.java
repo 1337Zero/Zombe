@@ -13,8 +13,6 @@ import me.zero.cc.Zero_lite.utils.KeySetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.PlayerCapabilities;
-import net.minecraft.world.GameType;
 
 public class FlyMod implements Mod{
 	
@@ -64,8 +62,14 @@ public class FlyMod implements Mod{
 		if(onkey.isKeyDown() && !(upkey.isKeyDown() || downkey.isKeyDown() || (minecraft.currentScreen != null))){
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(flyenabled){
-					flyenabled = false;
-					//minecraft.thePlayer.hurtResistantTime = 1000;
+					flyenabled = false;		
+					long falltime = calcFallTime();
+					if(falltime > 0){
+						falltime += (falltime/2);
+						minecraft.getIntegratedServer().getPlayerList().getPlayerByUsername(minecraft.player.getName()).capabilities.disableDamage = true;
+						removeGodLater rgl = new removeGodLater(falltime);
+						rgl.start();
+					}		
 					speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);					
 				}else{				
 					flyenabled = true;				
@@ -318,6 +322,19 @@ public class FlyMod implements Mod{
 	public void setNerfcreaetivefly(boolean nerfcreaetivefly) {
 		this.nerfcreaetivefly = nerfcreaetivefly;
 	}
+	public long calcFallTime(){
+		double playerhigh = minecraft.player.posY;
+		double blockhigh = minecraft.world.getHeight((int)minecraft.player.posX, (int)minecraft.player.posZ);
+		
+		System.out.println(playerhigh + " - " + blockhigh + " = " + (playerhigh - blockhigh));
+		System.out.println((playerhigh - blockhigh) + " takes " + (playerhigh - blockhigh)*0.058 + " seconds");
+		if(playerhigh > blockhigh){
+			//static fall speed * blocks falling
+			return (long) (((playerhigh - blockhigh)*0.058)*1000);
+		}else{
+			return 0;
+		}
+	}
 }
 class FlyModGui extends GuiScreen{
 	
@@ -401,4 +418,22 @@ class FlyModGui extends GuiScreen{
 			}
 		}		
 	}
+}
+class removeGodLater extends Thread{
+	
+	long delay = 0;
+	
+	public removeGodLater(long delay) {
+		this.delay = delay;
+	}
+	
+	public void run(){
+		System.out.println();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e) {
+			e.printStackTrace();			
+		}
+		Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerByUsername(Minecraft.getMinecraft().player.getName()).capabilities.disableDamage = false;
+	}	
 }

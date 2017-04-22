@@ -5,11 +5,15 @@ import java.util.ArrayList;
 import me.zero.cc.Zero_lite.LiteModMain;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiBooleanButton;
 import me.zero.cc.Zero_lite.Gui.Buttons.GuiChooseStringButton;
+import me.zero.cc.Zero_lite.utils.GroundMark;
 import me.zero.cc.Zero_lite.utils.GuiPositions;
+import me.zero.cc.Zero_lite.utils.Markables;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 public class InfoMod implements Mod {
 
@@ -42,6 +46,13 @@ public class InfoMod implements Mod {
 	private boolean showcoor = false;
 	private boolean showWorldAge = false;
 	
+	private boolean showfriendly = false;
+	private boolean showaggressiv = false;
+	private boolean dynamicselection = false;
+	
+	public ArrayList<Markables> blocks = new ArrayList<Markables>();
+	private LightSearchThread lst;
+	
 	private long lastdiraktu = 0;
 	
 	public InfoMod(Minecraft minecraft,LiteModMain speicher){		
@@ -61,6 +72,10 @@ public class InfoMod implements Mod {
 		infoidDir = speicher.getInfoLineManager().getInfoLine(posDir).addInfo("");
 		infoidCoor = speicher.getInfoLineManager().getInfoLine(posCoor).addInfo("");
 		infoidWorldAge = speicher.getInfoLineManager().getInfoLine(posWorldAge).addInfo("");
+		
+		showfriendly = Boolean.valueOf(speicher.getConfig().getData("Info-Mod.showfriendlyspawns"));
+		showaggressiv = Boolean.valueOf(speicher.getConfig().getData("Info-Mod.showaggressivspawns"));
+		dynamicselection = Boolean.valueOf(speicher.getConfig().getData("Info-Mod.dynamicselection"));
 
 		lastaktu = System.currentTimeMillis();
 		lastdiraktu = System.currentTimeMillis();
@@ -73,6 +88,12 @@ public class InfoMod implements Mod {
 	public void use() {
 		if(showfps){
 			UpdateFPS();
+		}
+		if(lst == null) {
+			if(showaggressiv || showfriendly){
+				lst = new LightSearchThread(this);
+				lst.start();
+			}
 		}
 		if(showdir){
 			if(System.currentTimeMillis() - lastdiraktu >= 60){
@@ -232,23 +253,48 @@ public class InfoMod implements Mod {
 	}
 
 	@Override
-	public void manupulateValue(String valueToManupulate, boolean b) {
-		
+	public void manupulateValue(String valueToManupulate, boolean b) {		
 		if(valueToManupulate.equalsIgnoreCase("showcoor")){
 			showcoor = b;
 			speicher.getConfig().replaceData("Info-Mod.showcoor", showcoor + "");
-		}else
-		if(valueToManupulate.equalsIgnoreCase("showfps")){
+		}else if(valueToManupulate.equalsIgnoreCase("showfps")){
 			showfps = b;
 			speicher.getConfig().replaceData("Info-Mod.showFPS", showfps + "");
-		}else
-		if(valueToManupulate.equalsIgnoreCase("showdir")){
+		}else if(valueToManupulate.equalsIgnoreCase("showdir")){
 			showdir = b;
 			speicher.getConfig().replaceData("Info-Mod.showdir", showdir + "");
-		}else
-		if(valueToManupulate.equalsIgnoreCase("showworldage")){
+		}else if(valueToManupulate.equalsIgnoreCase("showworldage")){
 			showWorldAge = b;
 			speicher.getConfig().replaceData("Info-Mod.showworldage", showWorldAge + "");
+		}else if(valueToManupulate.equalsIgnoreCase("showfmobspawn")){
+			showfriendly = b;
+			speicher.getConfig().replaceData("Info-Mod.showfriendlyspawns", showfriendly + "");
+			if(showfriendly == true){
+				if(lst == null){
+					lst = new LightSearchThread(this);
+					lst.start();
+				}
+			}else if(!showaggressiv){
+				lst.enabled = false;
+				lst = null;
+				blocks.clear();
+			}			
+		}else if(valueToManupulate.equalsIgnoreCase("showamobspawn")){
+			showaggressiv = b;
+			speicher.getConfig().replaceData("Info-Mod.showaggressivspawns", showaggressiv + "");
+			if(showaggressiv == true){
+				if(lst == null){
+					lst = new LightSearchThread(this);
+					lst.start();
+				}
+			}else if(!showfriendly){
+				lst.enabled = false;
+				lst = null;
+				blocks.clear();
+			}
+		}else if(valueToManupulate.equalsIgnoreCase("dynamichsel")){			
+			dynamicselection = b;
+			speicher.getConfig().replaceData("Info-Mod.dynamicselection", dynamicselection + "");
 		}else{
 			System.out.println("Don't know that " + valueToManupulate);
 		}	
@@ -394,6 +440,30 @@ public class InfoMod implements Mod {
 	public void setShowcoor(boolean showcoor) {
 		this.showcoor = showcoor;
 	}
+	public int getRadius() {
+		return Integer.parseInt(LiteModMain.config.getData("InfoMod.radius"));
+	}
+	/**
+	 * Called by every render tick... has to be registered in LiteModMain
+	 * @param float
+	 */
+	public void render(float partialTicks){
+		if(blocks.size() > 0 && enabled){
+			for(int i = 0; i < blocks.size();i++){
+				blocks.get(i).draw(partialTicks);
+			}			
+		}
+		
+	}
+	public boolean isShowingAggressivSpawns() {
+		return showaggressiv;
+	}
+	public boolean isShowingFriendlySpawns() {
+		return showfriendly;
+	}
+	public boolean isDynamic() {
+		return dynamicselection;
+	}
 }
 class InfoModGui extends GuiScreen{
 	
@@ -430,6 +500,14 @@ class InfoModGui extends GuiScreen{
 		GuiBooleanButton showworldage = new GuiBooleanButton(7, 10, 95, 150, 20, "Show WorldAge", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowWorldAge(), "showworldage", ModData.InfoMod, speicher,LiteModMain.lconfig.getData("InfoMod.showworldage").split(";"));
 		GuiChooseStringButton worldagepos = new GuiChooseStringButton(8, width/2+50, 95, 150, 20, "WorldAge-Position", GuiPositions.getPosList(), "posworldage", ModData.InfoMod, speicher,GuiPositions.getPos(((InfoMod)speicher.getMod(ModData.InfoMod.name())).getPosWorldAge()),LiteModMain.lconfig.getData("Main.choosepos").split(";"));
 		
+		
+		GuiBooleanButton showFriendly = new GuiBooleanButton(7, 10, 120, 150, 20, "Mark friendly spawns", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowingFriendlySpawns(), "showfmobspawn", ModData.InfoMod, speicher,LiteModMain.lconfig.getData("InfoMod.showfriendlymobspawn").split(";"));
+		GuiBooleanButton showAggressiv = new GuiBooleanButton(7, 10, 145, 150, 20, "Mark aggressiv spawns", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isShowingAggressivSpawns(), "showamobspawn", ModData.InfoMod, speicher,LiteModMain.lconfig.getData("InfoMod.showaggressivmobspawn").split(";"));
+		
+		GuiBooleanButton dynamic = new GuiBooleanButton(7, width/2+50, 120, 150, 20, "dynamic selection", ((InfoMod)speicher.getMod(ModData.InfoMod.name())).isDynamic(), "dynamichsel", ModData.InfoMod, speicher,LiteModMain.lconfig.getData("InfoMod.dynamicselection").split(";"));
+		
+		
+		
 		GuiButton back = new GuiButton(9, width/2-100,height-50 , "back to game");
 		
 		buttonList.add(showworldage);
@@ -441,11 +519,96 @@ class InfoModGui extends GuiScreen{
 		buttonList.add(showFPS);
 		buttonList.add(showDirection);
 		
+		buttonList.add(showFriendly);
+		buttonList.add(showAggressiv);
+		buttonList.add(dynamic);
+		
 		buttonList.add(back);
 	}
 	protected void keyTyped(char c,int key){			
 			if(key == 65 || key == 1){
 				speicher.getMinecraft().displayGuiScreen(null);		
+		}		
+	}
+}
+class LightSearchThread extends Thread{
+
+	private InfoMod omod;
+	public boolean selectivesearch;
+	public boolean enabled = true;
+	
+	public LightSearchThread(InfoMod omod){
+		this.omod = omod;
+		selectivesearch = Boolean.valueOf(LiteModMain.config.getData("InfoMod.dynamicselection"));
+	}
+	
+	@Override
+	public void run() {
+		while(enabled){
+			updateRenderPos();
+			try {
+				sleep(Long.valueOf(LiteModMain.config.getData("InfoMod.threadsleep")));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}		
+	}	
+	private void updateRenderPos(){	
+		ArrayList<Markables> tempblocks = new ArrayList<Markables>();		
+		
+		double posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
+		double posz = Minecraft.getMinecraft().player.posZ - omod.getRadius()*10;
+			
+		if(selectivesearch){
+			String facing = EnumFacing.fromAngle(Minecraft.getMinecraft().player.rotationYawHead).getName().toUpperCase();				
+			if(facing.equalsIgnoreCase("north")){
+				posz = (Minecraft.getMinecraft().player.posZ +1) - (omod.getRadius()*10)*2;
+				posx = Minecraft.getMinecraft().player.posX - omod.getRadius()*10;
+			}else if(facing.equalsIgnoreCase("south")){
+				posz = Minecraft.getMinecraft().player.posZ;
+			}else if(facing.equalsIgnoreCase("west")){
+				//updaten -
+				posx = (Minecraft.getMinecraft().player.posX +1) - (omod.getRadius()*10)*2;
+				posz = Minecraft.getMinecraft().player.posZ - omod.getRadius()*10;
+			}else if(facing.equalsIgnoreCase("east")){
+				posx = Minecraft.getMinecraft().player.posX;
+			}				
+		}
+		int radius = omod.getRadius()*10;
+		for(double x = posx; x < (posx + (radius)*2);x++){
+			for(double y = Minecraft.getMinecraft().player.posY-(radius); y < Minecraft.getMinecraft().player.posY+(radius);y++){				
+				for(double z = posz; z < (posz + (radius)*2);z++){
+					if(Minecraft.getMinecraft() != null){
+						if(Minecraft.getMinecraft().world != null){
+							if(Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y, z)) != null){
+								Block block = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y, z)).getBlock();
+								if(Block.getIdFromBlock(block) == 0 ){
+									Block blockbelow = Minecraft.getMinecraft().world.getBlockState(new BlockPos(x, y-1, z)).getBlock();
+									if(Block.getIdFromBlock(blockbelow) != 0 && Block.getIdFromBlock(blockbelow) != 31 && Block.getIdFromBlock(blockbelow) != 175 && Block.getIdFromBlock(blockbelow) != 8 && Block.getIdFromBlock(blockbelow) != 9&& Block.getIdFromBlock(blockbelow) != 10&& Block.getIdFromBlock(blockbelow) != 11){
+										if(block != null){
+											int blightlevel = Minecraft.getMinecraft().world.getLight(new BlockPos(x, y, z));
+											if(blightlevel >= 9){
+												if(omod.isShowingFriendlySpawns()){
+													//green: 0.0F,1.0F,0.0F,1.0F													
+													tempblocks.add(new GroundMark(x,y,z,Minecraft.getMinecraft(),0.0F,1.0F,0.0F,1.0F));
+												}												
+											}else if(blightlevel <= 7){
+												if(omod.isShowingAggressivSpawns()){
+													//red: 1.0F,0.0F,0.0F,1.0F
+													tempblocks.add(new GroundMark(x,y,z,Minecraft.getMinecraft(),1.0F,0.0F,0.0F,1.0F));		
+												}																	
+											}else{
+												/*Not used atm maybe later for other settings*/
+											}									
+										}
+									}									
+								}								
+							}							
+						}						
+					}					
+				}
+			}
+			omod.blocks = tempblocks;		
 		}		
 	}
 }
