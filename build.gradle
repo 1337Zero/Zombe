@@ -28,7 +28,7 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 
-version = "0.0.5.8"
+version = "0.0.5.9"
 group = "de.cultcraft.de.zero" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Zombe"
 
@@ -41,7 +41,7 @@ litemod {
     json {
         name = "Zombe"
         mcversion = "1.12"
-        version = "0.0.5.8"
+        version = "0.0.5.9"
         author = "1337Zero"
     }
 }
