@@ -5,9 +5,9 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -36,7 +36,7 @@ public class BlockMark implements Markables {
 		setUpRenderer(partialTicks);
 		
 		Tessellator tessellator = Tessellator.getInstance();
-	    VertexBuffer worldRenderer = tessellator.getBuffer();
+		BufferBuilder worldRenderer = tessellator.getBuffer();
 	    	    
 	    BlockPos blockpos = new BlockPos(x,y,z);
 		IBlockState iblockstate = minecraft.world.getBlockState(blockpos);

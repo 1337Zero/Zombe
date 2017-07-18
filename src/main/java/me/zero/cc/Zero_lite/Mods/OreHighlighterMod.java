@@ -26,9 +26,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -168,7 +168,7 @@ public class OreHighlighterMod implements Mod {
 	 */
 	public void renderBlock(Mark block){
 		 Tessellator tessellator = Tessellator.getInstance();
-		 VertexBuffer worldRenderer = tessellator.getBuffer();
+		 BufferBuilder worldRenderer = tessellator.getBuffer();
 
 		BlockPos blockpos = new BlockPos(block.getX(),block.getY(), block.getZ());
 		IBlockState iblockstate = minecraft.world.getBlockState(blockpos);

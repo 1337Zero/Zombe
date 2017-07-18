@@ -90,7 +90,8 @@ public class SpeedMod implements Mod {
 					}else{
 						speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);
 					}
-						UpdateSpeed(minecraft);									
+						UpdateSpeed(minecraft);		
+						Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerByUsername(Minecraft.getMinecraft().player.getName()).capabilities.disableDamage = true;
 				}
 			}else{
 				if(showspeed){

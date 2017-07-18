@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import com.jcraft.jogg.Buffer;
 import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.gl.GL;
 
@@ -21,10 +22,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -203,7 +205,7 @@ public class MobHighlighterMod implements Mod {
 	public void renderMob(Mark m){
 		//float r,float g,float b,float alpha,double x,double y,double z,double maxy
 	    Tessellator tessellator = Tessellator.getInstance();
-	    VertexBuffer worldRenderer = tessellator.getBuffer();
+	    BufferBuilder worldRenderer = tessellator.getBuffer();
 	    worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
 	    worldRenderer.pos( m.getEntity().posX, m.getEntity().posY,  m.getEntity().posZ).color(m.getR(), m.getG(), m.getB(), m.getAlpha()).endVertex();
 		worldRenderer.pos( m.getEntity().posX, m.getEntity().posY + m.getEntity().getEyeHeight(), m.getEntity().posZ).color(m.getR(), m.getG(), m.getB(), m.getAlpha()).endVertex();

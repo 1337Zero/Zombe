@@ -21,9 +21,12 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.RecipesMapExtending;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
@@ -75,13 +78,15 @@ public class RecipeMod implements Mod {
 	
 		RenderItem itemRenderer = minecraft.getRenderItem();
 		int x = (posx/2)+90;
-		int y = 20;		
+		int y = 20;	
 			for (ItemStack fitem : renderItems) {
 				if(x < mousex & (x + 15) > mousex){
 					if(y < mouseyy & (y +20) > mouseyy){
-						for(int i = 0; i < CraftingManager.getInstance().getRecipeList().size();i++){
-							if(CraftingManager.getInstance().getRecipeList().get(i) instanceof ShapedRecipes){
-								ShapedRecipes src = (ShapedRecipes) CraftingManager.getInstance().getRecipeList().get(i);								
+						int count = 0;						
+						IRecipe r = CraftingManager.getRecipeById(count++);						
+						while(r != null){
+							if(r instanceof ShapedRecipes){
+								ShapedRecipes src = (ShapedRecipes) r;								
 								if(Item.getIdFromItem(fitem.getItem()) == Item.getIdFromItem(src.getRecipeOutput().getItem())){
 									ArrayList<ItemStack> recipe = formatShapedRecipe(getShapedRecipe(src,true), src.getRecipeOutput());
 									if(recipe != null){
@@ -103,12 +108,12 @@ public class RecipeMod implements Mod {
 											}
 											renderposx += 20;
 										}
-										minecraft.fontRendererObj.drawString("Possible recipe:", 0, (posy-(4*15)), 0xFFFFFF);	
+										minecraft.fontRenderer.drawString("Possible recipe:", 0, (posy-(4*15)), 0xFFFFFF);	
 										break;
 									}
 								}
-							}else if(CraftingManager.getInstance().getRecipeList().get(i) instanceof ShapelessRecipes){
-								ShapelessRecipes src = (ShapelessRecipes) CraftingManager.getInstance().getRecipeList().get(i);								
+							}else if(r instanceof ShapelessRecipes){
+								ShapelessRecipes src = (ShapelessRecipes) r;								
 								if(Item.getIdFromItem(fitem.getItem()) == Item.getIdFromItem(src.getRecipeOutput().getItem())){
 									ArrayList<ItemStack> recipe = getShapelessRecipe(src,true);
 									if(recipe != null){
@@ -131,12 +136,14 @@ public class RecipeMod implements Mod {
 											}	
 											renderposx += 20;
 										}
-										minecraft.fontRendererObj.drawString("Possible recipe:", 0, (posy-(4*15)), 0xFFFFFF);	
+										minecraft.fontRenderer.drawString("Possible recipe:", 0, (posy-(4*15)), 0xFFFFFF);	
 										break;
 									}
 								}							
-							}
+							}							
+							r = CraftingManager.getRecipeById(count++);
 						}
+						
 					}
 				}
 				if (x + 15 <= (posx-15)) {
@@ -217,6 +224,18 @@ public class RecipeMod implements Mod {
 			newarray.add(new ItemStack(Item.getItemById(0)));
 			newarray.add(new ItemStack(Item.getItemById(0)));
 			return newarray;
+		}else if(itemid == 333){
+			//modify boat recipe
+			newarray.add(new ItemStack(Item.getItemById(0)));
+			newarray.add(new ItemStack(Item.getItemById(0)));
+			newarray.add(new ItemStack(Item.getItemById(0)));
+			newarray.add(x.get(1));
+			newarray.add(new ItemStack(Item.getItemById(0)));
+			newarray.add(x.get(2));
+			newarray.add(x.get(2));
+			newarray.add(x.get(2));
+			newarray.add(x.get(2));
+			return newarray;
 		}
 		return x;
 	}
@@ -228,45 +247,27 @@ public class RecipeMod implements Mod {
 	 */
 	private ArrayList<ItemStack> getShapedRecipe(ShapedRecipes src,boolean withnull){
 		try{
-			Field f = null;
-			if(LiteLoader.isDevelopmentEnvironment()){
-				f = src.getClass().getDeclaredField("recipeItems");
-			}else{
-				/*
-				 * Search for there code hide system to find the right variable name ...
-				 * should be c if they don't update anything
-				for(Field e : src.getClass().getDeclaredFields()){
-					System.out.println(e);
-				}
-				for(Field e : src.getClass().getFields()){
-					System.out.println(e);
-				}*/
-				f = src.getClass().getDeclaredField("c");
-			}				
-			f.setAccessible(true);
-			ItemStack[] l = (ItemStack[]) f.get(src);
-			ArrayList<ItemStack> recept = new ArrayList<ItemStack>();
-			for (int x = 0; x < l.length; x++) {
-				if(withnull){
-					if (l[x] != null) {
-						recept.add(l[x]);
+			ArrayList<ItemStack> recept = new ArrayList<ItemStack>();			
+			for(Ingredient i : src.getIngredients()){
+				for(ItemStack s  : i.getMatchingStacks()){
+					if(withnull){
+						if (s != null) {
+							recept.add(s);
+						}else{
+							recept.add(new ItemStack(Item.getItemById(0)));
+						}
 					}else{
-						recept.add(new ItemStack(Item.getItemById(0)));
-					}
-				}else{
-					if (l[x] != null) {
-						recept.add(l[x]);
-					}
-				}				
-			}	
+						if (s != null) {
+							recept.add(s);
+						}
+					}				
+				
+				}
+			}
 			return recept;
 		}catch(IllegalArgumentException e){
 			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
 		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}			
 		return null;
@@ -278,41 +279,20 @@ public class RecipeMod implements Mod {
 	 * @return
 	 */
 	private ArrayList<ItemStack> getShapelessRecipe(ShapelessRecipes src,boolean withnull){
-		try{			
-			Field f = null;
-			if(LiteLoader.isDevelopmentEnvironment()){
-				f = src.getClass().getDeclaredField("recipeItems");
-			}else{
-				
-				 //* Search for there code hide system to find the right variable name ...
-				 //* should be b if they don't update anything
-				/*for(Field e : src.getClass().getDeclaredFields()){
-					System.out.println(e);
-				}
-				for(Field e : src.getClass().getFields()){
-					System.out.println(e);
-				}*/
-				f = src.getClass().getDeclaredField("b");
-			}
-			f.setAccessible(true);
-			List<ItemStack> l = (List<ItemStack>) f.get(src);
+		try{		
+			
 			ArrayList<ItemStack> recept = new ArrayList<ItemStack>();
-			for (int x = 0; x < l.size(); x++) {
-				if(Item.getIdFromItem(l.get(x).getItem()) != 0){
-					recept.add(l.get(x));
-				}else{
-					recept.add(new ItemStack(Item.getItemById(0)));
+			
+			
+			for(Ingredient i : src.getIngredients()){
+				for(ItemStack s : i.getMatchingStacks()){
+					recept.add(s);
 				}
-				
 			}
 			return recept;
 		}catch(IllegalArgumentException e){
 			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		}catch (SecurityException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -321,7 +301,6 @@ public class RecipeMod implements Mod {
 	@Override
 	public void use() {
 		if (enabled) {
-			CraftingManager cfl = CraftingManager.getInstance();
 			if (minecraft.currentScreen instanceof GuiCrafting) {
 				//Show Possible Pattern ?
 				if(showCraftingPattern){
@@ -363,13 +342,13 @@ public class RecipeMod implements Mod {
 					}
 				}
 				//Calc what can be craftet
-				if (aktu ) {
+				if (aktu) {
 					try {				
 						olditems.clear();
 						for(int i = 0; i < items.size();i++){
 							olditems.add(items.get(i));
 						}
-						founditems = getOutPuts(cfl, items);
+						founditems = getOutPuts(items);
 						items.clear();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -388,7 +367,7 @@ public class RecipeMod implements Mod {
 				renderItems.clear();	
 				if(founditems.size() > 0){
 					//minecraft.fontRendererObj.drawString("you can craft this:", x, 0, 0xFFFFFF);
-					itemRenderer.renderItemOverlayIntoGUI(minecraft.fontRendererObj, new ItemStack(Item.getItemById(0)), (x + (x/4)), 0, "Possible craft's:");
+					itemRenderer.renderItemOverlayIntoGUI(minecraft.fontRenderer, new ItemStack(Item.getItemById(0)), (x + (x/4)), 0, "Possible craft's:");
 				}
 				for (ItemStack fitem : founditems) {
 					if(fitem != null){
@@ -410,7 +389,7 @@ public class RecipeMod implements Mod {
 	 */
 	private void loadCustomRecipes(){
 		CustomRecipesConfig cfg = LiteModMain.customconfig;
-		CraftingManager cfl = CraftingManager.getInstance();
+	//	CraftingManager cfl = CraftingManager.getInstance();
 		
 		int count = 0;
 				
@@ -457,7 +436,7 @@ public class RecipeMod implements Mod {
 					System.out.println(recipepatternReplacement);
 				}
 			
-				switch(diffrentChars){				
+				/*switch(diffrentChars){				
 					case 1:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
 						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
 						});
@@ -530,7 +509,7 @@ public class RecipeMod implements Mod {
 						recipepatternReplacement[8].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[8].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[8].split("=")[1].split(":")[1]))
 						});	
 						break;
-				}				
+				}		*/		
 			}else{
 				System.out.println("[RecipeMod] error loading recipe");
 			}
@@ -560,66 +539,28 @@ public class RecipeMod implements Mod {
 	 * @return
 	 * @throws IOException
 	 */
-	private ArrayList<ItemStack> getOutPuts(CraftingManager cfl,ArrayList<ItemStack> items) throws IOException {
+	private ArrayList<ItemStack> getOutPuts(ArrayList<ItemStack> items) throws IOException {
 		ArrayList<ItemStack> recip = new ArrayList<ItemStack>();
-		for (int i = 0; i < cfl.getRecipeList().size(); i++) {
-			if (cfl.getRecipeList().get(i) instanceof ShapelessRecipes) {
-				ShapelessRecipes src = (ShapelessRecipes) cfl.getRecipeList().get(i);
-				/*Field f = null;
-				if(LiteLoader.isDevelopmentEnvironment()){
-					f = src.getClass().getDeclaredField("recipeItems");
-				}else{
-					
-					 // Search for there code hide system to find the right variable name ...
-					 // should be b if they don't update anything
-					/for(Field e : src.getClass().getDeclaredFields()){
-						System.out.println(e);
-					}
-					for(Field e : src.getClass().getFields()){
-						System.out.println(e);
-					}
-					f = src.getClass().getDeclaredField("b");
-				}
-				f.setAccessible(true);
-				List<ItemStack> l = (List<ItemStack>) f.get(src);
-				ArrayList<ItemStack> recept = new ArrayList<ItemStack>();
-				for (int x = 0; x < l.size(); x++) {
-					recept.add(l.get(x));
-				}*/
+		
+		int count = 0;
+		IRecipe r = CraftingManager.getRecipeById(count++);
+		
+		while(r != null){
+			if (r instanceof ShapelessRecipes) {
+				ShapelessRecipes src = (ShapelessRecipes) r;
+				
 				if (matchItemStackRezept(items,getShapelessRecipe(src,false),true,Item.getIdFromItem(src.getRecipeOutput().getItem()))) 
 				{
 					recip.add(src.getRecipeOutput());
 				}
-			} else if (cfl.getRecipeList().get(i) instanceof ShapedRecipes && !(cfl.getRecipeList().get(i) instanceof RecipesMapExtending)) {
-				ShapedRecipes src = (ShapedRecipes) cfl.getRecipeList().get(i);
-				/*Field f = null;
-				if(LiteLoader.isDevelopmentEnvironment()){
-					f = src.getClass().getDeclaredField("recipeItems");
-				}else{
-					
-					  Search for there code hide system to find the right variable name ...
-					  should be c if they don't update anything
-					for(Field e : src.getClass().getDeclaredFields()){
-						System.out.println(e);
-					}
-					for(Field e : src.getClass().getFields()){
-						System.out.println(e);
-					}
-					f = src.getClass().getDeclaredField("c");
-				}				
-				f.setAccessible(true);
-				ItemStack[] l = (ItemStack[]) f.get(src);
-				ArrayList<ItemStack> recept = new ArrayList<ItemStack>();
-				for (int x = 0; x < l.length; x++) {
-					if (l[x] != null) {
-						recept.add(l[x]);
-					}
-				}*/
+			} else if (r instanceof ShapedRecipes && !(r instanceof RecipesMapExtending)) {
+				ShapedRecipes src = (ShapedRecipes) r;
 				if (matchItemStackRezept(items,getShapedRecipe(src,false),false,Item.getIdFromItem(src.getRecipeOutput().getItem()))) {
 					recip.add(src.getRecipeOutput());
 				}
 			}
-		}
+			r = CraftingManager.getRecipeById(count++);
+		}			
 		return recip;
 	}
 	/**

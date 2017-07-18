@@ -106,9 +106,9 @@ public class InfoLine {
 		
 		if(pos != GuiPositions.UP_LEFT && pos != GuiPositions.MID_LEFT && pos != GuiPositions.DOWN_LEFT){
 			String info = createInfoLine();
-			minecraft.fontRendererObj.drawString(info, (posx-minecraft.fontRendererObj.getStringWidth(info)), posy, 0xffff0000);	
+			minecraft.fontRenderer.drawString(info, (posx-minecraft.fontRenderer.getStringWidth(info)), posy, 0xffff0000);	
 		}else{
-			minecraft.fontRendererObj.drawString(createInfoLine(), posx, posy, 0xffff0000);
+			minecraft.fontRenderer.drawString(createInfoLine(), posx, posy, 0xffff0000);
 		}			
 	}
 	private String createInfoLine(){

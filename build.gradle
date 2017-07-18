@@ -1,7 +1,13 @@
+apply plugin: 'java'
+
+// dependencies {
+ //  compile group: 'org.javassist', name: 'javassist', version: '3.15.0-GA'
+ //}
+
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
         maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
@@ -13,29 +19,29 @@ buildscript {
         maven {
             name = 'sponge'
             url = 'http://repo.spongepowered.org/maven'
-        }
+        } 
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 
-version = "0.0.5.7"
+version = "0.0.5.8"
 group = "de.cultcraft.de.zero" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Zombe"
 
 minecraft {
-    version = "1.11.2"
-    mappings = "snapshot_20161228"
+    version = "1.12"
+    mappings = "snapshot_20170628"
     runDir = "run"
 }
 litemod {
     json {
         name = "Zombe"
-        mcversion = "1.11.2"
-        version = "0.0.5.6"
+        mcversion = "1.12"
+        version = "0.0.5.8"
         author = "1337Zero"
     }
 }

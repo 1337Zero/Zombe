@@ -37,6 +37,8 @@ public class FlyMod implements Mod{
 	private boolean ignoreshift = true;
 	private boolean nerfcreaetivefly = true;
 	
+	private boolean isfallgod = false;
+	
 	public FlyMod(Minecraft minecraft, LiteModMain speicher) {	
 		this.speicher = speicher;
 		this.minecraft = minecraft;
@@ -63,16 +65,35 @@ public class FlyMod implements Mod{
 			if((System.currentTimeMillis() - lastpressed) >=100){
 				if(flyenabled){
 					flyenabled = false;		
+					minecraft.player.capabilities.allowFlying = false;
+					minecraft.player.capabilities.disableDamage = false;
 					long falltime = calcFallTime();
+					setFallGodMode(true);
 					if(falltime > 0){
-						falltime += (falltime/2);
-						minecraft.getIntegratedServer().getPlayerList().getPlayerByUsername(minecraft.player.getName()).capabilities.disableDamage = true;
-						removeGodLater rgl = new removeGodLater(falltime);
-						rgl.start();
+						if(minecraft.getIntegratedServer() != null){
+							if(minecraft.getIntegratedServer().getPlayerList() != null){
+								if(minecraft.getIntegratedServer().getPlayerList().getPlayerByUsername(minecraft.player.getName()) != null){
+									if(minecraft.getIntegratedServer().getPlayerList().getPlayerByUsername(minecraft.player.getName()).capabilities != null){
+										falltime += (falltime/2);
+										minecraft.getIntegratedServer().getPlayerList().getPlayerByUsername(minecraft.player.getName()).capabilities.disableDamage = true;
+										removeGodLater rgl = new removeGodLater(falltime,this);
+										rgl.start();
+									}
+								}
+							}
+						}else{
+							isfallgod = true;
+							removeGodLater rgl = new removeGodLater(falltime,this);
+							rgl.start();
+						}
 					}		
 					speicher.getInfoLineManager().getInfoLine(pos).resetInfo(infoID);					
-				}else{				
-					flyenabled = true;				
+				}else{		
+					flyenabled = true;		
+					minecraft.player.capabilities.allowFlying = true;
+					minecraft.player.capabilities.disableDamage = true;
+					System.out.println(minecraft.player.capabilities.allowFlying + " : " + minecraft.player.capabilities.isFlying);
+					
 				}
 				speicher.getConfig().replaceData("Fly-Mod.fly-enabled", flyenabled + "");
 			}							
@@ -335,6 +356,12 @@ public class FlyMod implements Mod{
 			return 0;
 		}
 	}
+	public boolean isFallGodmode(){
+		return false;
+	}
+	public void setFallGodMode(boolean b){
+		//isfallgod = b;
+	}
 }
 class FlyModGui extends GuiScreen{
 	
@@ -422,18 +449,24 @@ class FlyModGui extends GuiScreen{
 class removeGodLater extends Thread{
 	
 	long delay = 0;
+	private FlyMod mod;
 	
-	public removeGodLater(long delay) {
+	public removeGodLater(long delay,FlyMod m) {
 		this.delay = delay;
+		this.mod = m;
 	}
+
 	
 	public void run(){
-		System.out.println();
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e) {
 			e.printStackTrace();			
 		}
-		Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerByUsername(Minecraft.getMinecraft().player.getName()).capabilities.disableDamage = false;
+		if(Minecraft.getMinecraft().isSingleplayer()){
+			Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerByUsername(Minecraft.getMinecraft().player.getName()).capabilities.disableDamage = false;
+		}else{
+			mod.setFallGodMode(false);
+		}
 	}	
 }

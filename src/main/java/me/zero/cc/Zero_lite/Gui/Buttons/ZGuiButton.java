@@ -66,7 +66,7 @@ public class ZGuiButton extends GuiButton{
         int posy = tooltipY+10;
         for(String localtext: text){ 
         	//this.drawString(Minecraft.getMinecraft().fontRendererObj, LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
-        	Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(LiteModMain.formateTextColor(localtext), tooltipX+10, posy, 0xFFFFFF);
+        	Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(LiteModMain.formateTextColor(localtext), tooltipX+10, posy, 0xFFFFFF);
         	//Minecraft.getMinecraft().fontRendererObj.drawString(LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
    		 	posy += 10;
    	 	}

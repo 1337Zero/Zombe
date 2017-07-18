@@ -14,8 +14,8 @@ public class GuiUtils {
 		int maxlength = 0;
 		
 		 for(String text: textarray){    
-			 if(Minecraft.getMinecraft().fontRendererObj.getStringWidth(text) > maxlength){
-				 maxlength = Minecraft.getMinecraft().fontRendererObj.getStringWidth(LiteModMain.formateTextColor(text)) + 10;
+			 if(Minecraft.getMinecraft().fontRenderer.getStringWidth(text) > maxlength){
+				 maxlength = Minecraft.getMinecraft().fontRenderer.getStringWidth(LiteModMain.formateTextColor(text)) + 10;
 			 }
 		 }		
 		return maxlength;

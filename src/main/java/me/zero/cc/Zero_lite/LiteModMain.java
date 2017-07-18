@@ -1,6 +1,7 @@
 package me.zero.cc.Zero_lite;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
@@ -30,10 +31,15 @@ import me.zero.cc.Zero_lite.utils.Markables;
 import me.zero.cc.Zero_lite.utils.SelectionHelper;
 import me.zero.cc.Zero_lite.utils.UpdateChecker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.network.play.server.SPacketUpdateHealth;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -45,6 +51,8 @@ import com.mumfrey.liteloader.PostRenderListener;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.core.LiteLoaderEventBroker.ReturnValue;
+
+
 
 public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 
@@ -77,7 +85,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		return "Zombe-Lite";
 	}
 	public String getVersion() {
-		return "1057";
+		return "1058";
 	}
 
 	public void init(File configPath) {	
@@ -90,7 +98,43 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		if(LiteLoader.isDevelopmentEnvironment()){
 			config.replaceData("Main.debug", true + "");
 		}
-		LiteModMain.instance = this;
+		LiteModMain.instance = this;	
+		
+		/*
+		 * System.out.println("overriding maybe ?");
+		
+		try {
+			ClassPool cp = ClassPool.getDefault();
+			//net.minecraft.client.network.NetHandlerPlayClient
+			
+			cp.importPackage("me.zero.cc.Zero_lite.LiteModMain");
+			cp.importPackage("me.zero.cc.Zero_lite.Mods.ModData");
+			cp.importPackage("me.zero.cc.Zero_lite.Mods.FlyMod");
+			
+			CtClass cc = cp.get("net.minecraft.client.network.NetHandlerPlayClient");
+			
+			CtMethod m = cc.getDeclaredMethod("handleUpdateHealth");
+		    
+			
+			
+			//m.insertBefore("{ System.out.println(\"Updating Health\"); }");
+			
+			//m.insertBefore("{FlyMod m=(FlyMod)LiteModMain.instance.getMod(ModData.FlyMod.name());if(m.isFallGodmode())System.out.println(\"Ignoring dmg\");return;}");
+			
+			m.insertBefore("FlyMod m = (FlyMod)LiteModMain.instance.getMod(ModData.FlyMod.name());if(!m.isFallGodmode())System.out.println(\"Ignoring dmg\");if(m.isFallGodmode())System.out.println(\"not Ignoring dmg\");if(!m.isFallGodmode())return;");
+			
+			cc.writeFile();
+			//Whatever but it works
+			Class c = cc.toClass();			
+			
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+		} catch (CannotCompileException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		 */
 	}
 
 	public void upgradeSettings(String version, File configPath,File oldConfigPath) {	
@@ -124,6 +168,8 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			lastSecondMarkPick = System.currentTimeMillis();
 
 			Minecraft.getMinecraft().renderGlobal = new ZLRenderGlobal(minecraft);
+			
+			
 		}
 	}	
 	/**
@@ -155,9 +201,61 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		return mods;
 	}
 
+	boolean injected = false;	
+	
 	public void onTick(Minecraft minecraft, float partialTicks, boolean inGame,	boolean clock) {	
 		initMods(minecraft);
-		if(minecraft.player != null){
+		if(minecraft.player != null){					
+			if(!injected){
+			/*	AbstractClientPlayer ac = (AbstractClientPlayer)minecraft.player;
+				//System.out.println(ac.fallDistance);
+				EntityPlayer ep = (EntityPlayer)ac;
+				//System.out.println(ep.fallDistance);
+				EntityLivingBase elb = (EntityLivingBase)ep;
+				
+				//System.out.println(elb.fallDistance);
+				Entity e = (Entity)elb;
+				e.setEntityInvulnerable(true);
+							*/
+				
+				//change value invulnerable
+			
+				
+			}	
+			 if(!injected){
+				/*  try {			
+						 //Load this from reflections 
+						//Minecraft mc = Minecraft.getMinecraft();
+												
+						
+						Field f = NetHandlerPlayClient.class.getDeclaredField("netManager");
+						Field f1 = NetHandlerPlayClient.class.getDeclaredField("guiScreenServer");
+						Field f2 = NetHandlerPlayClient.class.getDeclaredField("profile");
+						
+						f.setAccessible(true);
+						f1.setAccessible(true);
+						f2.setAccessible(true);
+						
+						NetworkManager nin = (NetworkManager)f.get(minecraft.getConnection());
+						GuiScreen gsc = (GuiScreen)f1.get(minecraft.getConnection());
+						GameProfile pro = (GameProfile)f2.get(minecraft.getConnection());;
+						
+						//Setzte neuen Networkhandler
+						System.out.println("Overriding network mananger");
+						Field con = minecraft.player.getClass().getDeclaredField("connection");
+						con.setAccessible(true);
+						con.set(con, new ZNetHandlerPlayClient(minecraft,gsc,nin,pro));
+					} catch (NoSuchFieldException e1) {
+						e1.printStackTrace();
+					} catch (SecurityException e1) {
+						e1.printStackTrace();
+					} catch (IllegalArgumentException e1) {
+						e1.printStackTrace();
+					} catch (IllegalAccessException e1) {
+						e1.printStackTrace();
+					}*/
+					 injected = true;
+			}
 			ilm.use(minecraft);
 			if(Zombe_config.isKeyDown()){
 				minecraft.displayGuiScreen(new ConfigMainFrame(this));
@@ -259,7 +357,7 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 		String[] messages = msg.split(";");
 		for(String text : messages){
 			Minecraft.getMinecraft().player.sendMessage(new TextComponentString(formateTextColor(prefix + text)));
-		}		
+		}
 	}
 	@Override
 	public boolean onChat(ITextComponent chat, String message, ReturnValue<ITextComponent> newMessage) {
