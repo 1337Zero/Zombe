@@ -33,14 +33,14 @@ group = "de.cultcraft.de.zero" // http://maven.apache.org/guides/mini/guide-nami
 archivesBaseName = "Zombe"
 
 minecraft {
-    version = "1.12"
+    version = "1.12.1"
     mappings = "snapshot_20170628"
     runDir = "run"
 }
 litemod {
     json {
         name = "Zombe"
-        mcversion = "1.12"
+        mcversion = "1.12.1"
         version = "0.0.5.9"
         author = "1337Zero"
     }
