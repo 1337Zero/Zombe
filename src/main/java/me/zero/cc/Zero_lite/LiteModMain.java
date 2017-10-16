@@ -99,42 +99,6 @@ public class LiteModMain implements Tickable, ChatFilter,PostRenderListener{
 			config.replaceData("Main.debug", true + "");
 		}
 		LiteModMain.instance = this;	
-		
-		/*
-		 * System.out.println("overriding maybe ?");
-		
-		try {
-			ClassPool cp = ClassPool.getDefault();
-			//net.minecraft.client.network.NetHandlerPlayClient
-			
-			cp.importPackage("me.zero.cc.Zero_lite.LiteModMain");
-			cp.importPackage("me.zero.cc.Zero_lite.Mods.ModData");
-			cp.importPackage("me.zero.cc.Zero_lite.Mods.FlyMod");
-			
-			CtClass cc = cp.get("net.minecraft.client.network.NetHandlerPlayClient");
-			
-			CtMethod m = cc.getDeclaredMethod("handleUpdateHealth");
-		    
-			
-			
-			//m.insertBefore("{ System.out.println(\"Updating Health\"); }");
-			
-			//m.insertBefore("{FlyMod m=(FlyMod)LiteModMain.instance.getMod(ModData.FlyMod.name());if(m.isFallGodmode())System.out.println(\"Ignoring dmg\");return;}");
-			
-			m.insertBefore("FlyMod m = (FlyMod)LiteModMain.instance.getMod(ModData.FlyMod.name());if(!m.isFallGodmode())System.out.println(\"Ignoring dmg\");if(m.isFallGodmode())System.out.println(\"not Ignoring dmg\");if(!m.isFallGodmode())return;");
-			
-			cc.writeFile();
-			//Whatever but it works
-			Class c = cc.toClass();			
-			
-		} catch (NotFoundException e) {
-			e.printStackTrace();
-		} catch (CannotCompileException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		 */
 	}
 
 	public void upgradeSettings(String version, File configPath,File oldConfigPath) {	
@@ -549,6 +513,15 @@ class ConfigMainFrame extends GuiScreen{
 		}else if(b.displayString.contains("Enable Selection")){
 			lmm.setEnableselection(!lmm.isEnableselection());
 			lmm.getConfig().replaceData("Main.enableSelection", "" + lmm.isEnableselection());			
+		}else if(b.displayString.contains("God Mode")){
+			if(Minecraft.getMinecraft().isSingleplayer()){
+				if(Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerByUsername(Minecraft.getMinecraft().player.getName()).capabilities.disableDamage){
+					Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerByUsername(Minecraft.getMinecraft().player.getName()).capabilities.disableDamage = false;
+				}else{
+					Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerByUsername(Minecraft.getMinecraft().player.getName()).capabilities.disableDamage = true;
+				}
+				lmm.getConfig().replaceData("Main.god", "" + Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerByUsername(Minecraft.getMinecraft().player.getName()).capabilities.disableDamage);	
+			}					
 		}else{
 			Mod mod = lmm.getMod(b.displayString);
 			if(mod != null){
@@ -571,9 +544,12 @@ class ConfigMainFrame extends GuiScreen{
 		}	
 		buttonList.add(new GuiButton(lmm.getMods().size(), width -100, height-20, 100, 20,"back to game..."));
 		
-		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 2, width-150, height-60, 150, 20, "Enable Selection", Boolean.valueOf(lmm.getConfig().getData("Main.enableSelection")), "enableselection", ModData.Nil, lmm,"Enables the Selection Part;Use a &6Wood Shovel;and a &6Wood Axe;to make a Selection".split(";")));
+		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 3, width-150, height-60, 150, 20, "Enable Selection", Boolean.valueOf(lmm.getConfig().getData("Main.enableSelection")), "enableselection", ModData.Nil, lmm,"Enables the Selection Part;Use a &6Wood Shovel;and a &6Wood Axe;to make a Selection".split(";")));
 		
 		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 1, width-100, height-40, 100, 20, "Update-Check", Boolean.valueOf(lmm.getConfig().getData("Main.searchupdates")), "check-updates", ModData.Nil, lmm,"Enables the Update Check;".split(";")));
+		
+		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 2, width-50, height-20, 100, 20, "God Mode", Boolean.valueOf(lmm.getConfig().getData("Main.god")), "godmode", ModData.Nil, lmm,"Enable/Disable SP Godmode;".split(";")));
+			
 	}
 	protected void keyTyped(char c,int key){
 		//F7 equals Button 65, so close Gui on key 65

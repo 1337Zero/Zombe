@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.lwjgl.input.Mouse;
 
@@ -30,6 +31,8 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.RecipesMapExtending;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 
 public class RecipeMod implements Mod {
 
@@ -113,7 +116,7 @@ public class RecipeMod implements Mod {
 									}
 								}
 							}else if(r instanceof ShapelessRecipes){
-								ShapelessRecipes src = (ShapelessRecipes) r;								
+								ShapelessRecipes src = (ShapelessRecipes) r;	
 								if(Item.getIdFromItem(fitem.getItem()) == Item.getIdFromItem(src.getRecipeOutput().getItem())){
 									ArrayList<ItemStack> recipe = getShapelessRecipe(src,true);
 									if(recipe != null){
@@ -388,8 +391,8 @@ public class RecipeMod implements Mod {
 	 * Loads the Recipes out of a file
 	 */
 	private void loadCustomRecipes(){
+		System.out.println("Lade Custom Recipes!");
 		CustomRecipesConfig cfg = LiteModMain.customconfig;
-	//	CraftingManager cfl = CraftingManager.getInstance();
 		
 		int count = 0;
 				
@@ -427,93 +430,29 @@ public class RecipeMod implements Mod {
 			if(!error){
 				ItemStack b = getBlockFromIdAndMeta(Integer.parseInt(recipeoutput.split(":")[0]), Integer.parseInt(recipeoutput.split(":")[1]));
 				b.setCount(Integer.parseInt(recipeoutput.split(":")[2]));
-			
 				if(LiteLoader.isDevelopmentEnvironment()){
 					System.out.println("Creating a recept with " + diffrentChars + " RecipeItems");
 					System.out.println("Target is " + recipepattern[0]);
 					System.out.println("Target is " + recipepattern[1]);
 					System.out.println("Target is " + recipepattern[2]);
 					System.out.println(recipepatternReplacement);
-				}
-			
-				/*switch(diffrentChars){				
-					case 1:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						});
-						break;
-					case 2: cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1]))
-						});
-						break;
-					case 3:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
-						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1]))
-						});
-						break;
-					case 4:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
-						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
-						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1]))
-						});						
-						break;
-					case 5:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
-						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
-						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
-						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1]))
-						});						
-						break;
-					case 6:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
-						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
-						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
-						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1])),
-						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1]))
-						});	
-						break;
-					case 7:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
-						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
-						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
-						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1])),
-						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1])),
-						recipepatternReplacement[6].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[1]))
-						});	
-						break;
-					case 8:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
-						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
-						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
-						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1])),
-						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1])),
-						recipepatternReplacement[6].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[1])),
-						recipepatternReplacement[7].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[1]))
-						});	
-						break;
-					case 9:cfl.addRecipe(b, new Object[] {recipepattern[0], recipepattern[1], recipepattern[2],
-						recipepatternReplacement[0].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[0].split("=")[1].split(":")[1])), 
-						recipepatternReplacement[1].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[1].split("=")[1].split(":")[1])),
-						recipepatternReplacement[2].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[2].split("=")[1].split(":")[1])),
-						recipepatternReplacement[3].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[3].split("=")[1].split(":")[1])),
-						recipepatternReplacement[4].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[4].split("=")[1].split(":")[1])),
-						recipepatternReplacement[5].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[5].split("=")[1].split(":")[1])),
-						recipepatternReplacement[6].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[6].split("=")[1].split(":")[1])),
-						recipepatternReplacement[7].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[7].split("=")[1].split(":")[1])),
-						recipepatternReplacement[8].split("=")[0].charAt(0), getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[8].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[8].split("=")[1].split(":")[1]))
-						});	
-						break;
-				}		*/		
-			}else{
-				System.out.println("[RecipeMod] error loading recipe");
-			}
+				}			
+				ShapelessRecipes sl = new ShapelessRecipes("", b, createIngredientList(recipepatternReplacement, diffrentChars));
+				Random r = new Random();
+				CraftingManager.REGISTRY.register(r.nextInt(10000 - 1000 + 1) + 1000, new ResourceLocation(b.getItem().getUnlocalizedName()), sl);
+				System.out.println("Recipe registered!");
+			}	
 		}		
+	}
+	
+	public NonNullList<Ingredient> createIngredientList(String[] recipepatternReplacement,int diffrentChars){
+		NonNullList<Ingredient> nnl = NonNullList.create();
+		
+		for(int i = 0; i < diffrentChars;i++){
+			Ingredient ig = Ingredient.fromStacks(getBlockFromIdAndMeta(Integer.parseInt(recipepatternReplacement[i].split("=")[1].split(":")[0]), Integer.parseInt(recipepatternReplacement[i].split("=")[1].split(":")[1])));
+			nnl.add(ig);
+		}		
+		return nnl;
 	}
 	/**
 	 * Creates an Itemstack out of an Id can be an Itemstack with Block or Item
@@ -642,7 +581,7 @@ public class RecipeMod implements Mod {
 					}else{
 						items.put(item.getDisplayName() + metadata, item);
 					}
-				}				
+				}
 			}
 		}
 		Collections.sort(itemnames);

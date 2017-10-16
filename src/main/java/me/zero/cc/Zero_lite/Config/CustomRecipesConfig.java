@@ -75,7 +75,7 @@ public class CustomRecipesConfig {
 		bw.write("#This creates a new TNT Recept, for crafting you need: XXX in the first line,XXX in the second line and X#X in the last line of the workbench\n");
 		bw.write("#X will be replaced with 3:0,# will be replaced with 85:0\n");
 		bw.write("#Example2:\n");
-		bw.write("#1~264:0:64;X,X,#;X=3:0,#=1:0");
+		bw.write("1~264:0:64;X,X,#;X=3:0,#=1:0");
 		bw.write("#This creates a new Diamond Recept, for crafting you need: X in the first line,X in the second line and # in the last line of the workbench\n");
 		bw.write("#X will be replaced with 3:0,# will be replaced with 1:0\n");
 		bw.write("###########################################\n");
