@@ -548,7 +548,7 @@ class ConfigMainFrame extends GuiScreen{
 		
 		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 1, width-100, height-40, 100, 20, "Update-Check", Boolean.valueOf(lmm.getConfig().getData("Main.searchupdates")), "check-updates", ModData.Nil, lmm,"Enables the Update Check;".split(";")));
 		
-		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 2, width-50, height-20, 100, 20, "God Mode", Boolean.valueOf(lmm.getConfig().getData("Main.god")), "godmode", ModData.Nil, lmm,"Enable/Disable SP Godmode;".split(";")));
+		buttonList.add(new GuiBooleanButton(lmm.getMods().size() + 2, width-100, height-80, 100, 20, "God Mode", Boolean.valueOf(lmm.getConfig().getData("Main.god")), "godmode", ModData.Nil, lmm,"Enable/Disable SP Godmode;".split(";")));
 			
 	}
 	protected void keyTyped(char c,int key){
