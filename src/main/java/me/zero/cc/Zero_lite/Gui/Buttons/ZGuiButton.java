@@ -1,25 +1,42 @@
 package me.zero.cc.Zero_lite.Gui.Buttons;
 
 
-import com.mumfrey.liteloader.gl.GL;
-
 import me.zero.cc.Zero_lite.LiteModMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class ZGuiButton extends GuiButton{
 
 	private String[] overlayText;
+	private ZGuiInterface in;
 	
-	public ZGuiButton(int id, int x, int y, int width, int height,String label,String[] overlayText) {
+	public ZGuiButton(int id, int x, int y, int width, int height,String label,String[] overlayText,ZGuiInterface in) {
 		super(id, x, y, width, height, label);
 		this.overlayText = overlayText;
-	}
-	protected void mouseDragged(Minecraft mc, int x, int y) {		 
+		this.in = in;
+	}	
+			
+
+	@Override
+	public void render(int mouseX, int mouseY, float partialTicks) {
 		 if(this.isMouseOver()){            	  
-        	 RenderTooltip(x+10, y+10, overlayText);
-         }
+			 renderTooltip((int)x+10, (int)y+50, overlayText);
+		 }
+		super.render(mouseX, mouseY, partialTicks);
+	}	
+	
+	@Override
+	public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
+		if(this.isMouseOver()) {
+			in.actionPerformed(this);
+		}		
+		return super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
 	}
+	@Override
+	public boolean mouseReleased(double arg0, double arg1, int arg2) {
+		return super.mouseReleased(arg0, arg1, arg2);
+	}	
 	/**
 	 * This methode was orignally writte by Zyin055
 	 * <a href=https://github.com/Zyin055/zyinhud/blob/master/src/main/java/com/zyin/zyinhud/gui/GuiTooltipScreen.java>https://github.com/Zyin055/zyinhud/blob/master/src/main/java/com/zyin/zyinhud/gui/GuiTooltipScreen.java</a>
@@ -27,16 +44,16 @@ public class ZGuiButton extends GuiButton{
 	 * @param y
 	 * @param text
 	 */
-	protected void RenderTooltip(int x, int y, String[] text){	
+	protected void renderTooltip(int x, int y, String[] text){	
         int tooltipX = x -10;
         int tooltipY = y -10;
         int tooltipWidth = GuiUtils.maxStringLength(text) +10;
         int tooltipHeight = 10 + (text.length * 10);
         
-        if(GuiUtils.isOverScreenWidth(Minecraft.getMinecraft(), (tooltipWidth + x-5))){
+        if(GuiUtils.isOverScreenWidth(Minecraft.getInstance(), (tooltipWidth + x-5))){
             tooltipX = x - tooltipWidth -15;
         }
-        if(GuiUtils.isOverScreenHeight(Minecraft.getMinecraft(), (tooltipHeight + y-5))){
+        if(GuiUtils.isOverScreenHeight(Minecraft.getInstance(), (tooltipHeight + y-5))){
             tooltipY = y -tooltipHeight -15;
         }
         
@@ -62,15 +79,15 @@ public class ZGuiButton extends GuiButton{
         drawGradientRect(tooltipX, tooltipY + tooltipHeight + 5, tooltipX + tooltipWidth + 7, tooltipY + tooltipHeight + 6, outerAlpha2, outerAlpha2);
      
         this.zLevel = tempzlevel;
-        GL.glDisableDepthTest();
+        GlStateManager.disableDepthTest();
         int posy = tooltipY+10;
         for(String localtext: text){ 
-        	//this.drawString(Minecraft.getMinecraft().fontRendererObj, LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
-        	Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(LiteModMain.formateTextColor(localtext), tooltipX+10, posy, 0xFFFFFF);
-        	//Minecraft.getMinecraft().fontRendererObj.drawString(LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
+        	//this.drawString(Minecraft.getInstance().fontRendererObj, LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
+        	Minecraft.getInstance().fontRenderer.drawStringWithShadow(LiteModMain.formateTextColor(localtext), tooltipX+10, posy, 0xFFFFFF);
+        	//Minecraft.getInstance().fontRendererObj.drawString(LiteModMain.formateTextColor(localtext), x, posy, 0xFFFFFF);
    		 	posy += 10;
    	 	}
-        
-        GL.glEnableDepthTest();
+
+        GlStateManager.enableDepthTest();
 	}
 }

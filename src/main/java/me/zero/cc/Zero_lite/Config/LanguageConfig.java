@@ -7,7 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
 
-import com.mumfrey.liteloader.core.LiteLoader;
+import me.zero.cc.Zero_lite.LiteModMain;
+
 
 public class LanguageConfig {
 
@@ -18,13 +19,13 @@ public class LanguageConfig {
 	"Main.updateMSG:&4A new Lite-Zombe Version is avaible: <urlversion>","Main.choosepos:Choose the &6Position;of the &6Info-Textline","Main.betaMSG:You are running beta version <urlversion>!;Please report bugs and errors!","Main.updatedMSG:Your are running the newest Version;Zombe-Lite (<urlversion>)",
 	"Selection.firstmark:&6Set Firstmark to (<x>;<y>;<z>)","Selection.secondmark:&6Set Secondmark to (<x>;<y>;<z>)","Selection.selected:Selected <size> Blocks",
 	"FlyMod.changeflyvalue:Change the Speed for flying;&6Up &fand &6Down","FlyMod.togglefly:Enable the Toggle-Flymod;Fly only works if &4both&f Buttons;&6Enable &fand &6Flydown or Up &fare pressed","FlyMod.enablefly:Enable &6Flymod","FlyMod.ignoreshift:If &6enabled&f, this will slow you down;if you press &6shift&f and &6flyup- &for &6down&f key","FlyMod.nerfswim:Disables the '&6swim&f' effect;for creative Fly;&6Flymod&f can be &4disabled&f to use this","FlyMod.chooseflyup:Choose the &6key&f for flying up","FlyMod.chooseflydown:Choose the &6key&f for flying down","FlyMod.enable:Choose the &6key;for &6enable/disable&f Flymod","FlyMod.Flyinfo:Displays the &6fly-speed-value",
-	"InfoMod.showdir:Displays your looking &6direction","InfoMod.showfps:Displays a &6fps &fcounter","InfoMod.showcoor:Displays your &6x,y,z&f Coordinates","InfoMod.showworldage:Displays the &6World Age","InfoMod.showfriendlymobspawn:Marks possible spawns for friendly Entities","InfoMod.showaggressivmobspawn:Marks possible spawns for aggressiv Entities","InfoMod.dynamicselection:Only checks &4blocks&f you can &4see",
+	"InfoMod.showdir:Displays your looking &6direction","InfoMod.showfps:Displays a &6fps &fcounter","InfoMod.showcoor:Displays your &6x,y,z&f Coordinates","InfoMod.showworldage:Displays the &6World Age","InfoMod.showfriendlymobspawn:Marks possible spawns for friendly Entities","InfoMod.showaggressivmobspawn:Marks possible spawns for aggressiv Entities","InfoMod.dynamicselection:Only checks &4blocks&f you can &4see","InfoMod.showblock:Displays the ID of the block u are looking at",
 	"LightMod.togglelight:Enable the &6LightMod","LightMod.enable:Choose the &6key&f to enable",
-	"MobHighLighter.toggle:Enable &6Mobhighlighter","MobHighLighter.chooseonkey:Choose the &6key&f to enable","MobHighLighter.showinfo:Display the &6Amount&f of marked &6Mobs",
+	"MobHighLighter.toggle:Enable &6Mobhighlighter","MobHighLighter.chooseonkey:Choose the &6key&f to enable","MobHighLighter.showinfo:Display the &6Amount&f of marked &6Mobs","MobHighlighter.showUnknownMobs:Displays a List with unknown Mobs around",
 	"OreHighLighter.toggle:Enable &6OreHighLighter","OreHighLighter.radius:Set the &6Radius for &6OreHighLighter","OreHighLighter.chooseonkey:Choose the the &6key; to enable","OreHighLighter.choosecavekey:Choose the the &6key; to see through Walls","OreHighLighter.showinfo:Displays the &6Radius","OreHighLighter.dynamicselection:Only checks &4blocks&f you can &4see","OreHighLighter.easymark:Uses &62&f instead of &64&f Marks per Block","OreHighLighter.deepness:Change how &6far&f to look into the ground",
 	"PathMod.toggle:Enable &6PathMod","PathMod.enablekey:Choose the &6key;to enable &6Pathmod","PathMod.showinfo:Displays the &6Amount&f of &6Marks","PathMod.seethroughwall:Enable see &6Pathmarks through &6walls",
 	"RangeMod.togglereachplace:Enable &6Placing Blocks&f over distance","RangeMod.togglereachbreak:Enable &6breaking Blocks&f over distance","RangeMod.togglereachpick:Enable &6Picking Blocks;over distance","RangeMod.marker:&6Marks&f the &6Block;you are looking at","RangeMod.dropblock:Let &6Blocks drop items","RangeMod.removefrominv:Enable &6removing Items;from &6Inventory","RangeMod.addtoinv:&6Get blocks &fyou break","RangeMod.range:Set the &6Range Value","RangeMod.chooseplacekey:Choose the key to &6enable Reachplace","RangeMod.choosepickkey:Choose the key to;&6enable Reachpick","RangeMod.choosebreakkey:Choose the key to &6enable Reachbreak","RangeMod.showinfo:Displays the &6Range Value",
-	"RecipeMod.enable:Enable &6RecipeMod","RecipeMod.loadcustomrecipes:Enable &6loading CustomRecipes;from your &6config","RecipeMod.showcraftinpattern:Displays possible &6Pattern for crafting Recipes;if you &6overlay &fpossible &6Craftingoutputs",
+	"RecipeMod.enable:Enable &6RecipeMod","RecipeMod.loadcustomrecipes:&6Load your CustomRecipes;from your &6config","RecipeMod.showcraftinpattern:Displays possible &6Pattern for crafting Recipes;if you &6overlay &fpossible &6Craftingoutputs",
 	"SpeedMod.choosespeed:Choose your &6horizontal moving Speed","SpeedMod.togglespeed:Enable &6Toggle Speed;Speed only works if &4both&f Buttons;&6Enable &fand &6move&f are pressed","SpeedMod.enablespeed:Enable &6Speedmod","SpeedMod.inteligendmode:&6Slows&f you &6down &fif you are &6looking up or down","SpeedMod.showinfo:Displays the &6Speed Value","SpeedMod.choosespeedkey:Choose the &6key&f to &6enable SpeedMod",
 	"TimeMod.freezetime:Enable &6Time freezing","TimeMod.addtime:Choose the Button to &6add 240","TimeMod.removetime:Choose the key to &6remove 240","TimeMod.multiplier:How fast should the &6time pass by&f ?","TimeMod.enable:Enable &6Timemod","TimeMod.showinfo:Displays the &6summed added time","TimeMod.choosefreeze:Choose the &6key&f to Freeze the Time",
 	""
@@ -39,7 +40,7 @@ public class LanguageConfig {
 		path = System.getProperty("user.dir");
 		path = path + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe";
 		try {
-			if(!LiteLoader.isDevelopmentEnvironment()){
+			if(!LiteModMain.isDev()){
 				loadConfig();
 			}
 			
@@ -101,7 +102,7 @@ public class LanguageConfig {
 	 * @throws Exception 
 	 */
 	private void saveConfig(String changedpart) throws Exception{
-		if(!LiteLoader.isDevelopmentEnvironment()){
+		if(!LiteModMain.isDev()){
 			File config_File = new File(path + System.getProperty("file.separator") + "language.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){

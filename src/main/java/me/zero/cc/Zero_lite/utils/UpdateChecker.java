@@ -34,7 +34,7 @@ public class UpdateChecker extends Thread{
          
         try {
 
-			this.sleep(10000);
+			Thread.sleep(10000);
             reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
             
             String readed = reader.readLine();

@@ -42,7 +42,7 @@ public class InfoLineManager {
 	 * @return InfoLine
 	 */
 	public InfoLine getInfoLine(GuiPositions pos){		
-		return getInfoLine(pos.getPos(pos));
+		return getInfoLine(GuiPositions.getPos(pos));
 	}
 	
 }

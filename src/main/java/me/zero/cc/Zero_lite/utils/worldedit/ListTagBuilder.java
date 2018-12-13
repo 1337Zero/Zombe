@@ -97,7 +97,8 @@ public class ListTagBuilder {
      *
      * @return a new builder
      */
-    public static <T extends Tag> ListTagBuilder createWith(T ... entries) {
+    @SafeVarargs
+	public static <T extends Tag> ListTagBuilder createWith(T ... entries) {
         checkNotNull(entries);
 
         if (entries.length == 0) {

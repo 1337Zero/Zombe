@@ -1,6 +1,6 @@
 package me.zero.cc.Zero_lite.utils;
 
-import com.mumfrey.liteloader.core.LiteLoader;
+import me.zero.cc.Zero_lite.LiteModMain;
 
 public enum Mobs {
 	//The first value represent the Compiled name of the Class, the second is the name given from config
@@ -61,7 +61,7 @@ public enum Mobs {
 	public static String getClassNameFromString(String mob){
 		if(mob != null){
 			
-			if(LiteLoader.isDevelopmentEnvironment()){
+			if(LiteModMain.isDev()){
 				return mob.replace("Entity", "");
 			}
 			

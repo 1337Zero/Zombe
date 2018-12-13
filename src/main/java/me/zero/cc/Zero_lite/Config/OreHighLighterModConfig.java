@@ -6,26 +6,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
-
-import com.mumfrey.liteloader.core.LiteLoader;
+import me.zero.cc.Zero_lite.LiteModMain;
 
 public class OreHighLighterModConfig {
 
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Blocklist:14,15,16,21,56,73,74,129,153,35-5",
+			"Blocklist:gold_ore,iron_ore,coal_ore,lapis_ore,diamond_ore,redstine_ore,emerald_ore,nether_quartz_ore,light_blue_wool",
 								
-			"Color.14:1.0F, 0.84F, 0.0F, 1.0F",
-			"Color.15:0.82F, 0.41F, 0.11F, 1.0F",
-			"Color.16:0.0F, 0.0F, 0.0F, 1.0F",
-			"Color.21:0.46F, 0.53F, 0.6F, 1.0F",
-			"Color.56:0.0F, 0.74F, 1.0F, 1.0F",
-			"Color.73:1.0F, 0.0F, 0.0F, 1.0F",
-			"Color.74:1.0F, 0.0F, 0.0F, 1.0F",
-			"Color.129:0.26F, 0.8F, 0.5F, 1.0F",
-			"Color.153:0.78F, 0.78F, 0.78F, 1.0F",
-			"Color.35-5:1.0F, 0.78F, 0.78F, 0.5F"
+			"Color.gold_ore:1.0F, 0.84F, 0.0F, 1.0F",
+			"Color.iron_ore:0.82F, 0.41F, 0.11F, 1.0F",
+			"Color.coal_ore:0.0F, 0.0F, 0.0F, 1.0F",
+			"Color.lapis_ore:0.46F, 0.53F, 0.6F, 1.0F",
+			"Color.diamond_ore:0.0F, 0.74F, 1.0F, 1.0F",
+			"Color.redstine_ore:1.0F, 0.0F, 0.0F, 1.0F",
+			"Color.emerald_ore:0.26F, 0.8F, 0.5F, 1.0F",
+			"Color.nether_quartz_ore:0.78F, 0.78F, 0.78F, 1.0F",
+			"Color.light_blue_wool:1.0F, 0.78F, 0.78F, 0.5F"
 			);
 	/*private List<String> defaultconfig = Arrays.asList(
 			"Blocklist:14,15,16,21,56,73,74,129,153,35-5,54,130,146,61,62,23,158,154,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,117,69,77,70,72,132,147,148,90,119,209,166,137,210,211,255",
@@ -86,7 +84,7 @@ public class OreHighLighterModConfig {
 		path = System.getProperty("user.dir");
 		path = path + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe";
 		try {
-			if(!LiteLoader.isDevelopmentEnvironment()){
+			if(!LiteModMain.isDev()){
 				loadConfig();
 			}
 			
@@ -147,7 +145,7 @@ public class OreHighLighterModConfig {
 	 * @throws Exception 
 	 */
 	private void saveConfig(String changedpart) throws Exception{
-		if(!LiteLoader.isDevelopmentEnvironment()){
+		if(!LiteModMain.isDev()){
 			File config_File = new File(path + System.getProperty("file.separator") + "Orehighlighter.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){
@@ -166,7 +164,7 @@ public class OreHighLighterModConfig {
 	public String getData(String key){
 		String back = "";
 		if(data.get(key) == null){
-			if(!LiteLoader.isDevelopmentEnvironment()){
+			if(!LiteModMain.isDev()){
 				System.out.println(key + " was not found in your config,i will try update it for you ;D");
 			}
 			for(int i = 0; i < defaultconfig.size();i++){

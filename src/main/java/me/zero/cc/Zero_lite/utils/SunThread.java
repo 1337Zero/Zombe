@@ -30,18 +30,19 @@ public class SunThread extends Thread{
 				}
 				if(freezetime){
 					if((freezedtime) >= 24000){
-						minecraft.world.setWorldTime((freezedtime)-24000);	
+						//minecraft.world.setGameTime((freezedtime)-24000);
+						minecraft.world.setDayTime((freezedtime)-24000);
 					}else{
-						minecraft.world.setWorldTime((freezedtime));	
+						minecraft.world.setDayTime((freezedtime));
 					}				
 				}else{
 					if((realtime + time2add) >= 24000 ){
-						minecraft.world.setWorldTime((realtime + time2add)-24000);
+						minecraft.world.setDayTime((realtime + time2add)-24000);
 					}else{
-						minecraft.world.setWorldTime(realtime + time2add);
+						minecraft.world.setDayTime(realtime + time2add);
 					}
 				}	
-				this.yield();
+				Thread.yield();
 		}
 	}
 	/**

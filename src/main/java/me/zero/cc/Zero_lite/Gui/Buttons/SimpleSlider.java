@@ -6,12 +6,12 @@ import org.lwjgl.opengl.GL11;
 
 
 import me.zero.cc.Zero_lite.LiteModMain;
-import me.zero.cc.Zero_lite.Mods.RangeMod;
-import me.zero.cc.Zero_lite.Mods.FlyMod;
-import me.zero.cc.Zero_lite.Mods.ModData;
-import me.zero.cc.Zero_lite.Mods.OreHighlighterMod;
-import me.zero.cc.Zero_lite.Mods.SpeedMod;
-import me.zero.cc.Zero_lite.Mods.TimeMod;
+import me.zero.cc.Zero_lite.mods.FlyMod;
+import me.zero.cc.Zero_lite.mods.ModData;
+import me.zero.cc.Zero_lite.mods.OreHighlighterMod;
+import me.zero.cc.Zero_lite.mods.RangeMod;
+import me.zero.cc.Zero_lite.mods.SpeedMod;
+import me.zero.cc.Zero_lite.mods.TimeMod;
 import net.minecraft.client.Minecraft;
 
 public class SimpleSlider extends ZGuiButton{
@@ -27,9 +27,10 @@ public class SimpleSlider extends ZGuiButton{
       private ModData modname;
       private String valueToManupulate;
       private LiteModMain speicher;
+      private double percent = 0.0;
       
-	public SimpleSlider(int id, int x, int y, String label, double startingValue,int width,int height,ModData modname,String valueNameToManupulate,LiteModMain speicher,String[] overlayText) {
-		super(id, x, y, width, height, label, overlayText);		
+	public SimpleSlider(int id, int x, int y, String label, double startingValue,int width,int height,ModData modname,String valueNameToManupulate,LiteModMain speicher,String[] overlayText,ZGuiInterface in) {
+		super(id, x, y, width, height, label, overlayText, in);		
 		xstart = x;
 		xPosition = (int) ((((double)width/10.0)*(double)startingValue) + (double)xstart);
 		if(xPosition +8 > (xstart + width)){
@@ -62,24 +63,40 @@ public class SimpleSlider extends ZGuiButton{
 		this.modname = modname;
 		this.speicher = speicher;
 	}
-	protected void mouseDragged(Minecraft mc, int x, int y) {			
-         if (this.enabled){        	 
-        	 if (this.dragging){          	
-                 if(xstart < x && (xstart + width) > x){
-                	 xPosition = x;
-                	 if((xPosition+8) > (xstart + width)){
-                		 xPosition = (xstart + width)-8;
-                	 }
-                 }
-        	 }                	 
-        	 this.displayString = txt;          	 
-        	 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        	 //240:54 - 352:144
-        	 this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 66, 4, 20);
-             this.drawTexturedModalRect(this.xPosition + 4, this.yPosition, 196, 66, 4, 20);
-         }
-         super.mouseDragged(mc, x, y);
-	}	
+	
+	@Override
+	public void render(int x, int y, float partialTicks) {
+		super.render(x, y, partialTicks);		
+		if (this.enabled){
+			if (this.dragging){         	
+				if(xstart < x && (xstart + width) > x){
+					xPosition = (int) x;
+               	 	if((xPosition+8) > (xstart + width)){
+               	 		xPosition = (xstart + width)-8;
+               	 	}
+                }
+       	 	}      
+			if(percent != getPercent()) {
+				//changed value
+				speicher.getMod(modname.name()).manupulateValue(valueToManupulate, getPercent());
+		       	double value = getValue();
+				NumberFormat df = NumberFormat.getInstance();
+				df.setMaximumFractionDigits(2);
+				this.setText(valueToManupulate + ": " + df.format(value));
+				percent = getPercent();
+			}
+	       	 
+	       	this.displayString = txt;          	 
+	       	//240:54 - 352:144
+	       	Minecraft.getInstance().getTextureManager().bindTexture(BUTTON_TEXTURES);
+	       	GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+	       	
+	       	drawTexturedModalRect(xPosition, yPosition, 0, 66, 4, 20);
+	       	drawTexturedModalRect(xPosition + 4, yPosition,  196, 66, 4, 20);
+	      }else {
+			System.out.println("not enabled");
+		}
+	}
 	/**
 	 * Set the text of the Slider
 	 * @param text, the Label of the Slider
@@ -94,8 +111,19 @@ public class SimpleSlider extends ZGuiButton{
 	public String getText(){
 		return txt;
 	}
-	
-	 public boolean mousePressed(Minecraft mc, int x, int y) {
+	@Override
+	public boolean mouseClicked(double x, double y, int p_mouseClicked_5_) {
+		if(this.isMouseOver()) {
+			if(y > yPosition && y < (yPosition + height)){
+				 if(x > xstart && x < (xstart + width)){
+					 this.dragging = true;
+					 return true;
+				 }				 
+			 }
+		}		
+		return super.mouseClicked(x, y, p_mouseClicked_5_);
+	}
+	/*protected boolean mousePressed(double x, double y) {
 		 if(y > yPosition && y < (yPosition + height)){
 			 if(x > xstart && x < (xstart + width)){
 				 this.dragging = true;
@@ -103,14 +131,22 @@ public class SimpleSlider extends ZGuiButton{
 			 }
 			 
 		 }
-		 return false;
-	 } 
-	 public void mouseReleased(int x, int y) {
+		 return super.mousePressed(x, y);
+	 } */
+	 public boolean mouseReleased(double x, double y, int c) {
 		 this.dragging = false;
 		 if(xstart < x && (xstart + width)-8 > x){
-        	xPosition = x;
+        	xPosition = (int)x;
          }
 		 speicher.getMod(modname.name()).manupulateValue(valueToManupulate, getPercent());
+		 double value = getValue();
+		 NumberFormat df = NumberFormat.getInstance();
+		 df.setMaximumFractionDigits(2);
+		 this.setText(valueToManupulate + ": " + df.format(value));
+		 percent = getPercent(); 
+		 return super.mouseReleased(x, y, c);
+	 }	
+	 private double getValue() {
 		 double value = 0;
 		 if(modname.name().equalsIgnoreCase(ModData.FlyMod.name())){
 			 value =  ((FlyMod)speicher.getMod(modname.name())).getFlyValue();
@@ -126,16 +162,14 @@ public class SimpleSlider extends ZGuiButton{
 			 }			 
 		 }else if(modname.name().equalsIgnoreCase(ModData.RangeMod.name())){
 			 value = ((RangeMod)speicher.getMod(ModData.RangeMod.name())).getRange();
-		 }		
-		 NumberFormat df = NumberFormat.getInstance();
-		 df.setMaximumFractionDigits(2);
-		 this.setText(valueToManupulate + ": " + df.format(value));
-	 }	 
+		 }	
+		 return value;
+	 }
 	 /**
 	  * 
 	  * @return the value in percent where the sliders is at the moment,not 100% accurate
 	  */
-	 public double getPercent(){		
+	 public double getPercent(){
 		 int xvalue = 0;
 		 if(xPosition == (xstart + width -8)){
 			 xvalue = xPosition + 8;

@@ -1,8 +1,8 @@
 package me.zero.cc.Zero_lite.Gui.Buttons;
 
-import org.lwjgl.input.Keyboard;
+import java.awt.event.KeyEvent;
 
-import net.minecraft.client.Minecraft;
+
 
 public class GuiChooseKeyButton extends ZGuiButton{
 	private int buttonkey = 0;
@@ -13,9 +13,11 @@ public class GuiChooseKeyButton extends ZGuiButton{
 	private String txt = "";
 	private String buttonname = "";
 	private boolean waiting = false;
+	private ZGuiInterface zi;
 	
-	public GuiChooseKeyButton(int id, int x, int y, int width, int height,String label, int buttonkey,String[] overlayText){
-		super(id, x, y, width, height, label, overlayText);		
+	
+	public GuiChooseKeyButton(int id, int x, int y, int width, int height,String label, int buttonkey,String[] overlayText,ZGuiInterface in){
+		super(id, x, y, width, height, label, overlayText,in);		
 		this.buttonkey = buttonkey;
 		this.xstart = x;
 		this.ystart = y;
@@ -23,25 +25,37 @@ public class GuiChooseKeyButton extends ZGuiButton{
 		this.height = height;
 		this.txt = label;
 		this.buttonname = label;
-		setLabel(label + ": " + Keyboard.getKeyName(this.buttonkey));
+		this.zi = in;
+		setLabel(label + ": " + makeBetterReadable(buttonkey));
 	}
-	protected void mouseDragged(Minecraft mc, int x, int y) {
+	private String makeBetterReadable(int key) {
+		String name = KeyEvent.getKeyText(buttonkey);
+		if(name.length() > 10) {
+			return "" + key;
+		}
+		return name;
+	}
+
+	@Override
+	public void render(int x, int y, float partialTicks) {
+		super.render(x, y, partialTicks);		
 		if(waiting){
 			this.displayString = buttonname + " waiting...";
 		}else{
-			this.displayString = buttonname + ": " + Keyboard.getKeyName(buttonkey);
+			this.displayString = buttonname + ": " + makeBetterReadable(buttonkey);
 		}
-		super.mouseDragged(mc, x, y);
 	}
-	public boolean mousePressed(Minecraft mc, int x, int y) {			
-		 if(x > xstart && x < (xstart + width)){			 
+	@Override
+	public boolean mouseClicked(double x, double y, int p_mouseClicked_5_) {
+		if(x > xstart && x < (xstart + width)){			 
 			 if(y > ystart && y < (ystart + height)){				 
 				 waiting = true;
 				 this.displayString = buttonname + " waiting...";
+				 zi.actionPerformed(this);
 				 return true;
 			 }			 
 		 }		 
-		 return false;
+		return super.mouseClicked(x, y, p_mouseClicked_5_);
 	}
 	/**
 	 * Set the text of the Button
@@ -72,4 +86,7 @@ public class GuiChooseKeyButton extends ZGuiButton{
 		waiting = false;
 		this.buttonkey = buttonkey;
 	}	
+	public void pressKey(int key) {
+		
+	}
 }

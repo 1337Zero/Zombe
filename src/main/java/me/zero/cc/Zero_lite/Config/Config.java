@@ -8,24 +8,24 @@ import java.io.FileWriter;
 import java.util.*;
 
 
-import com.mumfrey.liteloader.core.LiteLoader;
+import me.zero.cc.Zero_lite.LiteModMain;
 
 public class Config {
 
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Main.searchupdates:true","Main.debug:false","Main.cmdControlCharacter:#","Main.selectionR:1.0F","Main.selectionG:1.0F","Main.selectionB:1.0F","Main.selectionAlpha:0.5F","Main.enableSelection:true","Main.firstMarkR:1.0F","Main.firstMarkG:0.0F","Main.firstMarkB:1.0F","Main.firstMarkAlpha:1.0F","Main.secondMarkR:0.0F","Main.secondMarkG:1.0F","Main.secondMarkB:1.0F","Main.secondMarkAlpha:1.0F","Main.god:false",
-			"Fly-Mod.Key-Down:16","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:57","Fly-Mod.key-Toggle-fly:46","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false","Fly-Mod.nerfcreaetivefly:false",
-			"Speed-Mod.Toggle-speed:21","Speed-Mod.maxspeed:10","Speed-Mod.speed:1","Speed-Mod.showspeed:true","Speed-Mod.speed-Pos:UP_LEFT","Speed-Mod.togglespeed:false","Speed-Mod.speed-enabled:false","Speed-Mod.enabled:false","Speed-Mod.intelligentmode:false",
-			"Info-Mod.FPS-Pos:UP_CENTER","Info-Mod.showFPS:false","Info-Mod.Dir-POS:UP_RIGHT","Info-Mod.showdir:false","Info-Mod.Coor-Pos:UP_RIGHT","Info-Mod.showcoor:false","Info-Mod.Worldage-Pos:UP_LEFT","Info-Mod.showworldage:false","InfoMod.threadsleep:1000","InfoMod.radius:2","Info-Mod.showfriendlyspawns:false","Info-Mod.showaggressivspawns:false","Info-Mod.dynamicselection:true",
-			"Light-Mod.Toggle-Light:38","Light-Mod.lightmod-enabled:false",
-			"Time-Mod.Key-addtime:78","Time-Mod.Key-subtime:74","Time-Mod.Key-freezetime:55","Time-Mod.timetoadd:0","Time-Mod.Time-Mod-enabled:false","Time-Mod.time-freezed:false","Time-Mod.time-multiplier:0","Time-Mod.showTimeinfo:false","Time-Mod.showtimepos:UP_CENTER",
-			"RecipeMod.Enabled:false","RecipeMod.loadCustomRecipes:false","RecipeMod.showCraftingPattern:false",
-			"MobHighlighter.enabled:false","MobHighlighter.Toggle-Mobhighlighter:55","MobHighlighter.info-Pos:UP_LEFT","MobHighlighter.showinfo:false",
-			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:27","OreHighlighter.Toggle-Cave:13","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2","OreHighlighter.selectivesearch:false","OreHighlighter.threadsleep:1000",
-			"PathMod.info-Pos:UP_LEFT","PathMod.showinfo:false","PathMod.enabled:false","PathMod.Toggle-PathMod:11","PathMod.seethroughwall:true","PathMod.mark.r:1.0F","PathMod.mark.g:0.0F","PathMod.mark.b:1.0F","PathMod.mark.alpha:1.0F",
-			"RangeMod.Range:16","RangeMod.DropBlock:false","RangeMod.MarkBlock:false","RangeMod.removefrominventory:true","RangeMod.addtoinventory:true","RangeMod.placedelay:125","RangeMod.destroydelay:125","RangeMod.reachbreak:false","RangeMod.reachplace:false","RangeMod.reachbreakonkey:12","RangeMod.reachplaceonkey:52","RangeMod.showinfo:false","RangeMod.info-Pos:UP_LEFT","RangeMod.reachpick:false","RangeMod.pickdelay:250","RangeMod.reachpickonkey:55");
+			"Main.searchupdates:true","Main.debug:false","Main.cmdControlCharacter:#","Main.selectionR:1.0F","Main.selectionG:1.0F","Main.selectionB:1.0F","Main.selectionAlpha:0.5F","Main.enableSelection:true","Main.firstMarkR:1.0F","Main.firstMarkG:0.0F","Main.firstMarkB:1.0F","Main.firstMarkAlpha:1.0F","Main.secondMarkR:0.0F","Main.secondMarkG:1.0F","Main.secondMarkB:1.0F","Main.secondMarkAlpha:1.0F","Main.god:false","Main.openkey:296",
+			"Fly-Mod.Key-Down:81","Fly-Mod.ignoreshift:false","Fly-Mod.Key-Up:32","Fly-Mod.key-Toggle-fly:67","Fly-Mod.flyspeed:1","Fly-Mod.maxflyspeed:10","Fly-Mod.showfly:true","Fly-Mod.fly-Pos:UP_LEFT","Fly-Mod.fly-enabled:false","Fly-Mod.toggle-fly:false","Fly-Mod.nerfcreaetivefly:false",
+			"Speed-Mod.Toggle-speed:90","Speed-Mod.maxspeed:10","Speed-Mod.speed:1","Speed-Mod.showspeed:true","Speed-Mod.speed-Pos:UP_LEFT","Speed-Mod.togglespeed:false","Speed-Mod.speed-enabled:false","Speed-Mod.enabled:false","Speed-Mod.intelligentmode:false",
+			"Info-Mod.FPS-Pos:UP_CENTER","Info-Mod.showFPS:false","Info-Mod.Dir-POS:UP_RIGHT","Info-Mod.showdir:false","Info-Mod.Coor-Pos:UP_RIGHT","Info-Mod.showcoor:false","Info-Mod.Worldage-Pos:UP_LEFT","Info-Mod.showworldage:false","InfoMod.threadsleep:1000","InfoMod.radius:2","Info-Mod.showfriendlyspawns:false","Info-Mod.showaggressivspawns:false","Info-Mod.dynamicselection:true","Info-Mod.showblock:false","Info-Mod.block-Pos:UP_RIGHT",
+			"Light-Mod.Toggle-Light:75","Light-Mod.lightmod-enabled:false",
+			"Time-Mod.Key-addtime:334","Time-Mod.Key-subtime:333","Time-Mod.Key-freezetime:55","Time-Mod.timetoadd:0","Time-Mod.Time-Mod-enabled:false","Time-Mod.time-freezed:false","Time-Mod.time-multiplier:0","Time-Mod.showTimeinfo:false","Time-Mod.showtimepos:UP_CENTER",
+			"RecipeMod.Enabled:false","RecipeMod.showCraftingPattern:false",
+			"MobHighlighter.enabled:false","MobHighlighter.Toggle-Mobhighlighter:47","MobHighlighter.info-Pos:UP_LEFT","MobHighlighter.showinfo:false",
+			"OreHighlighter.enabled:false","OreHighlighter.Toggle-OreHighlighter:61","OreHighlighter.Toggle-Cave:93","OreHighlighter.info-Pos:UP_LEFT","OreHighlighter.showinfo:false","OreHighlighter.radius:2","OreHighlighter.selectivesearch:false","OreHighlighter.threadsleep:1000",
+			"PathMod.info-Pos:UP_LEFT","PathMod.showinfo:false","PathMod.enabled:false","PathMod.Toggle-PathMod:46","PathMod.seethroughwall:true","PathMod.mark.r:1.0F","PathMod.mark.g:0.0F","PathMod.mark.b:1.0F","PathMod.mark.alpha:1.0F",
+			"RangeMod.Range:16","RangeMod.DropBlock:false","RangeMod.MarkBlock:false","RangeMod.removefrominventory:true","RangeMod.addtoinventory:true","RangeMod.placedelay:125","RangeMod.destroydelay:125","RangeMod.reachbreak:false","RangeMod.reachplace:false","RangeMod.reachbreakonkey:331","RangeMod.reachplaceonkey:333","RangeMod.showinfo:false","RangeMod.info-Pos:UP_LEFT","RangeMod.reachpick:false","RangeMod.pickdelay:250","RangeMod.reachpickonkey:332");
 	
 	/**
 	 * Constructor for this class, loads the config from the Given path
@@ -36,10 +36,9 @@ public class Config {
 		path = System.getProperty("user.dir");
 		path = path + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe";
 		try {
-			if(!LiteLoader.isDevelopmentEnvironment()){
+			if(!LiteModMain.isDev()){
 				loadConfig();
-			}
-			
+			}			
 		} catch (Exception e) {
 			System.out.println("---- Oops >.< ----");
 			e.printStackTrace();
@@ -98,7 +97,7 @@ public class Config {
 	 * @throws Exception 
 	 */
 	private void saveConfig(String changedpart) throws Exception{
-		if(!LiteLoader.isDevelopmentEnvironment()){
+		if(!LiteModMain.isDev()){
 			File config_File = new File(path + System.getProperty("file.separator") + "config.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){

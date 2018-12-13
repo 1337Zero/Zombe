@@ -1,18 +1,16 @@
 package me.zero.cc.Zero_lite.utils;
 
 import org.lwjgl.opengl.GL11;
-
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
-import com.mumfrey.liteloader.gl.GL;
 
 public class GroundMark implements Markables {
 
@@ -39,9 +37,10 @@ public class GroundMark implements Markables {
 		BufferBuilder worldRenderer = tessellator.getBuffer();
 	    	    
 	    BlockPos blockpos = new BlockPos(x,y,z);
-		IBlockState iblockstate = minecraft.world.getBlockState(blockpos);
-		AxisAlignedBB axis = iblockstate.getSelectedBoundingBox(minecraft.world, blockpos);
-	   
+		//IBlockState iblockstate = minecraft.world.getBlockState(blockpos);
+		//AxisAlignedBB axis = iblockstate.getSelectedBoundingBox(minecraft.world, blockpos);
+		AxisAlignedBB axis = new AxisAlignedBB(blockpos);
+		
 	    worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
 		worldRenderer.pos(axis.minX, axis.minY, axis.minZ).color(r, g, b, alpha).endVertex();
 		worldRenderer.pos(axis.maxX, axis.minY, axis.maxZ).color(r, g, b, alpha).endVertex();	
@@ -60,24 +59,37 @@ public class GroundMark implements Markables {
 		double x = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
 		double y = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
 		double z = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
-		GL.glPushMatrix();
-	    OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
-	    GL.glEnableBlend();
-	    GL11.glEnable(2848);
-	    GL.glBlendFunc(770, 771);
-	    GL.glDisableTexture2D();
-	    GL.glDisableLighting();
-	    GL.glDisableDepthTest();
-
-	    GL.glDepthFunc(515);
+		//GL.glPushMatrix();
+	    GlStateManager.pushMatrix();
+		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
+	    OpenGlHelper.glMultiTexCoord2f(OpenGlHelper.GL_TEXTURE1, 240F, 240F);
+	    // GL.glEnableBlend();
+	    GlStateManager.enableBlend();
+		GL11.glEnable(2848);
+	    //GL.glBlendFunc(770, 771);
+	    GlStateManager.blendFunc(770, 771);
+		//GL.glDisableTexture2D();
+	    GlStateManager.disableTexture2D();
+	    //GL.glDisableLighting();
+	    GlStateManager.disableLighting();
+	    //GL.glDisableDepthTest();
+	    GlStateManager.disableDepthTest();
+	    
+	    //GL.glDepthFunc(515);
+	    GlStateManager.depthFunc(515);
 	    GL11.glLineWidth(1.0F);
-	    GL.glTranslated(-x, -y, -z);
+	    //GL.glTranslated(-x, -y, -z);
+	    GlStateManager.translated(-x, -y, -z);
 	}	
 	private void normalizeRenderer(){
-	    GL.glEnableTexture2D();
-	    GL.glDisableBlend();
-	    GL.glPopMatrix();
-	    GL.glEnableDepthTest();
+	    //GL.glEnableTexture2D();
+	    GlStateManager.enableTexture2D();
+		//GL.glDisableBlend();
+	    GlStateManager.disableBlend();
+	    //GL.glPopMatrix();
+	    GlStateManager.popMatrix();
+	    //GL.glEnableDepthTest();
+	    GlStateManager.enableDepthTest();
 	}
 
 	public double getX() {

@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import com.mumfrey.liteloader.core.LiteLoader;
+import me.zero.cc.Zero_lite.LiteModMain;
 
 public class CustomRecipesConfig {
 
@@ -71,11 +71,11 @@ public class CustomRecipesConfig {
 		bw.write("#Please use this Format to create Custom-Items\n");
 		bw.write("##########################################\n#");
 		bw.write("#Example1:\n");
-		bw.write("#0~46:0:1;XXX,XXX,X#X;X=3:0,#=85:0");
+		bw.write("#0~tnt:1;XXX,XXX,X#X;X=dirt,#=oak_fence\n");
 		bw.write("#This creates a new TNT Recept, for crafting you need: XXX in the first line,XXX in the second line and X#X in the last line of the workbench\n");
 		bw.write("#X will be replaced with 3:0,# will be replaced with 85:0\n");
 		bw.write("#Example2:\n");
-		bw.write("1~264:0:64;X,X,#;X=3:0,#=1:0");
+		bw.write("#1~diamond:64;XAA,AXA,AA#;X=dirt,#=stone,A=air\n");
 		bw.write("#This creates a new Diamond Recept, for crafting you need: X in the first line,X in the second line and # in the last line of the workbench\n");
 		bw.write("#X will be replaced with 3:0,# will be replaced with 1:0\n");
 		bw.write("###########################################\n");
@@ -110,7 +110,7 @@ public class CustomRecipesConfig {
 	 * @throws Exception 
 	 */
 	private void saveConfig(String changedpart) throws Exception{
-		if(!LiteLoader.isDevelopmentEnvironment()){
+		if(!LiteModMain.isDev()){
 			File config_File = new File(path + System.getProperty("file.separator") + "CustomRecipes.cfg");	
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){
@@ -133,7 +133,6 @@ public class CustomRecipesConfig {
 			for(int i = 0; i < defaultconfig.size();i++){
 				if(defaultconfig.get(i).split(":")[0].equalsIgnoreCase(key)){
 					data.put(key, defaultconfig.get(i).split(":")[1]);
-					System.out.println("adding " + defaultconfig.get(i));
 					back = defaultconfig.get(i).split(":")[1];
 					try {
 						saveConfig("");
@@ -143,7 +142,7 @@ public class CustomRecipesConfig {
 					return back;
 				}
 			}
-		}		
+		}	
 		return data.get(key);
 	}
 	/**

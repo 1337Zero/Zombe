@@ -7,15 +7,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
 
-import com.mumfrey.liteloader.core.LiteLoader;
+
+import me.zero.cc.Zero_lite.LiteModMain;
 
 public class MobHighLighterConfig {
 
 	private HashMap<String, String> data = new HashMap<String, String>();
 	private String path = "";	
 	private List<String> defaultconfig = Arrays.asList(
-			"Moblist:Polar_Bear,Stray,Llama,Evoker,Vindicator,Vex,Chicken,Cow,Horse,Ocelot,Pig,Sheep,Bat,Squid,Villager,Rabbit,Creeper,Skeleton,Zombie,Spider,Enderman,PigZombie,Cavespider,Silverfish,Lohe,Magmacube,Witch,Endermite,Guardian,Wolf,Item,Player,Mushroomcow,Slime,Ghast,Snowman,Giant,Irongolem,Enderdragon,Boat,Minecart,Spawnerminecart,Chestminecart,Tntminecart,Furnaceminecart,Xp,Wither",
-								
+			"Moblist:Polar_Bear,Stray,Llama,Evoker,Vindicator,Vex,Chicken,Cow,Horse,Ocelot,Pig,Sheep,Bat,Squid,Villager,Rabbit,Creeper,Skeleton,Zombie,Spider,Enderman,PigZombie,Cavespider,Silverfish,Lohe,Magmacube,Witch,Endermite,Guardian,Wolf,Item,Player,Mushroomcow,Slime,Ghast,Snowman,Giant,Irongolem,Enderdragon,Boat,Minecart,Spawnerminecart,Chestminecart,Tntminecart,Furnaceminecart,Xp,Wither,salmon",			
 			"Color.Chicken:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Cow:0.0F, 1.0F, 0.0F, 1.0F",
 			"Color.Horse:0.0F, 1.0F, 0.0F, 1.0F",
@@ -63,14 +63,15 @@ public class MobHighLighterConfig {
 			"Color.Vex:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Vindicator:1.0F, 0.0F, 0.0F, 1.0F",
 			"Color.Evoker:1.0F, 0.0F, 0.0F, 1.0F",
-			"Color.Polar_Bear:0.0F, 1.0F, 0.0F, 1.0F"
+			"Color.Polar_Bear:0.0F, 1.0F, 0.0F, 1.0F",
+			"Color.salmon:0.0F, 1.0F, 0.0F, 1.0F"
 			);
 	
 	public MobHighLighterConfig(){
 		path = System.getProperty("user.dir");
 		path = path + System.getProperty("file.separator") + "mods" + System.getProperty("file.separator") + "Lite_Zombe";
 		try {
-			if(!LiteLoader.isDevelopmentEnvironment()){
+			if(!LiteModMain.isDev()){
 				loadConfig();
 			}
 			
@@ -131,7 +132,7 @@ public class MobHighLighterConfig {
 	 * @throws Exception 
 	 */
 	private void saveConfig(String changedpart) throws Exception{
-		if(!LiteLoader.isDevelopmentEnvironment()){
+		if(!LiteModMain.isDev()){
 			File config_File = new File(path + System.getProperty("file.separator") + "Mobhighlighter.cfg");		
 			List<String> back = new ArrayList<String>();		
 			for(String key : data.keySet()){

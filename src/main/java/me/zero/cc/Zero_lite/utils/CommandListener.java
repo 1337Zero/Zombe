@@ -14,11 +14,13 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceFluidMode;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextComponentString;
 public class CommandListener {
 
@@ -136,11 +138,11 @@ public class CommandListener {
 					moblist.put("Player" , moblist.get("Player") + 1);
 				}						
 			}else{					
-				if(!founds.contains(e.getName())){
-					founds.add(e.getName());
-					moblist.put(e.getName(), 1);
+				if(!founds.contains(IRegistry.ENTITY_TYPE.getKey(e.getType()).toString())){
+					founds.add(e.getName().getUnformattedComponentText());
+					moblist.put(e.getName().getUnformattedComponentText(), 1);
 				}else{
-					moblist.put(e.getName(), moblist.get(e.getName()) + 1 );
+					moblist.put(e.getName().getUnformattedComponentText(), moblist.get(IRegistry.ENTITY_TYPE.getKey(e.getType()).toString()) + 1 );
 				}						
 			}					
 		}
@@ -157,12 +159,12 @@ public class CommandListener {
 		if(main.getSelection().size() > 0){
 			if(id.equals("0")){
 				for(BlockMark pos : main.getSelection()){					
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(Integer.valueOf(id)).getDefaultState());
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), BlockUtils.getBlockByRessource(id).getDefaultState());
 				}
 			}else{
 				for(BlockMark pos : main.getSelection()){					
-					ItemStack stack = new ItemStack(Item.getByNameOrId(id), 1, meta);
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockFromItem(stack.getItem()).getStateFromMeta(meta));
+					ItemStack stack = new ItemStack(IRegistry.ITEM.get(new ResourceLocation(id)));
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockFromItem(stack.getItem()).getDefaultState());
 				}
 			}
 		}else{
@@ -172,15 +174,16 @@ public class CommandListener {
 	}
 	private boolean onReplaceCommand(String idToReplace,int metaToReplace, String idToSet,int metaToSet){
 		if(main.getSelection().size() > 0){
-				for(BlockMark pos : main.getSelection()){
+			/*for(BlockMark pos : main.getSelection()){
+					//IBlockState state = minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getMaterial();
 					if(Block.getIdFromBlock(minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock()) == Integer.parseInt(idToReplace)){
-						int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+						int subid = Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
 						if(subid == metaToReplace){
 							ItemStack stack = new ItemStack(Item.getByNameOrId(idToSet), 1, metaToSet);
-							minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockFromItem(stack.getItem()).getStateFromMeta(metaToSet));	
+							Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockFromItem(stack.getItem()).getStateFromMeta(metaToSet));	
 						}
 					}
-				}
+				}*/
 		}else{
 			sendMessage("&4Please select some Blocks first!");
 		}
@@ -204,7 +207,7 @@ public class CommandListener {
 	private boolean onPasteCommand(){
 		if(schematics != null){
 			schematics.pasteSchematic(minecraft.player.posX, minecraft.player.posY, minecraft.player.posZ);
-			sendMessage("Pasted " + schematics.blocks.length + " Blocks/" + schematics.tileentity.tagCount() + " Tiles/" + schematics.entities.tagCount() + " Entities");
+			sendMessage("Pasted " + schematics.blocks.length + " Blocks/" + schematics.tileentity.size() + " Tiles/" + schematics.entities.size() + " Entities");
 			sendMessage("Do " + LiteModMain.config.getData("Main.cmdControlCharacter") + "sel to clear your Ram from it!");
 		}
 		return true;
@@ -241,20 +244,21 @@ public class CommandListener {
 		return true;
 	}
 	private boolean onKillAll(){
-		List<Entity> mobs = minecraft.getIntegratedServer().getServer().getEntityWorld().loadedEntityList;
+		List<Entity> mobs = minecraft.getIntegratedServer().getPlayerList().getPlayerByUUID(minecraft.player.getUniqueID()).getEntityWorld().loadedEntityList;
 		List<Entity> clientmobs = minecraft.world.loadedEntityList;
 		int count = 0;
 		//Deleting Mobs from the local Server...
 		for(Entity mob : mobs){
 			if(!(mob instanceof EntityPlayerMP) & !(mob instanceof EntityPlayerSP) & !(mob instanceof EntityPlayer)){
-				minecraft.getIntegratedServer().getServer().getEntityWorld().unloadEntities(mobs);
+				minecraft.getIntegratedServer().getPlayerList().getPlayerByUUID(minecraft.player.getUniqueID()).getEntityWorld().unloadEntities(mobs);
 				count++;
 			}
 		}
 		//Deleting Mobs from the Renderer
 		for(Entity mob : clientmobs){
 			if(!(mob instanceof EntityPlayerMP) & !(mob instanceof EntityPlayerSP) & !(mob instanceof EntityPlayer)){
-				mob.setDead();
+				//mob.setDead();
+				mob.onKillCommand();
 			}
 		}
 		sendMessage("&6removed &4" + count + "&6 Entities");
@@ -311,7 +315,7 @@ public class CommandListener {
 		return true;
 	}
 	private boolean onExpandCommand(int value){
-		RayTraceResult objpos = minecraft.player.rayTrace(5, 1.0F);
+		RayTraceResult objpos = minecraft.player.rayTrace(5, 1.0F,RayTraceFluidMode.ALWAYS);
 		if((objpos.getBlockPos().getY() - minecraft.player.posY) > 2){
 			if(main.getFirstmark().getY() < main.getSecondmark().getY()){
 				main.getFirstmark().setY(main.getFirstmark().getY() + value);
@@ -361,56 +365,56 @@ public class CommandListener {
 		return true;
 	}
 	private boolean onMoveCommand(int value){
-		RayTraceResult objpos = minecraft.player.rayTrace(5, 1.0F);
+		/*RayTraceResult objpos = minecraft.player.rayTrace(5, 1.0F,RayTraceFluidMode.ALWAYS);
 		if((objpos.getBlockPos().getY() - minecraft.player.posY) > 2){
 			//Up Code here		
 			for(BlockMark pos : main.getSelection()){
-				int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+				int subid = Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
 				
-				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY() + value, pos.getZ()), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
-				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
+				Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY() + value, pos.getZ()), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
+				Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 			}			
 		}else if((objpos.getBlockPos().getY() - minecraft.player.posY) < -2){
 			//Down Code here
 			for(BlockMark pos : main.getSelection()){
-				int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
-				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY() - value, pos.getZ()), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
-				minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
+				int subid = Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+				Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY() - value, pos.getZ()), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
+				Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 			}
 		}else{			
 			EnumFacing facing = EnumFacing.fromAngle(minecraft.player.rotationYawHead);			
 			if(facing.equals(EnumFacing.NORTH)){
 				//z--			
 				for(BlockMark pos : main.getSelection()){
-					int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ() - value), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
+					int subid = Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ() - value), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 				}
 			}else if(facing.equals(EnumFacing.SOUTH)){
 				//z++
 				for(BlockMark pos : main.getSelection()){
-					int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ() + value), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
+					int subid = Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ() + value), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 				}				
 			}else if(facing.equals(EnumFacing.EAST)){
 				//x++
 				for(BlockMark pos : main.getSelection()){
-					int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX() + value, pos.getY(), pos.getZ()), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
+					int subid = Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX() + value, pos.getY(), pos.getZ()), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 				}				
 			}else if(facing.equals(EnumFacing.WEST)){
 				//x--
 				for(BlockMark pos : main.getSelection()){
-					int subid = Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX() - value, pos.getY(), pos.getZ()), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
-					minecraft.getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
+					int subid = Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getMetaFromState(Minecraft.getInstance().world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())));
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX() - value, pos.getY(), pos.getZ()), minecraft.world.getBlockState(new BlockPos(pos.getX(), pos.getY(),pos.getZ())).getBlock().getStateFromMeta(subid));	
+					Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(pos.getX(), pos.getY(), pos.getZ()), Block.getBlockById(0).getDefaultState());
 				}
 			}
 		}
 		main.setSelection(SelectionHelper.calcSelectedBlocks(minecraft, main.getFirstmark(), main.getSecondmark(),Float.valueOf(main.getConfig().getData("Main.selectionR")),Float.valueOf(main.getConfig().getData("Main.selectionG")),Float.valueOf(main.getConfig().getData("Main.selectionB")),Float.valueOf(main.getConfig().getData("Main.selectionAlpha"))));	
-		sendMessage("Moved " + main.getSelection().size() + " Blocks");	
+		sendMessage("Moved " + main.getSelection().size() + " Blocks");	*/
 		return true;
 	}
 	private boolean onSelCommand(){
@@ -425,7 +429,7 @@ public class CommandListener {
 	 * @param msg Message send to the Player
 	 */
 	private void sendMessage(String msg){
-		minecraft.player.sendMessage(new TextComponentString(main.formateTextColor(main.prefix + msg)));
+		minecraft.player.sendMessage(new TextComponentString(LiteModMain.formateTextColor(LiteModMain.prefix + msg)));
 	}
 	
 	

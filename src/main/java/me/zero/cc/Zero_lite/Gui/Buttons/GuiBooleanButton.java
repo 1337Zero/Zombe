@@ -2,8 +2,7 @@ package me.zero.cc.Zero_lite.Gui.Buttons;
 
 
 import me.zero.cc.Zero_lite.LiteModMain;
-import me.zero.cc.Zero_lite.Mods.ModData;
-import net.minecraft.client.Minecraft;
+import me.zero.cc.Zero_lite.mods.ModData;
 
 public class GuiBooleanButton extends ZGuiButton{
 
@@ -17,8 +16,8 @@ public class GuiBooleanButton extends ZGuiButton{
 	private String valueToManupulate;
 	private LiteModMain speicher;
 	
-	public GuiBooleanButton(int id, int x, int y, int width, int height,String label, boolean value,String valueToManupulate,ModData moddata,LiteModMain speicher,String[] overlayText) {
-		super(id, x, y, width, height, label, overlayText);
+	public GuiBooleanButton(int id, int x, int y, int width, int height,String label, boolean value,String valueToManupulate,ModData moddata,LiteModMain speicher,String[] overlayText,ZGuiInterface in) {
+		super(id, x, y, width, height, label, overlayText,in);
 		this.value = value;
 		this.xstart = x;
 		this.ystart = y;
@@ -30,7 +29,26 @@ public class GuiBooleanButton extends ZGuiButton{
 		this.speicher = speicher;
 		this.displayString = txt + ": " + value;
 	}
-	public boolean mousePressed(Minecraft mc, int x, int y) {		 
+	@Override
+	public boolean mouseClicked(double x, double y, int p_mouseClicked_5_) {
+		if(x > xstart && x < (xstart + width)){			 
+			 if(y > ystart && y < (ystart + height)){
+				 if(value){
+					 value = false;
+				 }else{
+					value = true;
+				 }
+				 if(!moddata.equals(ModData.Nil)){
+					 speicher.getMod(moddata.name()).manupulateValue(valueToManupulate, value);						 
+				 }			
+				 this.displayString = txt + ": " + value;				 
+				 return true;
+			 }			 
+		 }	
+		return super.mouseClicked(x, y, p_mouseClicked_5_);
+	}
+	/*@Override
+	protected boolean mousePressed(double x, double y) {
 		 if(x > xstart && x < (xstart + width)){			 
 			 if(y > ystart && y < (ystart + height)){
 				 if(value){
@@ -41,10 +59,10 @@ public class GuiBooleanButton extends ZGuiButton{
 				 if(!moddata.equals(ModData.Nil)){
 					 speicher.getMod(moddata.name()).manupulateValue(valueToManupulate, value);						 
 				 }			
-				 this.displayString = txt + ": " + value;
+				 this.displayString = txt + ": " + value;				 
 				 return true;
 			 }			 
 		 }		 
 		 return false;
-	}
+	}*/
 }

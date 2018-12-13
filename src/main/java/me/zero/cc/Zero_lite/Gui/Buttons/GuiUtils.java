@@ -2,7 +2,6 @@ package me.zero.cc.Zero_lite.Gui.Buttons;
 
 import me.zero.cc.Zero_lite.LiteModMain;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 
 public class GuiUtils {
 	/**
@@ -14,8 +13,8 @@ public class GuiUtils {
 		int maxlength = 0;
 		
 		 for(String text: textarray){    
-			 if(Minecraft.getMinecraft().fontRenderer.getStringWidth(text) > maxlength){
-				 maxlength = Minecraft.getMinecraft().fontRenderer.getStringWidth(LiteModMain.formateTextColor(text)) + 10;
+			 if(Minecraft.getInstance().fontRenderer.getStringWidth(text) > maxlength){
+				 maxlength = Minecraft.getInstance().fontRenderer.getStringWidth(LiteModMain.formateTextColor(text)) + 10;
 			 }
 		 }		
 		return maxlength;
@@ -27,8 +26,8 @@ public class GuiUtils {
 	 * @return boolean
 	 */
 	public static boolean isOverScreenWidth(Minecraft minecraft,int uiX){
-		ScaledResolution reso = new ScaledResolution(minecraft);
-		if(uiX > reso.getScaledWidth()){
+		int scaledWidth = Minecraft.getInstance().mainWindow.getScaledWidth();
+		if(uiX > scaledWidth){
 			return true;
 		}
 		return false;
@@ -40,8 +39,8 @@ public class GuiUtils {
 	 * @return boolean
 	 */
 	public static boolean isOverScreenHeight(Minecraft minecraft,int uiZ){
-		ScaledResolution reso = new ScaledResolution(minecraft);
-		if(uiZ > reso.getScaledHeight()){
+		int scaledHeight = Minecraft.getInstance().mainWindow.getScaledHeight();
+		if(uiZ > scaledHeight){
 			return true;
 		}
 		return false;

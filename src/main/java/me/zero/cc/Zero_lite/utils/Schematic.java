@@ -28,7 +28,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -66,27 +65,28 @@ public class Schematic{
 			   					double ypos = y + py;
 			   					double zpos = z + pz;
 			   					int b = blocks[index] & 0xFF;
-			   					Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setBlockState(new BlockPos(xpos, ypos, zpos), Block.getBlockById(b).getStateFromMeta(data[index]));
+			   					BlockUtils.getBlockByID(b);
+								Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().setBlockState(new BlockPos(xpos, ypos, zpos), Block.getStateById(data[index]));
 			   				}
 			   			}
 			   		}
 			   		/*if(tileentity != null){
 			   			for(int i = 0; i < tileentity.tagCount();i++){
 				   			TileEntity enti = TileEntity.createAndLoadEntity(tileentity.getCompoundTagAt(i));
-				   			enti.setPos(new BlockPos(enti.getPos().getX() + Minecraft.getMinecraft().thePlayer.posX,enti.getPos().getY() + Minecraft.getMinecraft().thePlayer.posY, enti.getPos().getZ() + Minecraft.getMinecraft().thePlayer.posZ));
-				   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().setTileEntity(enti.getPos(), enti);
+				   			enti.setPos(new BlockPos(enti.getPos().getX() + Minecraft.getInstance().thePlayer.posX,enti.getPos().getY() + Minecraft.getInstance().thePlayer.posY, enti.getPos().getZ() + Minecraft.getInstance().thePlayer.posZ));
+				   			Minecraft.getInstance().getIntegratedServer().getEntityWorld().setTileEntity(enti.getPos(), enti);
 				   		}
 			   		}*/
 			   		if(entities != null){
-			   			for(int i = 0; i < entities.tagCount();i++){	   			
-				   			Entity ent = createEntityFromNBT(entities.getCompoundTagAt(i));
+			   			for(int i = 0; i < entities.size();i++){				   				
+				   			Entity ent = createEntityFromNBT(entities.getCompound(i));
 				   			if(ent != null){
-				   				Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().spawnEntity(ent);
+				   				Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).addEntity(ent);
 				   			}	   			
 				   		}
 			   		}
-			   		
-		   			Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().updateEntities();
+			   		//Minecraft.getInstance().getIntegratedServer().getEntityWorld().updateEntities();
+			   		//Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(Minecraft.getInstance().player.getUniqueID()).getEntityWorld().
 			   }catch(Exception e){
 				   e.printStackTrace();
 			   } 
@@ -103,25 +103,26 @@ public class Schematic{
 			 width = nbt.getShort("Width");
 			 height = nbt.getShort("Height");
 			 length = nbt.getShort("Length");		
-			 if(nbt.getTagList("Entities", 9).tagCount() == 0){
-				 entities = (NBTTagList)nbt.getTag("Entities");	
+			 if(nbt.getList("Entities", 9).size() == 0){
+				 entities = (NBTTagList)nbt.get("Entities");	
 			 }else{
-				 entities = nbt.getTagList("Entities", 9);	
+				 entities = nbt.getList("Entities", 9);	
 			 }
-			 if(nbt.getTagList("TileEntities", 9).tagCount() == 0){
-				 tileentity = (NBTTagList)nbt.getTag("TileEntities");	
+			 if(nbt.getList("TileEntities", 9).size() == 0){
+				 tileentity = (NBTTagList)nbt.get("TileEntities");	
 			 }else{
-				 tileentity = nbt.getTagList("TileEntities", 9);	
+				 tileentity = nbt.getList("TileEntities", 9);	
 			 }	 
 			 blocks = nbt.getByteArray("Blocks");
 			 data = nbt.getByteArray("Data");
 		 }else{
-			 Minecraft.getMinecraft().player.sendChatMessage(LiteModMain.formateTextColor(LiteModMain.prefix + "&4Could not load the file!"));
+			 Minecraft.getInstance().player.sendChatMessage(LiteModMain.formateTextColor(LiteModMain.prefix + "&4Could not load the file!"));
 		 }
 		 fis.close();
 	 }
 	 private Entity createEntityFromNBT(NBTTagCompound nbt){
-		 return EntityList.createEntityFromNBT(nbt, Minecraft.getMinecraft().world);
+		 //return EntityList.createEntityFromNBT(nbt, Minecraft.getInstance().world);
+		 return null;
 	 }
 
 	 public void loadFromSelection(ArrayList<BlockMark> selection){
@@ -152,9 +153,9 @@ public class Schematic{
 	     schematic.put("WEOriginX", new IntTag((int)minX));
 	     schematic.put("WEOriginY", new IntTag((int)minY));
 	     schematic.put("WEOriginZ", new IntTag((int)minZ));
-	     schematic.put("WEOffsetX", new IntTag((int)(Minecraft.getMinecraft().player.posX - minX)));
-	     schematic.put("WEOffsetY", new IntTag((int)(Minecraft.getMinecraft().player.posY - minY)));
-	     schematic.put("WEOffsetZ", new IntTag((int)(Minecraft.getMinecraft().player.posZ - minZ)));
+	     schematic.put("WEOffsetX", new IntTag((int)(Minecraft.getInstance().player.posX - minX)));
+	     schematic.put("WEOffsetY", new IntTag((int)(Minecraft.getInstance().player.posY - minY)));
+	     schematic.put("WEOffsetZ", new IntTag((int)(Minecraft.getInstance().player.posZ - minZ)));
 	     
 	     List<Tag> tileEntities = new ArrayList<Tag>();
 	     List<Tag> entities = new ArrayList<Tag>();
@@ -162,14 +163,15 @@ public class Schematic{
 	     schematic.put("TileEntities", new ListTag(CompoundTag.class, tileEntities));
 	     schematic.put("Entities", new ListTag(CompoundTag.class, entities));
 	     
-		 int i = 0;		 
+		 //int i = 0;		 
 		 for(double y = minY; y <= maxY;y++){
 			 for(double z = minZ; z <= maxZ;z++){
 				 for(double x = minX; x <= maxX; x++){						
-					 BlockPos mypos = new BlockPos(x,y,z);
-					 blocks[i] = (byte) Block.getIdFromBlock(Minecraft.getMinecraft().world.getBlockState(mypos).getBlock());
-					 data[i] = (byte) Minecraft.getMinecraft().world.getBlockState(mypos).getBlock().getMetaFromState(Minecraft.getMinecraft().world.getBlockState(mypos));
-					 i++;
+					 /*BlockPos mypos = new BlockPos(x,y,z);
+					 Block.geti
+					 blocks[i] = (byte) Block.getIdFromBlock(Minecraft.getInstance().world.getBlockState(mypos).getBlock());
+					 data[i] = (byte) Minecraft.getInstance().world.getBlockState(mypos).getBlock().getMetaFromState(Minecraft.getInstance().world.getBlockState(mypos));
+					 i++;*/
 					}	
 				}	
 			}

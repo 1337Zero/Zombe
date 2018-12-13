@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.7.7",
+  "package": "me.zero.cc.Zero_lite.mixin",
+  "refmap": "mixin.example.refmap.json",
+  "target": "@env(DEFAULT)",
+  "mixins": [
+    "MixinPostRenderEntities",
+    "MixinRenderGlobal"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+

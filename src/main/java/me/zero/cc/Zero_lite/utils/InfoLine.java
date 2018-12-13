@@ -3,8 +3,6 @@ package me.zero.cc.Zero_lite.utils;
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-
 public class InfoLine {
 
 	private ArrayList<String> infos = new ArrayList<String>();
@@ -66,50 +64,53 @@ public class InfoLine {
 	 * @param Minecraft
 	 */
 	public void UpdateLine(Minecraft minecraft){
-		ScaledResolution reso = new ScaledResolution(minecraft);
-		int posx = reso.getScaledWidth();
-		int posy = reso.getScaledHeight();
-		
-		if(pos == GuiPositions.UP_LEFT){
-			posx = 5;
-			posy = 5;
-		}	
-		if(pos == GuiPositions.UP_CENTER){
-			posx = posx/2;
-			posy = 5;
-		}		
-		if(pos == GuiPositions.UP_RIGHT){
-			posy = 5;
-		}
-		if(pos == GuiPositions.MID_LEFT){
-			posx = 5;
-			posy = posy/2;
-		}
-		if(pos == GuiPositions.MID_CENTER){
-			posx = posx/2;
-			posy = posy/2;
-		}
-		if(pos == GuiPositions.MID_RIGHT){
-			posy = posy/2;
-		}
-		if(pos == GuiPositions.DOWN_LEFT){
-			posx = 5;
-			posy = posy-10;
-		}		
-		if(pos == GuiPositions.DOWN_CENTER){
-			posx = posx/2;
-			posy = posy-10;
-		}
-		if(pos == GuiPositions.DOWN_RIGHT){
-			posy = posy-10;
-		}
-		
-		if(pos != GuiPositions.UP_LEFT && pos != GuiPositions.MID_LEFT && pos != GuiPositions.DOWN_LEFT){
-			String info = createInfoLine();
-			minecraft.fontRenderer.drawString(info, (posx-minecraft.fontRenderer.getStringWidth(info)), posy, 0xffff0000);	
-		}else{
-			minecraft.fontRenderer.drawString(createInfoLine(), posx, posy, 0xffff0000);
-		}			
+		if(minecraft != null && minecraft.mainWindow != null) {
+			//ScaledResolution reso = new ScaledResolution(minecraft);
+			int posx = minecraft.mainWindow.getScaledWidth();
+			int posy = minecraft.mainWindow.getScaledHeight();
+									
+			if(pos == GuiPositions.UP_LEFT){
+				posx = 5;
+				posy = 5;
+			}	
+			if(pos == GuiPositions.UP_CENTER){
+				posx = posx/2;
+				posy = 5;
+			}		
+			if(pos == GuiPositions.UP_RIGHT){
+				posy = 5;
+			}
+			if(pos == GuiPositions.MID_LEFT){
+				posx = 5;
+				posy = posy/2;
+			}
+			if(pos == GuiPositions.MID_CENTER){
+				posx = posx/2;
+				posy = posy/2;
+			}
+			if(pos == GuiPositions.MID_RIGHT){
+				posy = posy/2;
+			}
+			if(pos == GuiPositions.DOWN_LEFT){
+				posx = 5;
+				posy = posy-10;
+			}		
+			if(pos == GuiPositions.DOWN_CENTER){
+				posx = posx/2;
+				posy = posy-10;
+			}
+			if(pos == GuiPositions.DOWN_RIGHT){
+				posy = posy-10;
+			}
+			
+			if(pos != GuiPositions.UP_LEFT && pos != GuiPositions.MID_LEFT && pos != GuiPositions.DOWN_LEFT){
+				String info = createInfoLine();
+				minecraft.fontRenderer.drawStringWithShadow(info, (posx-minecraft.fontRenderer.getStringWidth(info)), posy, 0xffff0000);	
+				//minecraft.fontRenderer.drawStringWithShadow(info, posy, posy, posx)
+			}else{
+				minecraft.fontRenderer.drawStringWithShadow(createInfoLine(), posx, posy, 0xffff0000);
+			}	
+		}				
 	}
 	private String createInfoLine(){
 		ArrayList<String> newinfos = new ArrayList<String>();

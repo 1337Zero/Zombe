@@ -1,0 +1,10 @@
+{
+  "id": "zombe",
+  "name": "Zombe Modpack",
+  "authors": [
+    "1337Zero"
+  ],
+  "listeners": [
+    "me.zero.cc.Zero_lite.LiteModMain"
+  ]
+}
