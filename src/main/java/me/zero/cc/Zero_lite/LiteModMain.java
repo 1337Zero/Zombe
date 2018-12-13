@@ -327,7 +327,7 @@ public class LiteModMain implements ClientTickable, InitializationListener ,Over
 		this.update = update;
 	}
 	public static boolean isDev() {
-		return true;
+		return false;
 	}
 	public static void sendMessage(String msg){
 		String[] messages = msg.split(";");
