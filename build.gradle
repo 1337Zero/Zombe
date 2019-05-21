@@ -1,51 +1,45 @@
+buildscript {
+	repositories {
+		maven { url 'https://www.jitpack.io' }
+		maven { url 'https://files.minecraftforge.net/maven' }
+		maven { url 'http://repo.spongepowered.org/maven' }
+	}
+	dependencies {
+		classpath 'com.github.Chocohead:ForgeGradle:moderniser-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+	}
+}
+plugins {
+	id 'de.set.ecj' version '1.3.0'
+}
+apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
-// dependencies {
- //  compile group: 'org.javassist', name: 'javassist', version: '3.15.0-GA'
- //}
+group 'me.zero.cc'
+version '0.0.6.0.0'
+archivesBaseName = 'Zombe'
 
-buildscript {
-    repositories {
-        mavenCentral()
-        mavenLocal()
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = 'sponge'
-            url = 'http://repo.spongepowered.org/maven'
-        } 
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-    }
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+	maven { url 'https://www.jitpack.io' }
+	maven { url 'http://repo.strezz.org/artifactory/list/Strezz-Central' }	
+	maven { url 'https://www.dimdev.org/maven/' }
 }
 
-apply plugin: 'net.minecraftforge.gradle.liteloader'
-
-version = "0.0.5.9"
-group = "de.cultcraft.de.zero" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Zombe"
-
+dependencies {
+	implementation 'com.github.Chocohead:Rift:jitpack-SNAPSHOT:dev'
+}
 minecraft {
-    version = "1.12.2"
-    mappings = "snapshot_20171016"
-    runDir = "run"
+	version = '1.13.2'
+	mappings = 'snapshot_20181130'
+	runDir = 'run'
+	tweakClass = 'org.dimdev.riftloader.launch.RiftLoaderClientTweaker'
 }
-litemod {
-    json {
-        name = "Zombe"
-        mcversion = "1.12.2"
-        version = "0.0.5.9"
-        author = "1337Zero"
-    }
-}
-
-jar {
-    from litemod.outputs
+mixin {
+    defaultObfuscationEnv notch
+    add sourceSets.main, 'mixin.example.refmap.json'
 }
